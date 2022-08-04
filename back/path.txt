@@ -1,0 +1,2 @@
+./themes/hugo-theme-next/layouts/partials/widgets/reward.html
+./themes/hugo-theme-next/layouts/partials/widgets/copyright.html

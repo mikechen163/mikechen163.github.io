@@ -1,0 +1,43 @@
+Description = "mike163's home"
+Keywords =  "技术总结 投资 "
+Subtitle = ""
+AuthorImg = "/img/avatar.png"
+AuthorName = "mike163"
+Introduce = "承认自己的无知,是智慧的开始"
+DateFormat = "2006-01-02"
+YearFormat = "2006年"
+MonthFormat = "01-02"
+
+ArticleDeclContent = "本博客文章除特别声明外，均采用 <a href='https://creativecommons.org/licenses/by-nc-sa/3.0/' target='_blank' style='text-decoration: underline;'>CC BY-NC-SA 3.0</a>许可协议，转载请注明出处！"
+
+[Footer]
+  StorageLink = "https://gitee.com/"
+  StorageName = "Gitee 仓库"
+  ICPLink = "http://beian.miit.gov.cn"
+  ICPNo = "粤 ICP 备 号"
+
+[[Socials]]
+  Name = "GitHub"
+  Icon = "github"
+  URL = "https://github.com/mikechen163/"
+
+
+[[Links]]
+  Name = "Nutz"
+  Permalink = "https://nutzam.com/"
+
+[[Links]]
+  Name = "JFinal"
+  Permalink = "https://jfinal.com/"
+
+[[Links]]
+  Name = "Wendal"
+  Permalink = "http://wendal.net/"
+
+[[Links]]
+  Name = "廖雪峰"
+  Permalink = "https://www.liaoxuefeng.com/"
+
+[[Links]]
+  Name = "凡梦星尘"
+  Permalink = "https://lisenhui.cn/"
