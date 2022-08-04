@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>市场情绪 on 麦克的茶馆</title>
+    <link>/tags/%E5%B8%82%E5%9C%BA%E6%83%85%E7%BB%AA/</link>
+    <description>Recent content in 市场情绪 on 麦克的茶馆</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Sun, 26 Jul 2015 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/tags/%E5%B8%82%E5%9C%BA%E6%83%85%E7%BB%AA/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>不要亏损</title>
+      <link>/post/invest-do-not-loss-your-money/</link>
+      <pubDate>Sun, 26 Jul 2015 00:00:00 +0000</pubDate>
+      
+      <guid>/post/invest-do-not-loss-your-money/</guid>
+      <description>巴菲特曾经说过，投资最重要的三件事是： 不要亏损，不要亏损，记住前两条。 股神只告诉我们这很重要，却没有告诉我们怎么做。 个人简单的总结如下： 1、</description>
+    </item>
+    
+    <item>
+      <title>如何长期在市场生存</title>
+      <link>/post/invest-how-to-long-survice/</link>
+      <pubDate>Sun, 26 Jul 2015 00:00:00 +0000</pubDate>
+      
+      <guid>/post/invest-how-to-long-survice/</guid>
+      <description>长期在市场生存的关键：其实就是4个字，不要亏损。 那么，如何做到呢？ 要知道，短期的市场是无法被预测的，任何时候你的买入的第二天，股价都会大幅下</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>tls on 麦克的茶馆</title>
+    <link>/tags/tls/</link>
+    <description>Recent content in tls on 麦克的茶馆</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Sat, 18 Jan 2020 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/tags/tls/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>配置v2ray&#43;ws&#43;tls1.3&#43;nginx</title>
+      <link>/post/setup-v2ray-ws-tls-nginx/</link>
+      <pubDate>Sat, 18 Jan 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/post/setup-v2ray-ws-tls-nginx/</guid>
+      <description>1 安装nginx sudo yum install nginx sudo systemctl start nginx sudo systemctl status nginx 检查nginx 版本,重点是检查 openssl是否支持1.1.1,只有1.1.1之后的版本,才能支持t</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>shortcodes on 麦克的茶馆</title>
+    <link>/tags/shortcodes/</link>
+    <description>Recent content in shortcodes on 麦克的茶馆</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Sun, 10 Mar 2019 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/tags/shortcodes/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>科 普 作 品 概 览(约１２００种)</title>
+      <link>/post/sicence-books/</link>
+      <pubDate>Sun, 10 Mar 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/post/sicence-books/</guid>
+      <description>科 普 作 品 概 览(约１２００种) 这里 目 录 1．科学传记 2．科学经典名著 3．科学史 4．科学概观 5．科学哲学、科学与哲学 6．科学与社会，科学与文化 7．</description>
+    </item>
+    
+  </channel>
+</rss>

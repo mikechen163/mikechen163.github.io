@@ -1,0 +1,938 @@
+<!DOCTYPE HTML>
+<html lang="zh-cn" dir="content/zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" /> 
+  <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" />
+  <title> 配置v2ray&#43;ws&#43;tls1.3&#43;nginx - 麦克的茶馆 </title>
+  
+  <meta name="keywords" content="技术总结 投资 ">
+  
+  
+  <meta name="author" content="mike163">
+  
+  <meta property="og:title" content="配置v2ray&#43;ws&#43;tls1.3&#43;nginx"/>
+  <meta property="og:site_name" content="麦克的茶馆">
+  <meta property="og:image" content="/img/author.jpg"> 
+  <meta name="title" content="配置v2ray&#43;ws&#43;tls1.3&#43;nginx - 麦克的茶馆" />
+  
+  <meta name="description" content="mike163&#39;s home">
+   
+  <link rel="shortcut icon" href="/img/favicon.ico" />
+  <link rel="apple-touch-icon" href="/img/apple-touch-icon.png" />
+  <link rel="apple-touch-icon-precomposed" href="/img/apple-touch-icon.png" />
+  <link href="//unpkg.com/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+  
+  <link href="//unpkg.com/imageviewer@1.1.0/dist/viewer.min.css" rel="stylesheet"/>
+  
+  <link href="/css/main.css" rel="stylesheet" type="text/css" />
+  <link href="/css/syntax.css" rel="stylesheet" type="text/css" />    
+  
+  
+  
+</head>
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+<div class="container one-collumn sidebar-position-left page-home  ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> <div class="site-brand-container">
+<div class="site-nav-toggle">
+  <div class="toggle" role="button" style="opacity: 1; top: 0px;">
+      <span class="toggle-line"></span>
+      <span class="toggle-line"></span>
+      <span class="toggle-line"></span>
+  </div>
+</div>
+<div class="site-meta ">
+  
+  
+  
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">麦克的茶馆</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-right">
+    <div class="toggle popup-trigger" style="opacity: 1; top: 0px;">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+<nav class="site-nav">
+    <ul id="menu" class="menu">
+    
+        
+    
+    
+    
+      <li class="menu-item ">
+        <a href="/" rel="section" >
+            <i class="menu-item-icon fa fa-fw fa-home"></i> <br />首页
+        </a>
+      </li>
+        
+    
+    
+    
+      <li class="menu-item menu-item-active">
+        <a href="/post" rel="section" >
+            <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档
+        </a>
+      </li>
+        
+    
+    
+    
+      <li class="menu-item ">
+        <a href="/about.html" rel="section" >
+            <i class="menu-item-icon fa fa-fw fa-user"></i> <br />关于我
+        </a>
+      </li>
+    
+      <li class="menu-item menu-item-search">
+        <a href="javascript:;" class="popup-trigger"> <i class="menu-item-icon fa fa-search fa-fw"></i> <br /> 搜索</a>
+      </li>
+    </ul>
+    <div class="site-search">
+      <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon"><i class="fa fa-search"></i> </span>
+    <span class="popup-btn-close"><i class="fa fa-times-circle"></i></span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索关键字..." spellcheck="false" type="text" id="local-search-input" autocapitalize="none" autocorrect="off">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+    </div>
+</nav> </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+<section id="posts" class="posts-expand">
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+      
+      <h1 class="post-title" itemprop="name headline">
+        <a class="post-title-link" href="/post/setup-v2ray-ws-tls-nginx/" itemprop="url">
+        配置v2ray&#43;ws&#43;tls1.3&#43;nginx
+        </a>
+      </h1>
+      
+      <div class="post-meta">
+      <span class="post-pushdate">
+<i class="fa fa-calendar-o fa-fw"></i>
+<span class="post-meta-item-text">时间：</span>
+<time itemprop="dateCreated" datetime="2016-03-22T13:04:35+08:00" content="2020-01-18">
+    2020-01-18
+</time>
+</span> 
+      
+
+  <span class="post-category" >
+  <i class="fa fa-folder-o fa-fw"></i>  
+  <span class="post-meta-item-text">分类：</span>
+  
+    <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+      <a class="post-category-a" href="/categories/%E6%8A%80%E6%9C%AF" itemprop="url" rel="index">
+        <span itemprop="name">技术</span>
+      </a>
+      &nbsp; 
+    </span>
+  
+</span>
+
+
+      <span class="post-wordcount">
+<i class="fa fa-file-word-o fa-fw"></i>
+<span class="post-meta-item-text">字数：</span>
+<span class="leancloud-world-count">699 字</span>
+</span>
+      <span class="post-readtime">
+<i class="fa fa-eye fa-fw"></i>
+<span class="post-meta-item-text">阅读：</span>
+<span class="leancloud-view-count">2分钟</span>
+</span>
+      <span id="/post/setup-v2ray-ws-tls-nginx/" class="leancloud_visitors post-visitor" data-flag-title="配置v2ray&#43;ws&#43;tls1.3&#43;nginx">
+<i class="fa fa-binoculars fa-fw"></i>
+<span class="post-meta-item-text">阅读次数：</span>
+<span class="leancloud-visitors-count"></span>
+</span>
+      </div>
+     
+    </header>
+  
+    <div class="post-body" itemprop="articleBody">
+    <h3 id="1-安装nginx">1 安装nginx</h3>
+<pre><code>sudo yum install nginx
+sudo systemctl start nginx
+sudo systemctl status nginx
+</code></pre>
+<p>检查nginx 版本,重点是检查 openssl是否支持1.1.1,只有1.1.1之后的版本,才能支持tls1.3</p>
+<pre><code>  nginx -V
+  built by gcc 8.2.1 20180905 (Red Hat 8.2.1-3) (GCC)
+  built with OpenSSL 1.1.1 FIPS  11 Sep 2018 (running with OpenSSL 1.1.1c FIPS  28 May 2019)
+  TLS SNI support enabled
+</code></pre>
+<h3 id="2-申请证书">2 申请证书</h3>
+<pre><code>sudo yum install epel-release
+sudo yum install certbot
+</code></pre>
+<p>打开 80 443 端口</p>
+<pre><code>sudo iptables -I INPUT 4  -p tcp -m tcp --dport 80 -j ACCEPT
+sudo iptables -I INPUT 4  -p tcp -m tcp --dport 443 -j ACCEPT
+</code></pre>
+<p>申请证书 ,修改email地址 和 域名 参数</p>
+<pre><code>sudo certbot certonly --webroot --email your_email@xxx -w /usr/share/nginx/html -d xxx.your.site
+</code></pre>
+<p>如果看到</p>
+<pre><code>Congratulations! Your certificate and chain have been saved at:
+ /etc/letsencrypt/live/xxx.site/fullchain.pem
+Your key file has been saved at:
+/etc/letsencrypt/live/xxx.site/privkey.pem
+说明申请成功了
+</code></pre>
+ <!-- more -->    
+<p>修改/etc/nginx/conf.d/defaul.conf文件 ,注意把所有xxx.site修改为你自己的域名</p>
+<pre><code>server {
+# SSL configuration
+listen 443 ssl http2 default_server;
+listen [::]:443 ssl http2 default_server;
+ssl_certificate    /etc/letsencrypt/live/xxx.site/fullchain.pem;
+ssl_certificate_key  /etc/letsencrypt/live/xxx.site/privkey.pem;
+
+#ssl_protocols TLSv1.2 TLSv1.3;
+ssl_protocols  TLSv1.3;
+
+root /usr/share/nginx/html;
+#root /var/www;
+
+# Add index.php to the list if you are using PHP
+index index.html index.htm index.nginx-debian.html;
+
+server_name xxx.site; 
+
+
+location /vray { #
+    proxy_redirect off;
+    proxy_pass http://127.0.0.1:9000; 
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection &quot;upgrade&quot;;
+    proxy_set_header Host $http_host;
+ }
+}
+</code></pre>
+<p>重启nginx</p>
+<pre><code>sudo systemctl restart nginx
+</code></pre>
+<p>如果成功,这时候可以访问https://xxx.site/</p>
+<h3 id="3-配置v2ray">3 配置v2ray</h3>
+<p>服务器侧关键数据</p>
+<pre><code>&quot;inbound&quot;: {
+&quot;port&quot;: 9000, //(此端口与nginx配置相关)
+&quot;listen&quot;: &quot;127.0.0.1&quot;,
+&quot;protocol&quot;: &quot;vmess&quot;,
+&quot;settings&quot;: {
+  &quot;clients&quot;: [
+    {
+    
+        &quot;id&quot;: &quot;xxxxx-xxxx-xxxx&quot;,
+       &quot;level&quot;: 1,
+      &quot;alterId&quot;: 64 //此ID也需与客户端保持一致
+    }
+  ]
+},
+&quot;streamSettings&quot;:{
+  &quot;network&quot;: &quot;ws&quot;,
+  &quot;wsSettings&quot;: {
+       &quot;path&quot;: &quot;/vray&quot; //与nginx配置相关
+  }
+}
+},
+
+
+
+&quot;outbound&quot;: {
+&quot;protocol&quot;: &quot;freedom&quot;,
+&quot;settings&quot;: {}
+},
+&quot;outboundDetour&quot;: [
+{
+  &quot;protocol&quot;: &quot;blackhole&quot;,
+  &quot;settings&quot;: {},
+  &quot;tag&quot;: &quot;blocked&quot;
+}
+],
+&quot;routing&quot;: {
+&quot;strategy&quot;: &quot;rules&quot;,
+&quot;settings&quot;: {
+  &quot;rules&quot;: [
+    {
+      &quot;type&quot;: &quot;field&quot;,
+      &quot;ip&quot;: [
+        &quot;0.0.0.0/8&quot;,
+        &quot;10.0.0.0/8&quot;,
+        &quot;100.64.0.0/10&quot;,
+        &quot;127.0.0.0/8&quot;,
+        &quot;169.254.0.0/16&quot;,
+        &quot;172.16.0.0/12&quot;,
+        &quot;192.0.0.0/24&quot;,
+        &quot;192.0.2.0/24&quot;,
+        &quot;192.168.0.0/16&quot;,
+        &quot;198.18.0.0/15&quot;,
+        &quot;198.51.100.0/24&quot;,
+        &quot;203.0.113.0/24&quot;,
+        &quot;::1/128&quot;,
+        &quot;fc00::/7&quot;,
+        &quot;fe80::/10&quot;
+      ],
+      &quot;outboundTag&quot;: &quot;blocked&quot;
+    }
+  ]
+}
+}
+</code></pre>
+<p>客户段配置</p>
+<pre><code> &quot;outbounds&quot;: [
+{
+&quot;protocol&quot;: &quot;vmess&quot;,
+&quot;settings&quot;: {
+  &quot;vnext&quot;: [
+    {
+   
+      &quot;address&quot;: &quot;xxx.xxx.xxx.xxx&quot;,
+    &quot;port&quot;: 443,  // 服务器端口
+
+      &quot;users&quot;: [
+        {
+                   &quot;id&quot;: &quot;xxx-xxxx-xxxx-xxxx&quot;,
+          &quot;alterId&quot;: 64,
+          &quot;security&quot;: &quot;aes-128-gcm&quot;
+        }
+      ]
+    }
+  ]
+},
+
+&quot;streamSettings&quot;:{
+    &quot;network&quot;: &quot;ws&quot;,
+    &quot;security&quot;: &quot;tls&quot;,
+    &quot;tlsSettings&quot;: {
+        &quot;serverName&quot;: &quot;xxx.site&quot;
+    },
+    &quot;wsSettings&quot;: {
+        &quot;path&quot;: &quot;/vray&quot;
+    }
+},
+&quot;tag&quot;: &quot;forgin&quot;
+},
+
+{
+// Protocol name of the outbound proxy.
+&quot;protocol&quot;: &quot;freedom&quot;,
+
+// Settings of the protocol. Varies based on protocol.
+&quot;settings&quot;: {},
+
+// Tag of the outbound. May be used for routing.
+&quot;tag&quot;: &quot;direct&quot;
+},{
+&quot;protocol&quot;: &quot;blackhole&quot;,
+&quot;settings&quot;: {},
+&quot;tag&quot;: &quot;blocked&quot;
+}],
+
+// Transport is for global transport settings. If you have multiple transports with same settings
+// (say mKCP), you may put it here, instead of in each individual inbound/outbounds.
+//&quot;transport&quot;: {},
+
+// Routing controls how traffic from inbounds are sent to outbounds.
+&quot;routing&quot;: {
+&quot;domainStrategy&quot;: &quot;IPOnDemand&quot;,
+&quot;rules&quot;:[
+  {
+    // Blocks access to private IPs. Remove this if you want to access your router.
+    &quot;type&quot;: &quot;field&quot;,
+    &quot;ip&quot;: [&quot;geoip:private&quot;],
+    &quot;outboundTag&quot;: &quot;blocked&quot;
+  },
+  {
+    // Blocks major ads.
+    &quot;type&quot;: &quot;field&quot;,
+    &quot;domain&quot;: [&quot;geosite:category-ads&quot;],
+    &quot;outboundTag&quot;: &quot;blocked&quot;
+  }
+]
+},
+</code></pre>
+
+    </div>
+          
+    <footer class="post-footer">
+     
+ 
+<div class="post-tags">     
+    
+    <a href="/tags/v2ray" rel="tag" title="v2ray">#v2ray#</a>
+    
+    <a href="/tags/tls" rel="tag" title="tls">#tls#</a>
+    
+    <a href="/tags/ws" rel="tag" title="ws">#ws#</a>
+    
+    <a href="/tags/nginx" rel="tag" title="nginx">#nginx#</a>
+    
+</div>
+
+
+
+      
+
+
+<div class="addthis_inline_share_toolbox"></div>
+
+
+
+     
+     
+     <div class="post-nav">
+    <div class="post-nav-next post-nav-item">
+    
+        <a href="/post/setup-new-vps/" rel="next" title="UBNT ERX v2ray 配置透明代理">
+        <i class="fa fa-chevron-left"></i> UBNT ERX v2ray 配置透明代理
+        </a>
+    
+    </div>
+
+    <div class="post-nav-prev post-nav-item">
+    
+        <a href="/post/sicence-books/" rel="prev" title="科 普 作 品 概 览(约１２００种)">
+        科 普 作 品 概 览(约１２００种) 
+        <i class="fa fa-chevron-right"></i>
+        </a>
+    
+    </div>
+</div>  
+     
+
+
+
+
+<div id="wcomments"></div>
+
+
+
+
+
+
+
+    </footer>
+  </article>
+</section>
+
+          </div>
+        </div>
+        <div class="sidebar-toggle">
+  <div class="sidebar-toggle-line-wrap">
+    <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+    <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+    <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+  </div>
+</div>
+<aside id="sidebar" class="sidebar">
+  <div class="sidebar-inner">
+
+    <section class="site-overview sidebar-panel  sidebar-panel-active ">
+      <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+        src="/img/avatar.png"
+        alt="mike163" />
+    <p class="site-author-name" itemprop="name">mike163</p>
+    <p class="site-description motion-element" itemprop="description"> 
+      
+        承认自己的无知,是智慧的开始
+      
+    </p>
+</div>
+      <nav class="site-state motion-element">
+    <div class="site-state-item site-state-posts">
+      <a href="/post/">
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">日志</span>
+      </a>
+    </div>
+    <div class="site-state-item site-state-categories">    
+        <a href="/categories/">      
+         
+        <span class="site-state-item-count">3</span>
+        
+        <span class="site-state-item-name">分类</span>
+        
+        </a>
+    </div>
+
+    <div class="site-state-item site-state-tags">
+        <a href="/tags/">
+         
+        <span class="site-state-item-count">41</span>
+        
+        <span class="site-state-item-name">标签</span>
+        </a>
+    </div>
+</nav>
+      
+      
+<div class="links-of-author motion-element">
+    
+        <span class="links-of-author-item">
+        <a href="https://github.com/mikechen163/" target="_blank" title="GitHub">
+            <i class="fa fa-fw fa-github"></i>
+            GitHub
+        </a>
+        </span>
+    
+</div>
+
+
+      
+    <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+    <div class="links-of-blogroll-title">
+        <i class="fa fa-fw fa-globe"></i>
+        友情链接
+    </div>
+    <ul class="links-of-blogroll-list">
+        
+        <li class="links-of-blogroll-item">
+            <a href="https://nutzam.com/" title="Nutz" target="_blank">Nutz</a>
+        </li>
+        
+        <li class="links-of-blogroll-item">
+            <a href="https://jfinal.com/" title="JFinal" target="_blank">JFinal</a>
+        </li>
+        
+        <li class="links-of-blogroll-item">
+            <a href="http://wendal.net/" title="Wendal" target="_blank">Wendal</a>
+        </li>
+        
+        <li class="links-of-blogroll-item">
+            <a href="https://www.liaoxuefeng.com/" title="廖雪峰" target="_blank">廖雪峰</a>
+        </li>
+        
+        <li class="links-of-blogroll-item">
+            <a href="https://lisenhui.cn/" title="凡梦星尘" target="_blank">凡梦星尘</a>
+        </li>
+        
+    </ul>
+    </div>
+
+
+      
+    <div class="tagcloud-of-blogroll motion-element tagcloud-of-blogroll-inline">
+    <div class="tagcloud-of-blogroll-title">
+        <i class="fa fa-fw fa-tags"></i>
+        标签云
+    </div>
+    <ul class="tagcloud-of-blogroll-list">
+        
+        <li  class="tagcloud-of-blogroll-item">
+            <a href="/tags/%E4%BB%B7%E5%80%BC%E6%8A%95%E8%B5%84">价值投资
+            <sup>3</sup>
+            </a>
+        </li>
+        
+        <li  class="tagcloud-of-blogroll-item">
+            <a href="/tags/dns">Dns
+            <sup>2</sup>
+            </a>
+        </li>
+        
+        <li  class="tagcloud-of-blogroll-item">
+            <a href="/tags/er-x">Er x
+            <sup>2</sup>
+            </a>
+        </li>
+        
+        <li  class="tagcloud-of-blogroll-item">
+            <a href="/tags/iptable">Iptable
+            <sup>2</sup>
+            </a>
+        </li>
+        
+        <li  class="tagcloud-of-blogroll-item">
+            <a href="/tags/ss">Ss
+            <sup>2</sup>
+            </a>
+        </li>
+        
+        <li  class="tagcloud-of-blogroll-item">
+            <a href="/tags/ubnt">Ubnt
+            <sup>2</sup>
+            </a>
+        </li>
+        
+        <li  class="tagcloud-of-blogroll-item">
+            <a href="/tags/v2ray">V2ray
+            <sup>2</sup>
+            </a>
+        </li>
+        
+        <li  class="tagcloud-of-blogroll-item">
+            <a href="/tags/%E5%B8%82%E5%9C%BA%E6%83%85%E7%BB%AA">市场情绪
+            <sup>2</sup>
+            </a>
+        </li>
+        
+        <li  class="tagcloud-of-blogroll-item">
+            <a href="/tags/%E8%83%BD%E5%8A%9B%E5%9C%88">能力圈
+            <sup>2</sup>
+            </a>
+        </li>
+        
+        <li  class="tagcloud-of-blogroll-item">
+            <a href="/tags/anyconnect">Anyconnect
+            <sup>1</sup>
+            </a>
+        </li>
+        
+    </ul>
+    </div>
+
+
+      
+    </section>
+    
+  </div>
+</aside>
+
+      </div>
+    </main>
+   
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  <span class="copyright-year">  
+    &copy; 2010 - 2022
+  </span>
+  <span class="with-love"><i class="fa fa-heart"></i></span>
+  <span class="copyright-author">麦克的茶馆</span>
+</div>
+<div class="powered-info">
+  <span class="powered-by">
+    Powered by - <a class="powered-link" href="//gohugo.io" target="_blank" title="hugo" >Hugo v0.62.2</a>
+  </span>
+  <span class="separator-line">/</span>
+  <span class="theme-info">
+    Theme by - <a class="powered-link" href="//github.com/elkan1788/hugo-theme-next" target="_blank"> NexT
+    </a>
+  </span>
+</div>
+<div class="vistor-info">
+
+
+
+  <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  <span class="site-uv">
+    <i class="fa fa-user"></i>
+    <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+  </span>
+  <span class="separator-line">/</span>
+  <span class="site-pv">
+    <i class="fa fa-eye"></i>
+    <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+  </span>
+
+
+</div>
+<div class="license-info">
+  <span class="storage-info">
+    Storage by 
+    <a href="https://gitee.com/" style="font-weight:700" target="_blank">Gitee 仓库</a>
+  </span>
+  <span class="separator-line">/</span>
+  <span class="license-num"> 
+    <a href="http://beian.miit.gov.cn" target="_blank">粤 ICP 备 号</a>
+  </span>
+</div>
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+      <span id="scrollpercent"><span>0</span>%</span>
+    </div>
+  </div>
+
+  <script type="text/javascript" src="//unpkg.com/jquery@2.1.4/dist/jquery.min.js"></script>
+<script type="text/javascript" src="/js/search.js"></script>
+<script type="text/javascript" src="/js/affix.js"></script>
+
+
+<script type="text/javascript">
+
+  function detectIE() {
+    var ua = window.navigator.userAgent;
+
+    var msie = ua.indexOf('MSIE ');
+    var trident = ua.indexOf('Trident/');
+    var edge = ua.indexOf('Edge/');
+
+    if (msie>0 || trident>0 || edge>0) {
+      return -1;
+    }
+
+    return 1;
+  }
+
+
+  function getCntViewHeight() {
+    var docHeight = $('#content').height(),
+        winHeight = $(window).height(),
+        cntViewHeight = (docHeight > winHeight) ? (docHeight - winHeight) : ($(document).height() - winHeight);
+    return cntViewHeight;
+  }
+
+  function getScrollbarWidth() {
+    var $div = $('<div />').addClass('scrollbar-measure').prependTo('body');
+    var div = $div[0];
+    var scrollbarWidth = div.offsetWidth - div.clientWidth;
+
+    $div.remove();
+
+    return scrollbarWidth;
+  }
+
+  function registerBackTop() {
+    var THRESHOLD = 50;
+    var $top = $('.back-to-top');
+
+    $(window).on('scroll', function () {
+      $top.toggleClass('back-to-top-on', window.pageYOffset > THRESHOLD);
+
+      var scrollTop = $(window).scrollTop();
+      var cntViewHeight = getCntViewHeight();
+      var scrollPercent = (scrollTop) / (cntViewHeight);
+      var scrollPercentRounded = Math.round(scrollPercent*100);
+      var scrollPercentMaxed = (scrollPercentRounded > 100) ? 100 : scrollPercentRounded;
+      $('#scrollpercent>span').html(scrollPercentMaxed);
+    });
+
+    $top.on('click', function () {
+      $("html,body").animate({
+                 scrollTop: 0,
+                 screenLeft: 0,
+                 }, 800);
+    });
+  }
+
+  function initScrollSpy () {
+    var tocSelector = '.post-toc';
+    var $tocElement = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocElement
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+      })
+      .on('clear.bs.scrollspy', removeCurrentActiveClass);
+
+    $('body').scrollspy({ target: tocSelector });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+  }
+
+  function initAffix () {
+    var headerHeight = $('.header-inner').height();
+    var footerOffset = parseInt($('.footer').outerHeight(true), 10);
+    var sidebarTop = headerHeight + 10;
+
+    $('.sidebar-inner').affix({
+      offset: {
+        top: sidebarTop,
+        bottom: footerOffset 
+      }
+    });
+
+    
+
+  }
+
+  function initTOCDimension () {
+    var updateTOCHeightTimer;
+
+    $(window).on('resize', function () {
+      updateTOCHeightTimer && clearTimeout(updateTOCHeightTimer);
+
+      updateTOCHeightTimer = setTimeout(function () {
+        var tocWrapperHeight = document.body.clientHeight - 100;
+
+        updateTOCHeight(tocWrapperHeight);
+      }, 0);
+    });
+
+    
+    updateTOCHeight(document.body.clientHeight - 100);
+
+    
+    var scrollbarWidth = getScrollbarWidth();
+    $('.post-toc').css('width', 'calc(100% + ' + scrollbarWidth + 'px)');
+  }
+
+  function updateTOCHeight (height) {
+    height = height || 'auto';
+    $('.post-toc').css('max-height', height);
+  }
+
+$(function() {
+
+  var sidebarTop = $('.header-inner').height() + 10;
+  $('#sidebar').css({ 'margin-top': sidebarTop }).show(); 
+
+  
+  var sidebarMt = parseInt($('#sidebar').css('margin-top'));
+  var sidebarInHeight = parseInt($('.sidebar-inner').css('height'));
+  var sideHeight = sidebarMt + sidebarInHeight;
+  var contentHeight = $('.content-wrap').height();
+
+  if (contentHeight < sideHeight) {
+    $('.content-wrap').css('min-height', sideHeight);
+  }
+  
+  
+  $('.site-nav-toggle').on('click', function () {
+    var $siteNav = $('.site-nav');
+    var $toggleLine = $('.toggle');
+    var ON_CLASS_NAME = 'site-nav-on';
+    var CLOSE_CLASS_NAME = 'toggle-close';
+    var isSiteNavOn = $siteNav.hasClass(ON_CLASS_NAME);
+    var animateAction = isSiteNavOn ? 'slideUp' : 'slideDown';
+    var animateCallback = isSiteNavOn ? 'removeClass' : 'addClass';
+
+    $siteNav.stop()[animateAction]('normal', function () {
+      $siteNav[animateCallback](ON_CLASS_NAME);
+      $toggleLine[animateCallback](CLOSE_CLASS_NAME);
+    });
+
+  });
+
+  registerBackTop();
+  
+   
+  initAffix();
+  initTOCDimension();
+
+  $('.sidebar-nav-toc').click(function(){
+    $(this).addClass('sidebar-nav-active');
+    $(this).next().removeClass('sidebar-nav-active');      
+    $('.'+$(this).next().attr('data-target')).toggle(500);
+    $('.'+$(this).attr('data-target')).toggle(500);
+  });
+
+  $('.sidebar-nav-overview').click(function(){
+    $(this).addClass('sidebar-nav-active');
+    $(this).prev().removeClass('sidebar-nav-active');      
+    $('.'+$(this).prev().attr('data-target')).toggle(500);
+    $('.'+$(this).attr('data-target')).toggle(500);
+  });
+});  
+
+</script>
+
+
+
+
+
+<script src="//unpkg.com/imageviewer@1.1.0/dist/viewer.min.js"></script>
+<script type="text/javascript">
+$(function() {
+  $('.post-body').viewer(); 
+});
+</script>
+
+
+
+
+
+
+<script type="text/javascript">
+  const locale = {
+    placeholder: '欢迎留下您的宝贵建议，请填写您的昵称和邮箱便于后续交流. ^_^'
+  };
+  $(function(){
+    if (detectIE()>0) {
+      $.getScript(document.location.protocol+'//unpkg.com/@waline/client@1.6.0/dist/Waline.min.js', function(){
+         new Waline({
+          el: '#wcomments', 
+          visitor: true,
+          emoji: [], 
+          wordLimit: '200', 
+          uploadImage: false,
+          locale, 
+          requiredMeta: ['nick', 'mail'], 
+          serverURL: "Your WalineSerURL", 
+          lang: "zh-cn"
+        });
+      });      
+    } else {
+      $('#wcomments').html('抱歉，Waline插件不支持IE或Edge，建议使用Chrome浏览器。');
+    }
+  });
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=Your%20AddthisId"></script>
+
+
+
+
+
+
+
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https'){
+   bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+  }
+  else{
+    bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+  }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+
+</body>
+</html>

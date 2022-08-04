@@ -1,0 +1,926 @@
+<!DOCTYPE HTML>
+<html lang="zh-cn" dir="content/zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" /> 
+  <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" />
+  <title> Centos 7 VPS服务器配置说明 - 麦克的茶馆 </title>
+  
+  <meta name="keywords" content="技术总结 投资 ">
+  
+  
+  <meta name="author" content="mike163">
+  
+  <meta property="og:title" content="Centos 7 VPS服务器配置说明"/>
+  <meta property="og:site_name" content="麦克的茶馆">
+  <meta property="og:image" content="/img/author.jpg"> 
+  <meta name="title" content="Centos 7 VPS服务器配置说明 - 麦克的茶馆" />
+  
+  <meta name="description" content="mike163&#39;s home">
+   
+  <link rel="shortcut icon" href="/img/favicon.ico" />
+  <link rel="apple-touch-icon" href="/img/apple-touch-icon.png" />
+  <link rel="apple-touch-icon-precomposed" href="/img/apple-touch-icon.png" />
+  <link href="//unpkg.com/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+  
+  <link href="//unpkg.com/imageviewer@1.1.0/dist/viewer.min.css" rel="stylesheet"/>
+  
+  <link href="/css/main.css" rel="stylesheet" type="text/css" />
+  <link href="/css/syntax.css" rel="stylesheet" type="text/css" />    
+  
+  
+  
+</head>
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+<div class="container one-collumn sidebar-position-left page-home  ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> <div class="site-brand-container">
+<div class="site-nav-toggle">
+  <div class="toggle" role="button" style="opacity: 1; top: 0px;">
+      <span class="toggle-line"></span>
+      <span class="toggle-line"></span>
+      <span class="toggle-line"></span>
+  </div>
+</div>
+<div class="site-meta ">
+  
+  
+  
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">麦克的茶馆</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-right">
+    <div class="toggle popup-trigger" style="opacity: 1; top: 0px;">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+<nav class="site-nav">
+    <ul id="menu" class="menu">
+    
+        
+    
+    
+    
+      <li class="menu-item ">
+        <a href="/" rel="section" >
+            <i class="menu-item-icon fa fa-fw fa-home"></i> <br />首页
+        </a>
+      </li>
+        
+    
+    
+    
+      <li class="menu-item menu-item-active">
+        <a href="/post" rel="section" >
+            <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档
+        </a>
+      </li>
+        
+    
+    
+    
+      <li class="menu-item ">
+        <a href="/about.html" rel="section" >
+            <i class="menu-item-icon fa fa-fw fa-user"></i> <br />关于我
+        </a>
+      </li>
+    
+      <li class="menu-item menu-item-search">
+        <a href="javascript:;" class="popup-trigger"> <i class="menu-item-icon fa fa-search fa-fw"></i> <br /> 搜索</a>
+      </li>
+    </ul>
+    <div class="site-search">
+      <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon"><i class="fa fa-search"></i> </span>
+    <span class="popup-btn-close"><i class="fa fa-times-circle"></i></span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索关键字..." spellcheck="false" type="text" id="local-search-input" autocapitalize="none" autocorrect="off">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+    </div>
+</nav> </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+<section id="posts" class="posts-expand">
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+      
+      <h1 class="post-title" itemprop="name headline">
+        <a class="post-title-link" href="/post/vps-setup/" itemprop="url">
+        Centos 7 VPS服务器配置说明
+        </a>
+      </h1>
+      
+      <div class="post-meta">
+      <span class="post-pushdate">
+<i class="fa fa-calendar-o fa-fw"></i>
+<span class="post-meta-item-text">时间：</span>
+<time itemprop="dateCreated" datetime="2016-03-22T13:04:35+08:00" content="2015-08-01">
+    2015-08-01
+</time>
+</span> 
+      
+
+  <span class="post-category" >
+  <i class="fa fa-folder-o fa-fw"></i>  
+  <span class="post-meta-item-text">分类：</span>
+  
+    <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+      <a class="post-category-a" href="/categories/%E6%8A%80%E6%9C%AF" itemprop="url" rel="index">
+        <span itemprop="name">技术</span>
+      </a>
+      &nbsp; 
+    </span>
+  
+</span>
+
+
+      <span class="post-wordcount">
+<i class="fa fa-file-word-o fa-fw"></i>
+<span class="post-meta-item-text">字数：</span>
+<span class="leancloud-world-count">1560 字</span>
+</span>
+      <span class="post-readtime">
+<i class="fa fa-eye fa-fw"></i>
+<span class="post-meta-item-text">阅读：</span>
+<span class="leancloud-view-count">4分钟</span>
+</span>
+      <span id="/post/vps-setup/" class="leancloud_visitors post-visitor" data-flag-title="Centos 7 VPS服务器配置说明">
+<i class="fa fa-binoculars fa-fw"></i>
+<span class="post-meta-item-text">阅读次数：</span>
+<span class="leancloud-visitors-count"></span>
+</span>
+      </div>
+     
+    </header>
+  
+    <div class="post-body" itemprop="articleBody">
+    <p>vps 配置主要包括 安全、科学上网、应用相关。相关命令以centos 7为基准</p>
+<h3 id="1-安全配置">1 安全配置</h3>
+<p>参考文档</p>
+<p><a href="https://www.digitalocean.com/community/tutorials/additional-recommended-steps-for-new-centos-7-servers" target="_blank" rel="noopener">Additional Recommended Steps for New CentOS 7 Servers</a>
+</p>
+<p><a href="https://www.linode.com/docs/security/securing-your-server#centosfedora" target="_blank" rel="noopener">Securing Your Server</a>
+</p>
+<p><a href="https://www.linode.com/docs/security/linux-security-basics" target="_blank" rel="noopener">Linux Security Basics</a>
+</p>
+<h4 id="11-添加常用用户">1.1 添加常用用户</h4>
+<p>新增一个testuser,添加到wheel组，平时就使用这个用户操作。</p>
+<pre><code>useradd -g wheel -d /home/testuser testuser
+passwd testuser
+</code></pre>
+<p>在.bashrc文件后，添加ls的别名</p>
+<pre><code>alias l='ls -l'
+</code></pre>
+<h4 id="12-配置ssh">1.2 配置ssh</h4>
+<p>配置ssh的访问方式为 key访问，关闭密码方式。</p>
+<h5 id="1-生成public-key并添加到到远程主机sshauthorized_keys文件">1 生成public key，并添加到到远程主机~/.ssh/authorized_keys文件</h5>
+<pre><code>ssh-keygen -t rsa
+</code></pre>
+<p>拷贝到远程主机</p>
+<pre><code>ssh-copy-id -i .ssh/id_rsa.pub mike@ubox
+</code></pre>
+<p>退出ssh,重新登录ssh，检查是否已经不需要密码了。验证成功后，关闭ssh密码访问方式</p>
+<h5 id="3-修改服务器etcsshssh_config文件">3 修改服务器/etc/ssh/ssh_config文件</h5>
+<pre><code>PubkeyAuthentication yes #启用public key访问
+PasswordAuthentication no #关闭密码
+ChallengeResponseAuthentication no#关闭密码
+PermitRootLogin no#禁止root用户登录
+</code></pre>
+<p>修改完毕后，重新启动ssh服务</p>
+<pre><code>sudo systemctl sshd restart	
+</code></pre>
+<!-- more --> 
+<h4 id="12-更新系统安装常用软件">1.2 更新系统，安装常用软件</h4>
+<h5 id="1-更新系统">1 更新系统</h5>
+<pre><code>sudo yum update
+sudo yum install git gcc ruby
+</code></pre>
+<h5 id="2-配置时区-ntp">2 配置时区 ntp</h5>
+<pre><code>sudo timedatectl set-timezone Asia/Shanghai
+sudo timedatectl
+sudo yum install -y ntp
+sudo systemctl start ntpd
+sudo systemctl enable ntpd
+</code></pre>
+<h5 id="3-配置swap文件">3 配置swap文件</h5>
+<pre><code>sudo fallocate -l 2G /swapfile
+sudo chmod 600 /swapfile
+sudo mkswap /swapfile
+sudo swapon /swapfile
+sudo sh -c 'echo &quot;/swapfile none swap sw 0 0&quot; &gt;&gt; /etc/fstab'
+</code></pre>
+<h5 id="4-检查监听端口关闭不需要的服务">4 检查监听端口，关闭不需要的服务</h5>
+<pre><code>netstat -an | grep LIS
+sudo service postfix stop
+sudo systemctl disable postfix
+</code></pre>
+<h5 id="5-安装rvm使用rvm安装最新版本的ruby">5 安装rvm，使用rvm安装最新版本的ruby</h5>
+<pre><code>gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3
+\curl -sSL https://get.rvm.io | bash -s stable
+
+rvm list known
+rvm install 2.2-head
+rvm docs generate-ri #生成ri文档，可选
+</code></pre>
+<h5 id="6-安装vnstat统计网络用量">6 安装vnstat，统计网络用量</h5>
+<pre><code>sudo yum install vnstat
+
+sudo vi /etc/cron.d/vnstat
+内容如下：每5分钟，更新一次数据库，注意修改用户为 root
+*/5 * * * *  root /usr/sbin/vnstat.cron 
+
+vnstat --dumpdb #检查数据库
+vnstat --help #打印帮助
+vnstat -q #显示查询结果
+</code></pre>
+<p>参考 <a href="http://www.vpser.net/manage/vnstat.html" target="_blank" rel="noopener">Linux VPS流量查看/监测工具 &ndash; vnStat</a>
+</p>
+<h4 id="13-防火墙设置">1.3 防火墙设置</h4>
+<p>centos 7默认是用firewall防火墙，关闭，修改为iptables</p>
+<pre><code>systemctl stop firewalld#停止firewall
+systemctl disable firewalld.service#禁止firewall开机启动
+
+sudo yum install iptables-services
+sudo systemctl enable iptables
+sudo systemctl start iptables #启用iptables
+sudo systemctl  | grep firewall #检查防火墙
+</code></pre>
+<p>启用fail2ban，修改/etc/fail2ban/jail.conf进行定制</p>
+<pre><code>sudo yum install epel-release
+sudo yum install fail2ban
+sudo service fail2ban restart
+</code></pre>
+<h4 id="14-关闭selinux">1.4 关闭selinux</h4>
+<p>centos 8默认启用selinux,使用下面命令检查</p>
+<pre><code>#sestatus 
+
+SELinux status:                 enabled  
+SELinuxfs mount:                /sys/fs/selinux
+SELinux root directory:         /etc/selinux
+Loaded policy name:             targeted
+Current mode:                   enforcing
+Mode from config file:          enforcing 
+...
+</code></pre>
+<p>用下面的命令关闭</p>
+<pre><code>sudo setenforce 0
+</code></pre>
+<p>编辑</p>
+<pre><code>sudo vi /etc/selinux/config
+
+# This file controls the state of SELinux on the system.
+# SELINUX= can take one of these three values:
+#    enforcing - SELinux security policy is enforced.
+#    permissive - SELinux prints warnings instead of enforcing.
+#    disabled - No SELinux policy is loaded.
+SELINUX=disabled
+</code></pre>
+<h3 id="2-科学上网">2 科学上网</h3>
+<p>使用vps，翻墙技能是必须的，简单配置如下：</p>
+<h4 id="21-配置pptp隧道">2.1 配置pptp隧道</h4>
+<p>参考文档</p>
+<p><a href="http://www.lkycn.com/2015/03/23/425.html" target="_blank" rel="noopener">CENTOS7下搭建 PPTP VPN</a>
+</p>
+<p><a href="https://www.digitalocean.com/community/tutorials/how-to-setup-your-own-vpn-with-pptp" target="_blank" rel="noopener">How To Setup Your Own VPN With PPTP</a>
+</p>
+<p>具体步骤：</p>
+<h5 id="1-安装-ppp-pptpd">1 安装 ppp pptpd</h5>
+<pre><code>sudo yum -y install ppp pptpd
+</code></pre>
+<h5 id="2-配置etcpptpdconf">2 配置/etc/pptpd.conf</h5>
+<pre><code>debug #打开调试信息
+localip 10.0.0.1
+remoteip 10.0.0.100-200
+</code></pre>
+<h5 id="3-配置etcpppoptionspptpd">3 配置/etc/ppp/options.pptpd</h5>
+<pre><code>ms-dns 8.8.8.8 #配置dns
+ms-dns 8.8.4.4
+debug #打开调试信息
+logfile /var/log/pptpd.log #设置log文件
+</code></pre>
+<h5 id="4-配置-etcpppchap-secrets----格式很通俗易懂">4 配置 /etc/ppp/chap-secrets    #格式很通俗易懂。</h5>
+<pre><code>#client为帐号，server是pptpd服务，secret是密码，*表示是分配任意的ip
+ user          pptpd            pwd         *
+</code></pre>
+<h5 id="5-配置-etcsysctlconf">5 配置 /etc/sysctl.conf</h5>
+<pre><code>net.ipv4.ip_forward = 1
+sysctl -p #使内核参数生效
+</code></pre>
+<h5 id="6-配置iptables启用nat地址转换并且开放lcp-gre-协议">6 配置iptables，启用nat地址转换，并且开放lcp gre 协议</h5>
+<pre><code>sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE 
+sudo iptables -I INPUT -p gre -j ACCEPT
+sudo iptables -I INPUT -p tcp --dport 1723 -j ACCEPT
+sudo service iptables save
+</code></pre>
+<h5 id="8-配置开机启动">8 配置开机启动</h5>
+<pre><code>sudo systemctl restart pptpd
+sudo systemctl enable pptpd
+</code></pre>
+<h5 id="9-如果有问题检查日志文件的记录">9 如果有问题，检查日志文件的记录</h5>
+<pre><code>tail -f /var/log/pptpd.log
+</code></pre>
+<h4 id="22-shadowsocks配置">2.2 shadowsocks配置</h4>
+<p>参考这篇：
+<a href="http://piaoyun.cc/centos-shadowsocks-libev.html" target="_blank" rel="noopener">Centos系统下shadowsocks-libev服务端的一键安装脚本的搭建及常见问题的解决方法</a>
+</p>
+<p><a href="http://teddysun.com/357.html" target="_blank" rel="noopener">CentOS下shadowsocks-libev一键安装脚本</a>
+</p>
+<p>使用root用户登录，运行以下命令：</p>
+<pre><code>wget --no-check-certificate https://raw.githubusercontent.com/teddysun/shadowsocks_install/master/shadowsocks-libev.sh
+chmod +x shadowsocks-libev.sh
+./shadowsocks-libev.sh 2&gt;&amp;1 | tee shadowsocks-libev.log
+
+sudo vi /etc/shadowsocks-libev/config.json #修改配置
+sudo service shadowsocks start #启动服务
+sudo iptables -I INPUT -p tcp -m state --state NEW -m tcp --dport 8989 -j ACCEPT #增加规则
+sudo service iptables save
+</code></pre>
+<h4 id="23-安装anyconnect服务">2.3 安装anyconnect服务</h4>
+<p>记录 <a href="http://blog.mike163.net/2015/08/04/centos_setup_anyconnect/" target="_blank" rel="noopener">Centos 7 ccserv anyConnect服务器配置说明</a>
+</p>
+<h4 id="24-自定义proxy">2.4 自定义proxy</h4>
+<p>推荐 <a href="https://github.com/jiangmiao/proxy.git">https://github.com/jiangmiao/proxy.git</a>
+建议使用go语言版本. 编译命令</p>
+<pre><code>go build proxy.go 
+</code></pre>
+<p>服务器端启动脚本：</p>
+<pre><code>./proxy -verbose  back :8781 &amp;
+</code></pre>
+<p>客户端启动脚本</p>
+<pre><code>./proxy -poolsize=10  front linode:8781
+</code></pre>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">.  /;&#39;&#39;&#39;&#39;\¬ ≤≥    ƒ∫bfgv c
+rtzsdetgf[pv];&#39;\\ m.bvbvv  √ 
+</code></pre></div>
+    </div>
+          
+    <footer class="post-footer">
+     
+ 
+<div class="post-tags">     
+    
+    <a href="/tags/vps" rel="tag" title="vps">#vps#</a>
+    
+</div>
+
+
+
+      
+
+
+<div class="addthis_inline_share_toolbox"></div>
+
+
+
+     
+     
+     <div class="post-nav">
+    <div class="post-nav-next post-nav-item">
+    
+        <a href="/post/how_to_change_partion_size_for_mac_with_mbr_format/" rel="next" title="MAC OS X下的一些小技巧">
+        <i class="fa fa-chevron-left"></i> MAC OS X下的一些小技巧
+        </a>
+    
+    </div>
+
+    <div class="post-nav-prev post-nav-item">
+    
+        <a href="/post/invest-do-not-loss-your-money/" rel="prev" title="不要亏损">
+        不要亏损 
+        <i class="fa fa-chevron-right"></i>
+        </a>
+    
+    </div>
+</div>  
+     
+
+
+
+
+<div id="wcomments"></div>
+
+
+
+
+
+
+
+    </footer>
+  </article>
+</section>
+
+          </div>
+        </div>
+        <div class="sidebar-toggle">
+  <div class="sidebar-toggle-line-wrap">
+    <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+    <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+    <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+  </div>
+</div>
+<aside id="sidebar" class="sidebar">
+  <div class="sidebar-inner">
+
+    <section class="site-overview sidebar-panel  sidebar-panel-active ">
+      <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+        src="/img/avatar.png"
+        alt="mike163" />
+    <p class="site-author-name" itemprop="name">mike163</p>
+    <p class="site-description motion-element" itemprop="description"> 
+      
+        承认自己的无知,是智慧的开始
+      
+    </p>
+</div>
+      <nav class="site-state motion-element">
+    <div class="site-state-item site-state-posts">
+      <a href="/post/">
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">日志</span>
+      </a>
+    </div>
+    <div class="site-state-item site-state-categories">    
+        <a href="/categories/">      
+         
+        <span class="site-state-item-count">3</span>
+        
+        <span class="site-state-item-name">分类</span>
+        
+        </a>
+    </div>
+
+    <div class="site-state-item site-state-tags">
+        <a href="/tags/">
+         
+        <span class="site-state-item-count">41</span>
+        
+        <span class="site-state-item-name">标签</span>
+        </a>
+    </div>
+</nav>
+      
+      
+<div class="links-of-author motion-element">
+    
+        <span class="links-of-author-item">
+        <a href="https://github.com/mikechen163/" target="_blank" title="GitHub">
+            <i class="fa fa-fw fa-github"></i>
+            GitHub
+        </a>
+        </span>
+    
+</div>
+
+
+      
+    <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+    <div class="links-of-blogroll-title">
+        <i class="fa fa-fw fa-globe"></i>
+        友情链接
+    </div>
+    <ul class="links-of-blogroll-list">
+        
+        <li class="links-of-blogroll-item">
+            <a href="https://nutzam.com/" title="Nutz" target="_blank">Nutz</a>
+        </li>
+        
+        <li class="links-of-blogroll-item">
+            <a href="https://jfinal.com/" title="JFinal" target="_blank">JFinal</a>
+        </li>
+        
+        <li class="links-of-blogroll-item">
+            <a href="http://wendal.net/" title="Wendal" target="_blank">Wendal</a>
+        </li>
+        
+        <li class="links-of-blogroll-item">
+            <a href="https://www.liaoxuefeng.com/" title="廖雪峰" target="_blank">廖雪峰</a>
+        </li>
+        
+        <li class="links-of-blogroll-item">
+            <a href="https://lisenhui.cn/" title="凡梦星尘" target="_blank">凡梦星尘</a>
+        </li>
+        
+    </ul>
+    </div>
+
+
+      
+    <div class="tagcloud-of-blogroll motion-element tagcloud-of-blogroll-inline">
+    <div class="tagcloud-of-blogroll-title">
+        <i class="fa fa-fw fa-tags"></i>
+        标签云
+    </div>
+    <ul class="tagcloud-of-blogroll-list">
+        
+        <li  class="tagcloud-of-blogroll-item">
+            <a href="/tags/%E4%BB%B7%E5%80%BC%E6%8A%95%E8%B5%84">价值投资
+            <sup>3</sup>
+            </a>
+        </li>
+        
+        <li  class="tagcloud-of-blogroll-item">
+            <a href="/tags/dns">Dns
+            <sup>2</sup>
+            </a>
+        </li>
+        
+        <li  class="tagcloud-of-blogroll-item">
+            <a href="/tags/er-x">Er x
+            <sup>2</sup>
+            </a>
+        </li>
+        
+        <li  class="tagcloud-of-blogroll-item">
+            <a href="/tags/iptable">Iptable
+            <sup>2</sup>
+            </a>
+        </li>
+        
+        <li  class="tagcloud-of-blogroll-item">
+            <a href="/tags/ss">Ss
+            <sup>2</sup>
+            </a>
+        </li>
+        
+        <li  class="tagcloud-of-blogroll-item">
+            <a href="/tags/ubnt">Ubnt
+            <sup>2</sup>
+            </a>
+        </li>
+        
+        <li  class="tagcloud-of-blogroll-item">
+            <a href="/tags/v2ray">V2ray
+            <sup>2</sup>
+            </a>
+        </li>
+        
+        <li  class="tagcloud-of-blogroll-item">
+            <a href="/tags/%E5%B8%82%E5%9C%BA%E6%83%85%E7%BB%AA">市场情绪
+            <sup>2</sup>
+            </a>
+        </li>
+        
+        <li  class="tagcloud-of-blogroll-item">
+            <a href="/tags/%E8%83%BD%E5%8A%9B%E5%9C%88">能力圈
+            <sup>2</sup>
+            </a>
+        </li>
+        
+        <li  class="tagcloud-of-blogroll-item">
+            <a href="/tags/anyconnect">Anyconnect
+            <sup>1</sup>
+            </a>
+        </li>
+        
+    </ul>
+    </div>
+
+
+      
+    </section>
+    
+  </div>
+</aside>
+
+      </div>
+    </main>
+   
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  <span class="copyright-year">  
+    &copy; 2010 - 2022
+  </span>
+  <span class="with-love"><i class="fa fa-heart"></i></span>
+  <span class="copyright-author">麦克的茶馆</span>
+</div>
+<div class="powered-info">
+  <span class="powered-by">
+    Powered by - <a class="powered-link" href="//gohugo.io" target="_blank" title="hugo" >Hugo v0.62.2</a>
+  </span>
+  <span class="separator-line">/</span>
+  <span class="theme-info">
+    Theme by - <a class="powered-link" href="//github.com/elkan1788/hugo-theme-next" target="_blank"> NexT
+    </a>
+  </span>
+</div>
+<div class="vistor-info">
+
+
+
+  <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  <span class="site-uv">
+    <i class="fa fa-user"></i>
+    <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+  </span>
+  <span class="separator-line">/</span>
+  <span class="site-pv">
+    <i class="fa fa-eye"></i>
+    <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+  </span>
+
+
+</div>
+<div class="license-info">
+  <span class="storage-info">
+    Storage by 
+    <a href="https://gitee.com/" style="font-weight:700" target="_blank">Gitee 仓库</a>
+  </span>
+  <span class="separator-line">/</span>
+  <span class="license-num"> 
+    <a href="http://beian.miit.gov.cn" target="_blank">粤 ICP 备 号</a>
+  </span>
+</div>
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+      <span id="scrollpercent"><span>0</span>%</span>
+    </div>
+  </div>
+
+  <script type="text/javascript" src="//unpkg.com/jquery@2.1.4/dist/jquery.min.js"></script>
+<script type="text/javascript" src="/js/search.js"></script>
+<script type="text/javascript" src="/js/affix.js"></script>
+
+
+<script type="text/javascript">
+
+  function detectIE() {
+    var ua = window.navigator.userAgent;
+
+    var msie = ua.indexOf('MSIE ');
+    var trident = ua.indexOf('Trident/');
+    var edge = ua.indexOf('Edge/');
+
+    if (msie>0 || trident>0 || edge>0) {
+      return -1;
+    }
+
+    return 1;
+  }
+
+
+  function getCntViewHeight() {
+    var docHeight = $('#content').height(),
+        winHeight = $(window).height(),
+        cntViewHeight = (docHeight > winHeight) ? (docHeight - winHeight) : ($(document).height() - winHeight);
+    return cntViewHeight;
+  }
+
+  function getScrollbarWidth() {
+    var $div = $('<div />').addClass('scrollbar-measure').prependTo('body');
+    var div = $div[0];
+    var scrollbarWidth = div.offsetWidth - div.clientWidth;
+
+    $div.remove();
+
+    return scrollbarWidth;
+  }
+
+  function registerBackTop() {
+    var THRESHOLD = 50;
+    var $top = $('.back-to-top');
+
+    $(window).on('scroll', function () {
+      $top.toggleClass('back-to-top-on', window.pageYOffset > THRESHOLD);
+
+      var scrollTop = $(window).scrollTop();
+      var cntViewHeight = getCntViewHeight();
+      var scrollPercent = (scrollTop) / (cntViewHeight);
+      var scrollPercentRounded = Math.round(scrollPercent*100);
+      var scrollPercentMaxed = (scrollPercentRounded > 100) ? 100 : scrollPercentRounded;
+      $('#scrollpercent>span').html(scrollPercentMaxed);
+    });
+
+    $top.on('click', function () {
+      $("html,body").animate({
+                 scrollTop: 0,
+                 screenLeft: 0,
+                 }, 800);
+    });
+  }
+
+  function initScrollSpy () {
+    var tocSelector = '.post-toc';
+    var $tocElement = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocElement
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+      })
+      .on('clear.bs.scrollspy', removeCurrentActiveClass);
+
+    $('body').scrollspy({ target: tocSelector });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+  }
+
+  function initAffix () {
+    var headerHeight = $('.header-inner').height();
+    var footerOffset = parseInt($('.footer').outerHeight(true), 10);
+    var sidebarTop = headerHeight + 10;
+
+    $('.sidebar-inner').affix({
+      offset: {
+        top: sidebarTop,
+        bottom: footerOffset 
+      }
+    });
+
+    
+
+  }
+
+  function initTOCDimension () {
+    var updateTOCHeightTimer;
+
+    $(window).on('resize', function () {
+      updateTOCHeightTimer && clearTimeout(updateTOCHeightTimer);
+
+      updateTOCHeightTimer = setTimeout(function () {
+        var tocWrapperHeight = document.body.clientHeight - 100;
+
+        updateTOCHeight(tocWrapperHeight);
+      }, 0);
+    });
+
+    
+    updateTOCHeight(document.body.clientHeight - 100);
+
+    
+    var scrollbarWidth = getScrollbarWidth();
+    $('.post-toc').css('width', 'calc(100% + ' + scrollbarWidth + 'px)');
+  }
+
+  function updateTOCHeight (height) {
+    height = height || 'auto';
+    $('.post-toc').css('max-height', height);
+  }
+
+$(function() {
+
+  var sidebarTop = $('.header-inner').height() + 10;
+  $('#sidebar').css({ 'margin-top': sidebarTop }).show(); 
+
+  
+  var sidebarMt = parseInt($('#sidebar').css('margin-top'));
+  var sidebarInHeight = parseInt($('.sidebar-inner').css('height'));
+  var sideHeight = sidebarMt + sidebarInHeight;
+  var contentHeight = $('.content-wrap').height();
+
+  if (contentHeight < sideHeight) {
+    $('.content-wrap').css('min-height', sideHeight);
+  }
+  
+  
+  $('.site-nav-toggle').on('click', function () {
+    var $siteNav = $('.site-nav');
+    var $toggleLine = $('.toggle');
+    var ON_CLASS_NAME = 'site-nav-on';
+    var CLOSE_CLASS_NAME = 'toggle-close';
+    var isSiteNavOn = $siteNav.hasClass(ON_CLASS_NAME);
+    var animateAction = isSiteNavOn ? 'slideUp' : 'slideDown';
+    var animateCallback = isSiteNavOn ? 'removeClass' : 'addClass';
+
+    $siteNav.stop()[animateAction]('normal', function () {
+      $siteNav[animateCallback](ON_CLASS_NAME);
+      $toggleLine[animateCallback](CLOSE_CLASS_NAME);
+    });
+
+  });
+
+  registerBackTop();
+  
+   
+  initAffix();
+  initTOCDimension();
+
+  $('.sidebar-nav-toc').click(function(){
+    $(this).addClass('sidebar-nav-active');
+    $(this).next().removeClass('sidebar-nav-active');      
+    $('.'+$(this).next().attr('data-target')).toggle(500);
+    $('.'+$(this).attr('data-target')).toggle(500);
+  });
+
+  $('.sidebar-nav-overview').click(function(){
+    $(this).addClass('sidebar-nav-active');
+    $(this).prev().removeClass('sidebar-nav-active');      
+    $('.'+$(this).prev().attr('data-target')).toggle(500);
+    $('.'+$(this).attr('data-target')).toggle(500);
+  });
+});  
+
+</script>
+
+
+
+
+
+<script src="//unpkg.com/imageviewer@1.1.0/dist/viewer.min.js"></script>
+<script type="text/javascript">
+$(function() {
+  $('.post-body').viewer(); 
+});
+</script>
+
+
+
+
+
+
+<script type="text/javascript">
+  const locale = {
+    placeholder: '欢迎留下您的宝贵建议，请填写您的昵称和邮箱便于后续交流. ^_^'
+  };
+  $(function(){
+    if (detectIE()>0) {
+      $.getScript(document.location.protocol+'//unpkg.com/@waline/client@1.6.0/dist/Waline.min.js', function(){
+         new Waline({
+          el: '#wcomments', 
+          visitor: true,
+          emoji: [], 
+          wordLimit: '200', 
+          uploadImage: false,
+          locale, 
+          requiredMeta: ['nick', 'mail'], 
+          serverURL: "Your WalineSerURL", 
+          lang: "zh-cn"
+        });
+      });      
+    } else {
+      $('#wcomments').html('抱歉，Waline插件不支持IE或Edge，建议使用Chrome浏览器。');
+    }
+  });
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=Your%20AddthisId"></script>
+
+
+
+
+
+
+
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https'){
+   bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+  }
+  else{
+    bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+  }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+
+</body>
+</html>

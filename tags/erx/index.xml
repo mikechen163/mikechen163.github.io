@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>erx on 麦克的茶馆</title>
+    <link>/tags/erx/</link>
+    <description>Recent content in erx on 麦克的茶馆</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Sat, 18 Jan 2020 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/tags/erx/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>UBNT ERX dns配置</title>
+      <link>/post/setup-coredns-unbt-erx/</link>
+      <pubDate>Sat, 18 Jan 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/post/setup-coredns-unbt-erx/</guid>
+      <description>主要使用了这个项目 https://github.com/mikechen163/dohproxy 1 下载和编译 备注:go版本大于1.13 git clone --depth 1 https://github.com/mikechen163/dohproxy.git cd mikechen163/dohproxy GOOS=linux GOARCH=mipsle go build 2 copy到erx路由器上 scp cn.txt root@erx:/usr/local/bin/ scp block.txt root@erx:/usr/local/bin/ scp dohproxy root@erx:/usr/local/bin/mydns 3 启用mydns</description>
+    </item>
+    
+  </channel>
+</rss>

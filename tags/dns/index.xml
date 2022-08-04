@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>dns on 麦克的茶馆</title>
+    <link>/tags/dns/</link>
+    <description>Recent content in dns on 麦克的茶馆</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Wed, 01 Jul 2020 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/tags/dns/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Centos 7 增加第二个IP</title>
+      <link>/post/add-2nd-ip/</link>
+      <pubDate>Wed, 01 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/post/add-2nd-ip/</guid>
+      <description>最近的一些技术总结 1 Centos 7 增加第二个ip 服务器需要新增一个ip，记录一下： 检查服务器是否启用了NetworkManager服务 #ls /etc/sysconfig/network-scripts/ifcfg* #grep &#39;NM_CONTROLLED&#39; /etc/sysconfig/network-scripts/ifcfg-eth0 没找到</description>
+    </item>
+    
+    <item>
+      <title>UBNT ERX dns配置</title>
+      <link>/post/setup-coredns-unbt-erx/</link>
+      <pubDate>Sat, 18 Jan 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/post/setup-coredns-unbt-erx/</guid>
+      <description>主要使用了这个项目 https://github.com/mikechen163/dohproxy 1 下载和编译 备注:go版本大于1.13 git clone --depth 1 https://github.com/mikechen163/dohproxy.git cd mikechen163/dohproxy GOOS=linux GOARCH=mipsle go build 2 copy到erx路由器上 scp cn.txt root@erx:/usr/local/bin/ scp block.txt root@erx:/usr/local/bin/ scp dohproxy root@erx:/usr/local/bin/mydns 3 启用mydns</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>生活 on 麦克的茶馆</title>
+    <link>/categories/%E7%94%9F%E6%B4%BB/</link>
+    <description>Recent content in 生活 on 麦克的茶馆</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Fri, 17 Jun 2016 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/categories/%E7%94%9F%E6%B4%BB/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>使用hexo部署个人博客到coding.net</title>
+      <link>/post/setup-hexo-coding/</link>
+      <pubDate>Fri, 17 Jun 2016 00:00:00 +0000</pubDate>
+      
+      <guid>/post/setup-hexo-coding/</guid>
+      <description>1 在coding.net创建一个新项目，名称和注册用户名一致。 类别为公开。 2 添加个人的public key到coding.net 3 修改hexo</description>
+    </item>
+    
+    <item>
+      <title>科普作品列表</title>
+      <link>/post/science-book-list/</link>
+      <pubDate>Fri, 17 Jun 2016 00:00:00 +0000</pubDate>
+      
+      <guid>/post/science-book-list/</guid>
+      <description>科 普 作 品 概 览(约１２００种) 这里 目 录 1．科学传记 2．科学经典名著 3．科学史 4．科学概观 5．科学哲学、科学与哲学 6．科学与社会，科学与文化 7．</description>
+    </item>
+    
+    <item>
+      <title>装修记录（一）：好的设计</title>
+      <link>/post/2012-03-22-collect-decoration-infomation/</link>
+      <pubDate>Thu, 22 Mar 2012 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2012-03-22-collect-decoration-infomation/</guid>
+      <description>这个帖子用于记录一些装修的信息。有信息可以直接回复在这个帖子 ##1.设计公司## 三米设计确实还是有不少喜欢的作品 三米的案例集 http://www.3mihome.com/wrod.asp?MaxID=2 喜欢这个 这个 #</description>
+    </item>
+    
+  </channel>
+</rss>

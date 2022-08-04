@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>仓位控制 on 麦克的茶馆</title>
+    <link>/tags/%E4%BB%93%E4%BD%8D%E6%8E%A7%E5%88%B6/</link>
+    <description>Recent content in 仓位控制 on 麦克的茶馆</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Fri, 01 Nov 2013 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/tags/%E4%BB%93%E4%BD%8D%E6%8E%A7%E5%88%B6/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>投资，一个资产配置的游戏</title>
+      <link>/post/invest-asset-configuration-game/</link>
+      <pubDate>Fri, 01 Nov 2013 00:00:00 +0000</pubDate>
+      
+      <guid>/post/invest-asset-configuration-game/</guid>
+      <description>投资，是一个资产配置的游戏。按照资产的预期收益率和风险大小的比例，把资产配置在预期收益最大，风险最小的资产上，就是投资的价值之所在。 1 如何寻</description>
+    </item>
+    
+  </channel>
+</rss>
