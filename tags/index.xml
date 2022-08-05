@@ -111,24 +111,6 @@
     </item>
     
     <item>
-      <title>privacy</title>
-      <link>/tags/privacy/</link>
-      <pubDate>Sun, 10 Mar 2019 00:00:00 +0000</pubDate>
-      
-      <guid>/tags/privacy/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>shortcodes</title>
-      <link>/tags/shortcodes/</link>
-      <pubDate>Sun, 10 Mar 2019 00:00:00 +0000</pubDate>
-      
-      <guid>/tags/shortcodes/</guid>
-      <description></description>
-    </item>
-    
-    <item>
       <title>hexo</title>
       <link>/tags/hexo/</link>
       <pubDate>Fri, 17 Jun 2016 00:00:00 +0000</pubDate>
@@ -143,15 +125,6 @@
       <pubDate>Fri, 17 Jun 2016 00:00:00 +0000</pubDate>
       
       <guid>/tags/%E7%A7%91%E6%99%AE/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>价值投资</title>
-      <link>/tags/%E4%BB%B7%E5%80%BC%E6%8A%95%E8%B5%84/</link>
-      <pubDate>Mon, 21 Dec 2015 00:00:00 +0000</pubDate>
-      
-      <guid>/tags/%E4%BB%B7%E5%80%BC%E6%8A%95%E8%B5%84/</guid>
       <description></description>
     </item>
     
@@ -246,137 +219,11 @@
     </item>
     
     <item>
-      <title>亏损</title>
-      <link>/tags/%E4%BA%8F%E6%8D%9F/</link>
-      <pubDate>Sun, 26 Jul 2015 00:00:00 +0000</pubDate>
-      
-      <guid>/tags/%E4%BA%8F%E6%8D%9F/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>价值股</title>
-      <link>/tags/%E4%BB%B7%E5%80%BC%E8%82%A1/</link>
-      <pubDate>Sun, 26 Jul 2015 00:00:00 +0000</pubDate>
-      
-      <guid>/tags/%E4%BB%B7%E5%80%BC%E8%82%A1/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>安全边际</title>
-      <link>/tags/%E5%AE%89%E5%85%A8%E8%BE%B9%E9%99%85/</link>
-      <pubDate>Sun, 26 Jul 2015 00:00:00 +0000</pubDate>
-      
-      <guid>/tags/%E5%AE%89%E5%85%A8%E8%BE%B9%E9%99%85/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>市场情绪</title>
-      <link>/tags/%E5%B8%82%E5%9C%BA%E6%83%85%E7%BB%AA/</link>
-      <pubDate>Sun, 26 Jul 2015 00:00:00 +0000</pubDate>
-      
-      <guid>/tags/%E5%B8%82%E5%9C%BA%E6%83%85%E7%BB%AA/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>市盈率</title>
-      <link>/tags/%E5%B8%82%E7%9B%88%E7%8E%87/</link>
-      <pubDate>Sun, 26 Jul 2015 00:00:00 +0000</pubDate>
-      
-      <guid>/tags/%E5%B8%82%E7%9B%88%E7%8E%87/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>成长股</title>
-      <link>/tags/%E6%88%90%E9%95%BF%E8%82%A1/</link>
-      <pubDate>Sun, 26 Jul 2015 00:00:00 +0000</pubDate>
-      
-      <guid>/tags/%E6%88%90%E9%95%BF%E8%82%A1/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>技术分析</title>
-      <link>/tags/%E6%8A%80%E6%9C%AF%E5%88%86%E6%9E%90/</link>
-      <pubDate>Sun, 26 Jul 2015 00:00:00 +0000</pubDate>
-      
-      <guid>/tags/%E6%8A%80%E6%9C%AF%E5%88%86%E6%9E%90/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>投资</title>
-      <link>/tags/%E6%8A%95%E8%B5%84/</link>
-      <pubDate>Sun, 26 Jul 2015 00:00:00 +0000</pubDate>
-      
-      <guid>/tags/%E6%8A%95%E8%B5%84/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>护城河</title>
-      <link>/tags/%E6%8A%A4%E5%9F%8E%E6%B2%B3/</link>
-      <pubDate>Sun, 26 Jul 2015 00:00:00 +0000</pubDate>
-      
-      <guid>/tags/%E6%8A%A4%E5%9F%8E%E6%B2%B3/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>能力圈</title>
-      <link>/tags/%E8%83%BD%E5%8A%9B%E5%9C%88/</link>
-      <pubDate>Sun, 26 Jul 2015 00:00:00 +0000</pubDate>
-      
-      <guid>/tags/%E8%83%BD%E5%8A%9B%E5%9C%88/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>长期投资</title>
-      <link>/tags/%E9%95%BF%E6%9C%9F%E6%8A%95%E8%B5%84/</link>
-      <pubDate>Sun, 26 Jul 2015 00:00:00 +0000</pubDate>
-      
-      <guid>/tags/%E9%95%BF%E6%9C%9F%E6%8A%95%E8%B5%84/</guid>
-      <description></description>
-    </item>
-    
-    <item>
       <title>ssh</title>
       <link>/tags/ssh/</link>
       <pubDate>Mon, 22 Jun 2015 00:00:00 +0000</pubDate>
       
       <guid>/tags/ssh/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>仓位控制</title>
-      <link>/tags/%E4%BB%93%E4%BD%8D%E6%8E%A7%E5%88%B6/</link>
-      <pubDate>Fri, 01 Nov 2013 00:00:00 +0000</pubDate>
-      
-      <guid>/tags/%E4%BB%93%E4%BD%8D%E6%8E%A7%E5%88%B6/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>资产配置</title>
-      <link>/tags/%E8%B5%84%E4%BA%A7%E9%85%8D%E7%BD%AE/</link>
-      <pubDate>Fri, 01 Nov 2013 00:00:00 +0000</pubDate>
-      
-      <guid>/tags/%E8%B5%84%E4%BA%A7%E9%85%8D%E7%BD%AE/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>风险</title>
-      <link>/tags/%E9%A3%8E%E9%99%A9/</link>
-      <pubDate>Fri, 01 Nov 2013 00:00:00 +0000</pubDate>
-      
-      <guid>/tags/%E9%A3%8E%E9%99%A9/</guid>
       <description></description>
     </item>
     

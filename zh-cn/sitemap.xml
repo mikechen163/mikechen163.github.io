@@ -190,47 +190,6 @@
   </url>
   
   <url>
-    <loc>/tags/privacy/</loc>
-    <lastmod>2019-03-10T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-    <xhtml:link
-                rel="alternate"
-                hreflang="en"
-                href="/en/tags/privacy/"
-                />
-    <xhtml:link
-                rel="alternate"
-                hreflang="zh-cn"
-                href="/tags/privacy/"
-                />
-  </url>
-  
-  <url>
-    <loc>/tags/shortcodes/</loc>
-    <lastmod>2019-03-10T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-    <xhtml:link
-                rel="alternate"
-                hreflang="en"
-                href="/en/tags/shortcodes/"
-                />
-    <xhtml:link
-                rel="alternate"
-                hreflang="zh-cn"
-                href="/tags/shortcodes/"
-                />
-  </url>
-  
-  <url>
-    <loc>/post/sicence-books/</loc>
-    <lastmod>2019-03-10T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
     <loc>/post/using-ubnt-erx-router/</loc>
     <lastmod>2017-02-13T00:00:00+00:00</lastmod>
     <changefreq>weekly</changefreq>
@@ -268,27 +227,6 @@
   <url>
     <loc>/post/science-book-list/</loc>
     <lastmod>2016-06-17T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>/post/2016-invest-return-back/</loc>
-    <lastmod>2015-12-21T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>/tags/%E4%BB%B7%E5%80%BC%E6%8A%95%E8%B5%84/</loc>
-    <lastmod>2015-12-21T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>/categories/%E6%8A%95%E8%B5%84/</loc>
-    <lastmod>2015-12-21T00:00:00+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
@@ -392,27 +330,6 @@
   </url>
   
   <url>
-    <loc>/post/invest-do-not-loss-your-money/</loc>
-    <lastmod>2015-07-26T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>/tags/%E4%BA%8F%E6%8D%9F/</loc>
-    <lastmod>2015-07-26T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>/tags/%E4%BB%B7%E5%80%BC%E8%82%A1/</loc>
-    <lastmod>2015-07-26T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
     <loc>/about.html</loc>
     <lastmod>2015-07-26T00:00:00+00:00</lastmod>
     <changefreq>weekly</changefreq>
@@ -427,90 +344,6 @@
                 hreflang="zh-cn"
                 href="/about.html"
                 />
-  </url>
-  
-  <url>
-    <loc>/post/invest-how-to-long-survice/</loc>
-    <lastmod>2015-07-26T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>/tags/%E5%AE%89%E5%85%A8%E8%BE%B9%E9%99%85/</loc>
-    <lastmod>2015-07-26T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>/tags/%E5%B8%82%E5%9C%BA%E6%83%85%E7%BB%AA/</loc>
-    <lastmod>2015-07-26T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>/tags/%E5%B8%82%E7%9B%88%E7%8E%87/</loc>
-    <lastmod>2015-07-26T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>/post/invest-whats-pe-says/</loc>
-    <lastmod>2015-07-26T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>/tags/%E6%88%90%E9%95%BF%E8%82%A1/</loc>
-    <lastmod>2015-07-26T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>/tags/%E6%8A%80%E6%9C%AF%E5%88%86%E6%9E%90/</loc>
-    <lastmod>2015-07-26T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>/tags/%E6%8A%95%E8%B5%84/</loc>
-    <lastmod>2015-07-26T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>/tags/%E6%8A%A4%E5%9F%8E%E6%B2%B3/</loc>
-    <lastmod>2015-07-26T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>/tags/%E8%83%BD%E5%8A%9B%E5%9C%88/</loc>
-    <lastmod>2015-07-26T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>/tags/%E9%95%BF%E6%9C%9F%E6%8A%95%E8%B5%84/</loc>
-    <lastmod>2015-07-26T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>/post/invest-long-time-invest-thoughts/</loc>
-    <lastmod>2015-07-26T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
   </url>
   
   <url>
@@ -530,34 +363,6 @@
   <url>
     <loc>/post/2015-06-22-setup-weblog/</loc>
     <lastmod>2015-06-22T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>/tags/%E4%BB%93%E4%BD%8D%E6%8E%A7%E5%88%B6/</loc>
-    <lastmod>2013-11-01T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>/post/invest-asset-configuration-game/</loc>
-    <lastmod>2013-11-01T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>/tags/%E8%B5%84%E4%BA%A7%E9%85%8D%E7%BD%AE/</loc>
-    <lastmod>2013-11-01T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>/tags/%E9%A3%8E%E9%99%A9/</loc>
-    <lastmod>2013-11-01T00:00:00+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
