@@ -6,10 +6,19 @@
     <description>Recent content in nginx on 麦克的茶馆</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Sat, 18 Jan 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 12 Sep 2022 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/tags/nginx/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>在centos 7配置trojan go</title>
+      <link>/post/trojan-go-setup/</link>
+      <pubDate>Mon, 12 Sep 2022 00:00:00 +0000</pubDate>
+      
+      <guid>/post/trojan-go-setup/</guid>
+      <description>1 前置条件 需要一个域名 需要一个 vps，安装好centos 7 或者 8 1 安装nginx sudo yum install -y epel-release sudo yum update -y sudo yum install nginx sudo systemctl start nginx sudo systemctl status nginx 检查nginx 版本</description>
+    </item>
     
     <item>
       <title>配置v2ray&#43;ws&#43;tls1.3&#43;nginx</title>

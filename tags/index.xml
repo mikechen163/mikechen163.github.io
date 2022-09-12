@@ -6,10 +6,46 @@
     <description>Recent content in Tags on 麦克的茶馆</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Fri, 10 Jul 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 12 Sep 2022 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/tags/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>certbot</title>
+      <link>/tags/certbot/</link>
+      <pubDate>Mon, 12 Sep 2022 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/certbot/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>nginx</title>
+      <link>/tags/nginx/</link>
+      <pubDate>Mon, 12 Sep 2022 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/nginx/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>tls</title>
+      <link>/tags/tls/</link>
+      <pubDate>Mon, 12 Sep 2022 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/tls/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>trojan-go</title>
+      <link>/tags/trojan-go/</link>
+      <pubDate>Mon, 12 Sep 2022 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/trojan-go/</guid>
+      <description></description>
+    </item>
     
     <item>
       <title>iptable</title>
@@ -66,29 +102,11 @@
     </item>
     
     <item>
-      <title>nginx</title>
-      <link>/tags/nginx/</link>
-      <pubDate>Sat, 18 Jan 2020 00:00:00 +0000</pubDate>
-      
-      <guid>/tags/nginx/</guid>
-      <description></description>
-    </item>
-    
-    <item>
       <title>ss</title>
       <link>/tags/ss/</link>
       <pubDate>Sat, 18 Jan 2020 00:00:00 +0000</pubDate>
       
       <guid>/tags/ss/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>tls</title>
-      <link>/tags/tls/</link>
-      <pubDate>Sat, 18 Jan 2020 00:00:00 +0000</pubDate>
-      
-      <guid>/tags/tls/</guid>
       <description></description>
     </item>
     
