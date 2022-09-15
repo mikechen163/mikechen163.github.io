@@ -2,6 +2,28 @@
 <search>
   
   <entry>
+    <title>优化tcp性能</title>
+    <url>/post/tcp-performance-tune/</url>
+    <categories>
+      <category>技术</category>
+    </categories>
+    <tags>
+      
+      <tag>tcp</tag>
+      
+      <tag>sysctl</tag>
+      
+      <tag>ipv4</tag>
+      
+    </tags>
+    <content type="html"> 1 目标 提高tcp传输速率
+具体措施
+修改/etc/sysctl.conf
+然后执行 sudo sysctl -p 落实.
+2 具体参数 # fastopen = 3 ,此时服务器启用 tcp fast open net.ipv4.tcp_fastopen = 3 # socket的最大数目 net.core.somaxconn=3276 net.ipv4.tcp_keepalive_time = 900 net.ipv4.tcp_fin_timeout = 15 net.ipv4.tcp_max_syn_backlog = 8192 net.core.netdev_max_backlog =300000 # 发送最大缓冲区 6M net.core.wmem_max = 6291456 #接受最大缓冲区,设置为2M net.core.rmem_max = 2097152 #单个tcp链接接收, 最小,缺省,最大缓冲区参数 net.ipv4.tcp_rmem = 10240 262144 2097152 #单个tcp链接发送, 最小,缺省,最大缓冲区参数 net.ipv4.tcp_wmem = 10240 524288 6291456 #打开之后,发送窗口可以大于64k net.ipv4.tcp_window_scaling = 1 net.ipv4.tcp_sack = 1 然后执行 sudo sysctl -p 落实.  3 参考文档 Learning to Use the ss Tool to its Full Potential ss(8) — Linux manual page linux查看网络流量 </content>
+  </entry>
+  
+  <entry>
     <title>在centos 7配置trojan go</title>
     <url>/post/trojan-go-setup/</url>
     <categories>
