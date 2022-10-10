@@ -1,233 +1,40 @@
-<!DOCTYPE HTML>
-<html lang="zh-cn" dir="content/zh-CN">
-<head>
-  <meta charset="UTF-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" /> 
-  <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" />
-  <title> WNDR4300安装Openwrt，使用shadowsocks配置透明代理,使用chinadns&#43;dnscrypt-proxy处理DNS污染 - 麦克的茶馆 </title>
-  
-  <meta name="keywords" content="技术总结 投资 ">
-  
-  
-  <meta name="author" content="mike163">
-  
-  <meta property="og:title" content="WNDR4300安装Openwrt，使用shadowsocks配置透明代理,使用chinadns&#43;dnscrypt-proxy处理DNS污染"/>
-  <meta property="og:site_name" content="麦克的茶馆">
-  <meta property="og:image" content="/img/author.jpg"> 
-  <meta name="title" content="WNDR4300安装Openwrt，使用shadowsocks配置透明代理,使用chinadns&#43;dnscrypt-proxy处理DNS污染 - 麦克的茶馆" />
-  
-  <meta name="description" content="mike163&#39;s home">
-   
-  <link rel="shortcut icon" href="/img/favicon.ico" />
-  <link rel="apple-touch-icon" href="/img/apple-touch-icon.png" />
-  <link rel="apple-touch-icon-precomposed" href="/img/apple-touch-icon.png" />
-  <link href="//unpkg.com/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
-  
-  <link href="//unpkg.com/imageviewer@1.1.0/dist/viewer.min.css" rel="stylesheet"/>
-  
-  <link href="/css/main.css" rel="stylesheet" type="text/css" />
-  <link href="/css/syntax.css" rel="stylesheet" type="text/css" />    
-  
-  
-  
-</head>
-<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
-<div class="container one-collumn sidebar-position-left page-home  ">
-    <div class="headband"></div>
-
-    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
-      <div class="header-inner"> <div class="site-brand-container">
-<div class="site-nav-toggle">
-  <div class="toggle" role="button" style="opacity: 1; top: 0px;">
-      <span class="toggle-line"></span>
-      <span class="toggle-line"></span>
-      <span class="toggle-line"></span>
-  </div>
-</div>
-<div class="site-meta ">
-  
-  
-  
-  <div class="custom-logo-site-title">
-    <a href="/"  class="brand" rel="start">
-      <span class="logo-line-before"><i></i></span>
-      <span class="site-title">麦克的茶馆</span>
-      <span class="logo-line-after"><i></i></span>
-    </a>
-  </div>
-  <p class="site-subtitle"></p>
-</div>
-
-<div class="site-nav-right">
-    <div class="toggle popup-trigger" style="opacity: 1; top: 0px;">
-        <i class="fa fa-search fa-fw fa-lg"></i>
-    </div>
-  </div>
-</div>
-
-<nav class="site-nav">
-    <ul id="menu" class="menu">
-    
-        
-    
-    
-    
-      <li class="menu-item ">
-        <a href="/" rel="section" >
-            <i class="menu-item-icon fa fa-fw fa-home"></i> <br />首页
-        </a>
-      </li>
-        
-    
-    
-    
-      <li class="menu-item menu-item-active">
-        <a href="/post" rel="section" >
-            <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档
-        </a>
-      </li>
-        
-    
-    
-    
-      <li class="menu-item ">
-        <a href="/about.html" rel="section" >
-            <i class="menu-item-icon fa fa-fw fa-user"></i> <br />关于我
-        </a>
-      </li>
-    
-      <li class="menu-item menu-item-search">
-        <a href="javascript:;" class="popup-trigger"> <i class="menu-item-icon fa fa-search fa-fw"></i> <br /> 搜索</a>
-      </li>
-    </ul>
-    <div class="site-search">
-      <div class="popup search-popup local-search-popup">
-  <div class="local-search-header clearfix">
-    <span class="search-icon"><i class="fa fa-search"></i> </span>
-    <span class="popup-btn-close"><i class="fa fa-times-circle"></i></span>
-    <div class="local-search-input-wrapper">
-      <input autocomplete="off" placeholder="搜索关键字..." spellcheck="false" type="text" id="local-search-input" autocapitalize="none" autocorrect="off">
-    </div>
-  </div>
-  <div id="local-search-result"></div>
-</div>
-
-    </div>
-</nav> </div>
-    </header>
-
-    <main id="main" class="main">
-      <div class="main-inner">
-        <div class="content-wrap">
-          <div id="content" class="content">
-            
-<section id="posts" class="posts-expand">
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-      
-      <h1 class="post-title" itemprop="name headline">
-        <a class="post-title-link" href="/post/openwrt-shadowsocks-chinadns-setup/" itemprop="url">
-        WNDR4300安装Openwrt，使用shadowsocks配置透明代理,使用chinadns&#43;dnscrypt-proxy处理DNS污染
-        </a>
-      </h1>
-      
-      <div class="post-meta">
-      <span class="post-pushdate">
-<i class="fa fa-calendar-o fa-fw"></i>
-<span class="post-meta-item-text">时间：</span>
-<time itemprop="dateCreated" datetime="2016-03-22T13:04:35+08:00" content="2015-08-12">
-    2015-08-12
-</time>
-</span> 
-      
-
-  <span class="post-category" >
-  <i class="fa fa-folder-o fa-fw"></i>  
-  <span class="post-meta-item-text">分类：</span>
-  
-    <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-      <a class="post-category-a" href="/categories/%E6%8A%80%E6%9C%AF" itemprop="url" rel="index">
-        <span itemprop="name">技术</span>
-      </a>
-      &nbsp; 
-    </span>
-  
-</span>
-
-
-      <span class="post-wordcount">
-<i class="fa fa-file-word-o fa-fw"></i>
-<span class="post-meta-item-text">字数：</span>
-<span class="leancloud-world-count">2478 字</span>
-</span>
-      <span class="post-readtime">
-<i class="fa fa-eye fa-fw"></i>
-<span class="post-meta-item-text">阅读：</span>
-<span class="leancloud-view-count">5分钟</span>
-</span>
-      <span id="/post/openwrt-shadowsocks-chinadns-setup/" class="leancloud_visitors post-visitor" data-flag-title="WNDR4300安装Openwrt，使用shadowsocks配置透明代理,使用chinadns&#43;dnscrypt-proxy处理DNS污染">
-<i class="fa fa-binoculars fa-fw"></i>
-<span class="post-meta-item-text">阅读次数：</span>
-<span class="leancloud-visitors-count"></span>
-</span>
-      </div>
-     
-    </header>
-  
-    <div class="post-body" itemprop="articleBody">
-    <h4 id="1-wndr4300刷openwrt固件">1 wndr4300刷openwrt固件</h4>
-<p>wndr4300在openwrt的官方支持列表中，但官方固件可使用空间只有12M，所以需要打一些补丁。本文所用固件来自<a href="https://www.v2ex.com/t/147051#reply37" target="_blank" rel="noopener">我也分享 WNDR4300 14.07 固件，官方 ImageBuilder 编译，完全使用 128M flash,集成中文 Luci</a>
- ，具体链接：<a href="http://pan.baidu.com/s/14eo7G" target="_blank" rel="noopener">openwrt-ar71xx-nand-wndr4300</a>
-</p>
-<p>刷机说明：
-netgear原厂刷openwrt，必须刷结尾是factory.img的那个文件。由于无线网络缺省是关闭状态，必须使用网线，ip分配为dhcp自动分配，执行ping命令。返回成功后，可以使用telnet登录，没有密码。登录成功后，使用passwd命令改变root密码。然后使用ssh <a href="mailto:root@192.168.1.1">root@192.168.1.1</a> 重新登录。也可以用 http://192.168.1.1，进入 luci web配置页面，此时的密码就是刚才设置的root密码。</p>
-<pre><code>ping 192.168.1.1
+<!doctype html><html lang=zh-cn dir=content/zh-cn><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge,chrome=1"><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1"><meta http-equiv=content-security-policy content="upgrade-insecure-requests"><title>WNDR4300安装Openwrt，使用shadowsocks配置透明代理,使用chinadns+dnscrypt-proxy处理DNS污染 - 麦克的茶馆</title><meta name=keywords content="技术总结 投资 "><meta name=author content="mike163"><meta property="og:title" content="WNDR4300安装Openwrt，使用shadowsocks配置透明代理,使用chinadns+dnscrypt-proxy处理DNS污染"><meta property="og:site_name" content="麦克的茶馆"><meta property="og:image" content="/img/author.jpg"><meta name=title content="WNDR4300安装Openwrt，使用shadowsocks配置透明代理,使用chinadns+dnscrypt-proxy处理DNS污染 - 麦克的茶馆"><meta name=description content="mike163's home"><link rel="shortcut icon" href=/img/favicon.ico><link rel=apple-touch-icon href=/img/apple-touch-icon.png><link rel=apple-touch-icon-precomposed href=/img/apple-touch-icon.png><link href=//unpkg.com/font-awesome@4.7.0/css/font-awesome.min.css rel=stylesheet type=text/css><link href=//unpkg.com/imageviewer@1.1.0/dist/viewer.min.css rel=stylesheet><link href=/css/main.css rel=stylesheet type=text/css><link href=/css/syntax.css rel=stylesheet type=text/css></head><body itemscope itemtype=http://schema.org/WebPage lang=zh-hans><div class="container one-collumn sidebar-position-left page-home"><div class=headband></div><header id=header class=header itemscope itemtype=http://schema.org/WPHeader><div class=header-inner><div class=site-brand-container><div class=site-nav-toggle><div class=toggle role=button style=opacity:1;top:0><span class=toggle-line></span>
+<span class=toggle-line></span>
+<span class=toggle-line></span></div></div><div class=site-meta><div class=custom-logo-site-title><a href=/ class=brand rel=start><span class=logo-line-before><i></i></span>
+<span class=site-title>麦克的茶馆</span>
+<span class=logo-line-after><i></i></span></a></div><p class=site-subtitle></p></div><div class=site-nav-right><div class="toggle popup-trigger" style=opacity:1;top:0><i class="fa fa-search fa-fw fa-lg"></i></div></div></div><nav class=site-nav><ul id=menu class=menu><li class=menu-item><a href=/ rel=section><i class="menu-item-icon fa fa-fw fa-home"></i><br>首页</a></li><li class="menu-item menu-item-active"><a href=/post rel=section><i class="menu-item-icon fa fa-fw fa-archive"></i><br>归档</a></li><li class=menu-item><a href=/about.html rel=section><i class="menu-item-icon fa fa-fw fa-user"></i><br>关于我</a></li><li class="menu-item menu-item-search"><a href=javascript:; class=popup-trigger><i class="menu-item-icon fa fa-search fa-fw"></i><br>搜索</a></li></ul><div class=site-search><div class="popup search-popup local-search-popup"><div class="local-search-header clearfix"><span class=search-icon><i class="fa fa-search"></i></span>
+<span class=popup-btn-close><i class="fa fa-times-circle"></i></span><div class=local-search-input-wrapper><input autocomplete=off placeholder=搜索关键字... spellcheck=false type=text id=local-search-input autocapitalize=none autocorrect=off></div></div><div id=local-search-result></div></div></div></nav></div></header><main id=main class=main><div class=main-inner><div class=content-wrap><div id=content class=content><section id=posts class=posts-expand><article class="post post-type-normal" itemscope itemtype=http://schema.org/Article><header class=post-header><h1 class=post-title itemprop="name headline"><a class=post-title-link href=/post/openwrt-shadowsocks-chinadns-setup/ itemprop=url>WNDR4300安装Openwrt，使用shadowsocks配置透明代理,使用chinadns+dnscrypt-proxy处理DNS污染</a></h1><div class=post-meta><span class=post-pushdate><i class="fa fa-calendar-o fa-fw"></i>
+<span class=post-meta-item-text>时间：</span>
+<time itemprop=dateCreated datetime=2016-03-22T13:04:35+08:00 content="2015-08-12">2015-08-12</time></span>
+<span class=post-category><i class="fa fa-folder-o fa-fw"></i>
+<span class=post-meta-item-text>分类：</span>
+<span itemprop=about itemscope itemtype=https://schema.org/Thing><a class=post-category-a href=/categories/%E6%8A%80%E6%9C%AF itemprop=url rel=index><span itemprop=name>技术</span></a>
+&nbsp;</span></span>
+<span class=post-wordcount><i class="fa fa-file-word-o fa-fw"></i>
+<span class=post-meta-item-text>字数：</span>
+<span class=leancloud-world-count>2478 字</span></span>
+<span class=post-readtime><i class="fa fa-eye fa-fw"></i>
+<span class=post-meta-item-text>阅读：</span>
+<span class=leancloud-view-count>5分钟</span></span>
+<span id=/post/openwrt-shadowsocks-chinadns-setup/ class="leancloud_visitors post-visitor" data-flag-title=WNDR4300安装Openwrt，使用shadowsocks配置透明代理,使用chinadns+dnscrypt-proxy处理DNS污染><i class="fa fa-binoculars fa-fw"></i>
+<span class=post-meta-item-text>阅读次数：</span>
+<span class=leancloud-visitors-count></span></span></div></header><div class=post-body itemprop=articleBody><h4 id=1-wndr4300刷openwrt固件>1 wndr4300刷openwrt固件</h4><p>wndr4300在openwrt的官方支持列表中，但官方固件可使用空间只有12M，所以需要打一些补丁。本文所用固件来自<a href=https://www.v2ex.com/t/147051#reply37 target=_blank rel=noopener>我也分享 WNDR4300 14.07 固件，官方 ImageBuilder 编译，完全使用 128M flash,集成中文 Luci</a>
+，具体链接：<a href=http://pan.baidu.com/s/14eo7G target=_blank rel=noopener>openwrt-ar71xx-nand-wndr4300</a></p><p>刷机说明：
+netgear原厂刷openwrt，必须刷结尾是factory.img的那个文件。由于无线网络缺省是关闭状态，必须使用网线，ip分配为dhcp自动分配，执行ping命令。返回成功后，可以使用telnet登录，没有密码。登录成功后，使用passwd命令改变root密码。然后使用ssh <a href=mailto:root@192.168.1.1>root@192.168.1.1</a>
+重新登录。也可以用 http://192.168.1.1，进入 luci web配置页面，此时的密码就是刚才设置的root密码。</p><pre><code>ping 192.168.1.1
 telnet 192.168.1.1
-</code></pre>
-<p>进入web页面后，在网络-无线菜单下，设置wifi ssid，密码，启动WIFI，然后就可以无线登录了。在网络-接口-LAN 下，选择修改，可以设置路由器的静态IP。如果多个串联，需要把地址设置为192.168.2/3/4.1等非192.168.1.1的情况。<strong>【！！！必须设置为静态IP，千万不要选dhcp等其他选项，否则后面无法登录系统】</strong></p>
-<hr>
-<p>wndr4300变砖后，通过tftp重新刷固件的恢复方法。</p>
-<p>1、通过网线连接计算机和路由器的lan接口</p>
-<p>2、在计算机上，ip地址设置为手工设定为 192.168.1.2 掩码255.255.255.0</p>
-<p>3、关闭路由器电源开关。使用大头针或者类似工具，戳路由器背面的红色小孔（恢复出厂设置的孔），不要松开。</p>
-<p>4、打开路由器电源开关，观察电源指示灯从黄色-变成绿色闪烁状态，然后可以放开大头针</p>
-<p>5、在计算机上，进入存放待刷固件的目录（openwrt-ar71xx-nand-wndr4300-ubi-factory.img），使用tftp客户端 连接路由器。 mac os x命令如下：(-e 参数表示二进制模式)</p>
-<pre><code>tftp -e 192.168.1.1  
+</code></pre><p>进入web页面后，在网络-无线菜单下，设置wifi ssid，密码，启动WIFI，然后就可以无线登录了。在网络-接口-LAN 下，选择修改，可以设置路由器的静态IP。如果多个串联，需要把地址设置为192.168.2/3/4.1等非192.168.1.1的情况。<strong>【！！！必须设置为静态IP，千万不要选dhcp等其他选项，否则后面无法登录系统】</strong></p><hr><p>wndr4300变砖后，通过tftp重新刷固件的恢复方法。</p><p>1、通过网线连接计算机和路由器的lan接口</p><p>2、在计算机上，ip地址设置为手工设定为 192.168.1.2 掩码255.255.255.0</p><p>3、关闭路由器电源开关。使用大头针或者类似工具，戳路由器背面的红色小孔（恢复出厂设置的孔），不要松开。</p><p>4、打开路由器电源开关，观察电源指示灯从黄色-变成绿色闪烁状态，然后可以放开大头针</p><p>5、在计算机上，进入存放待刷固件的目录（openwrt-ar71xx-nand-wndr4300-ubi-factory.img），使用tftp客户端 连接路由器。 mac os x命令如下：(-e 参数表示二进制模式)</p><pre><code>tftp -e 192.168.1.1  
 put openwrt-ar71xx-nand-wndr4300-ubi-factory.img
-</code></pre>
-<p>6 另开一个终端窗口，持续ping 192.168.1.1，等待连续ping连续成功后10秒以上，断开路由器电源开关。等待5秒钟，再打开路由器电源。继续观察ping结果。等待ping持续成功后，可以telnet 192.168.1.1，进入正常设置程序。</p>
-  <!-- more --> 
-<h4 id="2-安装shadowsockschinadns">2 安装shadowsocks+chinadns</h4>
-<p>参考：<a href="https://cokebar.info/archives/664" target="_blank" rel="noopener">Shadowsocks + ChnRoute 实现 OpenWRT 路由器自动翻墙</a>
-</p>
-<p>获取 shadowsocks忽略表</p>
-<pre><code>wget -O- 'http://ftp.apnic.net/apnic/stats/apnic/delegated-apnic-latest' | awk -F\| '/CN\|ipv4/ { printf(&quot;%s/%d\n&quot;, $4, 32-log($5)/log(2)) }' &gt; ignore.list
-</code></pre>
-<p>注意：在luci配置的时候，要指定ignore.list文件的存放位置</p>
-<p>获取chinadns 国内IP列表</p>
-<pre><code>curl 'http://ftp.apnic.net/apnic/stats/apnic/delegated-apnic-latest' | grep ipv4 | grep CN | awk -F\| '{ printf(&quot;%s/%d\n&quot;, $4, 32-log($5)/log(2)) }' &gt; chnroute.txt
-</code></pre>
-<p>在Luci中切换至“网络”-“DHCP/DNS”设置，如下图，在”DNS转发”中填入127.0.0.1#5353</p>
-<p>然后切到HOSTS和解析文件选项卡，勾中“忽略解析文件”,忽略上级dns</p>
-<p>安装dig工具</p>
-<pre><code>opkg install bind-dig
+</code></pre><p>6 另开一个终端窗口，持续ping 192.168.1.1，等待连续ping连续成功后10秒以上，断开路由器电源开关。等待5秒钟，再打开路由器电源。继续观察ping结果。等待ping持续成功后，可以telnet 192.168.1.1，进入正常设置程序。</p><h4 id=2-安装shadowsockschinadns>2 安装shadowsocks+chinadns</h4><p>参考：<a href=https://cokebar.info/archives/664 target=_blank rel=noopener>Shadowsocks + ChnRoute 实现 OpenWRT 路由器自动翻墙</a></p><p>获取 shadowsocks忽略表</p><pre><code>wget -O- 'http://ftp.apnic.net/apnic/stats/apnic/delegated-apnic-latest' | awk -F\| '/CN\|ipv4/ { printf(&quot;%s/%d\n&quot;, $4, 32-log($5)/log(2)) }' &gt; ignore.list
+</code></pre><p>注意：在luci配置的时候，要指定ignore.list文件的存放位置</p><p>获取chinadns 国内IP列表</p><pre><code>curl 'http://ftp.apnic.net/apnic/stats/apnic/delegated-apnic-latest' | grep ipv4 | grep CN | awk -F\| '{ printf(&quot;%s/%d\n&quot;, $4, 32-log($5)/log(2)) }' &gt; chnroute.txt
+</code></pre><p>在Luci中切换至“网络”-“DHCP/DNS”设置，如下图，在”DNS转发”中填入127.0.0.1#5353</p><p>然后切到HOSTS和解析文件选项卡，勾中“忽略解析文件”,忽略上级dns</p><p>安装dig工具</p><pre><code>opkg install bind-dig
 dig www.twitter.com
-</code></pre>
-<h4 id="3-shadowsocks支持udp转发">3 shadowsocks支持udp转发</h4>
-<p>1 服务器侧必须使用shadowsocks-libev版本，且启动参数中有-u</p>
-<pre><code>netstat -an | grep udp
+</code></pre><h4 id=3-shadowsocks支持udp转发>3 shadowsocks支持udp转发</h4><p>1 服务器侧必须使用shadowsocks-libev版本，且启动参数中有-u</p><pre><code>netstat -an | grep udp
 已经有udp端口8888的监听
 udp        0      0 0.0.0.0:8888            0.0.0.0:*
-</code></pre>
-<p>2在iptables中添加一条允许udp 8888端口通过的规则</p>
-<pre><code>sudo iptables -I INPUT -p udp --dport 8888 -j ACCEPT
-</code></pre>
-<p>3 在openwrt luci shadowsocks服务中，启用udp转发，端口5300，转发地址8.8.8.8:53 (google public dns)</p>
-<pre><code>/usr/bin/ss-tunnel -c /var/etc/shadowsocks.json -l 5300 -L 8.8.8.8:53 -f /var/run/ss-tunnel.pid -u
-</code></pre>
-<p>使用dig测试一下：</p>
-<pre><code>root@OpenWrt:~# dig @localhost -p 5300 www.twitter.com
+</code></pre><p>2在iptables中添加一条允许udp 8888端口通过的规则</p><pre><code>sudo iptables -I INPUT -p udp --dport 8888 -j ACCEPT
+</code></pre><p>3 在openwrt luci shadowsocks服务中，启用udp转发，端口5300，转发地址8.8.8.8:53 (google public dns)</p><pre><code>/usr/bin/ss-tunnel -c /var/etc/shadowsocks.json -l 5300 -L 8.8.8.8:53 -f /var/run/ss-tunnel.pid -u
+</code></pre><p>使用dig测试一下：</p><pre><code>root@OpenWrt:~# dig @localhost -p 5300 www.twitter.com
 ;; ANSWER SECTION:
 www.twitter.com.	354	IN	CNAME	twitter.com.
 twitter.com.		1	IN	A	199.59.149.198
@@ -235,20 +42,10 @@ twitter.com.		1	IN	A	199.59.150.39
 
 ;; Query time: 274 msec
 ;; SERVER: 127.0.0.1#5300(127.0.0.1)
-</code></pre>
-<p>4 检查服务器侧数据，UDP包已经转发过来了</p>
-<pre><code> sudo iptables -L -v -n
+</code></pre><p>4 检查服务器侧数据，UDP包已经转发过来了</p><pre><code> sudo iptables -L -v -n
  464 39550 ACCEPT     udp  --  *      *       0.0.0.0/0            0.0.0.0/0            udp dpt:8888
-</code></pre>
-<p>5 配置chinadns，加上shadowssocks的UDP转发源</p>
-<p>共配置4个dns服务器，分别是是阿里dns，114 dns，dnscrypt-proxy，shadowsocks udp转发端口</p>
-<pre><code> 223.5.5.5,114.114.114.114,127.0.0.1:2053,127.0.0.1:5300
-</code></pre>
-<h4 id="4-安装dnscrypt-proxy">4 安装dnscrypt-proxy</h4>
-<p>参考：<a href="http://wiki.openwrt.org/inbox/dnscrypt" target="_blank" rel="noopener">using dnscrypt on openwrt</a>
-</p>
-<p>添加软件源</p>
-<pre><code>src/gz exopenwrt http://exopenwrt.and.in.net/barrier_breaker/ar71xx/packages/exOpenWrt
+</code></pre><p>5 配置chinadns，加上shadowssocks的UDP转发源</p><p>共配置4个dns服务器，分别是是阿里dns，114 dns，dnscrypt-proxy，shadowsocks udp转发端口</p><pre><code> 223.5.5.5,114.114.114.114,127.0.0.1:2053,127.0.0.1:5300
+</code></pre><h4 id=4-安装dnscrypt-proxy>4 安装dnscrypt-proxy</h4><p>参考：<a href=http://wiki.openwrt.org/inbox/dnscrypt target=_blank rel=noopener>using dnscrypt on openwrt</a></p><p>添加软件源</p><pre><code>src/gz exopenwrt http://exopenwrt.and.in.net/barrier_breaker/ar71xx/packages/exOpenWrt
 
 opkg update
 opkg install dnscrypt-proxy
@@ -268,26 +65,12 @@ opkg install dnscrypt-proxy
 208.67.220.220 https://www.opendns.com Cisco OpenDNS
 180.131.144.144 http://www.nawala.id nawala Indonesia
 106.185.41.36 http://meo.ws/dnsrec.php opennic-fvz-rec-jp-tk-01
-</code></pre>
-<h4 id="5-使用shadowsockgfwlist的方式翻墙">5 使用shadowsock+gfwlist的方式翻墙</h4>
-<p>参考：<a href="https://cokebar.info/archives/962" target="_blank" rel="noopener">Shadowsocks + GfwList 实现 OpenWRT 路由器自动翻墙
-</a>
-</p>
-<p>和利用ignore.list的方法的差别在于：前面的方法，只要IP不在国内，那么就需要启动代理，这种情况下，很多没有屏蔽的海外网站访问也通过代理，速度会下降很多。</p>
-<p>而通过gfwlist的方式，只有针对在gfwlist限制范围内IP地址，才启动代理。</p>
-<p>1.首先卸载前面已经安装但后面不再需要的包，注意shadowsocks-libev-spec 这个包是不需要的</p>
-<pre><code> opkg remove ip resolveip iptables-mod-tproxy shadowsocks-libev-spec
-</code></pre>
-<p>安装新的包(shadowsock-libev 没有spec后缀)：</p>
-<pre><code>opkg install iptables-mod-nat-extra 
+</code></pre><h4 id=5-使用shadowsockgfwlist的方式翻墙>5 使用shadowsock+gfwlist的方式翻墙</h4><p>参考：<a href=https://cokebar.info/archives/962 target=_blank rel=noopener>Shadowsocks + GfwList 实现 OpenWRT 路由器自动翻墙</a></p><p>和利用ignore.list的方法的差别在于：前面的方法，只要IP不在国内，那么就需要启动代理，这种情况下，很多没有屏蔽的海外网站访问也通过代理，速度会下降很多。</p><p>而通过gfwlist的方式，只有针对在gfwlist限制范围内IP地址，才启动代理。</p><p>1.首先卸载前面已经安装但后面不再需要的包，注意shadowsocks-libev-spec 这个包是不需要的</p><pre><code> opkg remove ip resolveip iptables-mod-tproxy shadowsocks-libev-spec
+</code></pre><p>安装新的包(shadowsock-libev 没有spec后缀)：</p><pre><code>opkg install iptables-mod-nat-extra 
 opkg install shadowsocks-libev
-</code></pre>
-<p>卸载dnsmasq,安装dnsmasq-full，full版本才支持需要用到的ipset特性</p>
-<pre><code>opkg remove dnsmasq &amp;&amp; opkg install dnsmasq-full
-</code></pre>
-<p>2 配置/etc/shadowsock.json，和服务器配置一致。
-修改/etc/init.d/shadowsocks, 启用ss-redir/ss-tunnel两个命令，关闭ss-local命令，注意ss-tunnel的监听端口5300不要和现有的端口冲突</p>
-<pre><code>SERVICE_USE_PID=1
+</code></pre><p>卸载dnsmasq,安装dnsmasq-full，full版本才支持需要用到的ipset特性</p><pre><code>opkg remove dnsmasq &amp;&amp; opkg install dnsmasq-full
+</code></pre><p>2 配置/etc/shadowsock.json，和服务器配置一致。
+修改/etc/init.d/shadowsocks, 启用ss-redir/ss-tunnel两个命令，关闭ss-local命令，注意ss-tunnel的监听端口5300不要和现有的端口冲突</p><pre><code>SERVICE_USE_PID=1
 SERVICE_WRITE_PID=1
 SERVICE_DAEMONIZE=1
 SERVICE_PID_FILE=/var/run/shadowsocks.pid
@@ -304,25 +87,13 @@ stop() {
 service_stop /usr/bin/ss-redir
 service_stop /usr/bin/ss-tunnel
 }
-</code></pre>
-<p>3 启动shadowsocks</p>
-<pre><code>/etc/init.d/shadowsocks enable
+</code></pre><p>3 启动shadowsocks</p><pre><code>/etc/init.d/shadowsocks enable
 /etc/init.d/shadowsocks start
-</code></pre>
-<p>4 增加防火墙规则，并加入到/etc/rc.local，保证开机执行</p>
-<pre><code>ipset -N gfwlist iphash
+</code></pre><p>4 增加防火墙规则，并加入到/etc/rc.local，保证开机执行</p><pre><code>ipset -N gfwlist iphash
 iptables -t nat -A PREROUTING -p tcp -m set --match-set gfwlist dst -j REDIRECT --to-port 1080
 iptables -t nat -A OUTPUT -p tcp -m set --match-set gfwlist dst -j REDIRECT --to-port 1080
-</code></pre>
-<p>5 修改 /etc/dnsmasq.conf  ，在最后加入  conf-dir=/etc/dnsmasq.d  ，新建并进入目录  /etc/dnsmasq.d  ，下载<a href="http://pan.baidu.com/s/1qWDVbfY" target="_blank" rel="noopener">dnsmasq_list.conf</a>
-后放入该目录</p>
-<p>附：<a href="https://github.com/cokebar/gfwlist2dnsmasq" target="_blank" rel="noopener">自动生成dnsmasq_list.conf 的脚本</a>
-</p>
-<h4 id="6-挂载u盘格式是fat32">6 挂载u盘，格式是fat32</h4>
-<p>参考 <a href="http://bbs.ybty.net/thread-452-1-1.html" target="_blank" rel="noopener">Openwrt安装USB驱动挂载U盘</a>
-</p>
-<p>需要执行的命令如下：</p>
-<pre><code> opkg update
+</code></pre><p>5 修改 /etc/dnsmasq.conf ，在最后加入 conf-dir=/etc/dnsmasq.d ，新建并进入目录 /etc/dnsmasq.d ，下载<a href=http://pan.baidu.com/s/1qWDVbfY target=_blank rel=noopener>dnsmasq_list.conf</a>
+后放入该目录</p><p>附：<a href=https://github.com/cokebar/gfwlist2dnsmasq target=_blank rel=noopener>自动生成dnsmasq_list.conf 的脚本</a></p><h4 id=6-挂载u盘格式是fat32>6 挂载u盘，格式是fat32</h4><p>参考 <a href=http://bbs.ybty.net/thread-452-1-1.html target=_blank rel=noopener>Openwrt安装USB驱动挂载U盘</a></p><p>需要执行的命令如下：</p><pre><code> opkg update
  opkg install kmod-usb-storage 
  opkg install kmod-fs-vfat
  opkg install kmod-nls-cp437
@@ -331,572 +102,47 @@ iptables -t nat -A OUTPUT -p tcp -m set --match-set gfwlist dst -j REDIRECT --to
  
  #然后就可以
  mount -t /dev/sda1 /mnt
-</code></pre>
-<h4 id="7-定时任务">7 定时任务</h4>
-<p>参考：<a href="http://www.slyar.com/blog/openwrt-crontab.html" target="_blank" rel="noopener">OpenWrt使用crontab执行计划任务 - Slyar Home</a>
-</p>
-<p>每天自动重启：</p>
-<pre><code> 59 02 * * 1-7 /sbin/reboot 
-</code></pre>
-<p>每10分钟重启chinadns</p>
-<pre><code>*/10 * * * * /etc/init.d/chinadns restart &gt;&gt; /dev/null 2&gt;&amp;1
-</code></pre>
-
-    </div>
-          
-    <footer class="post-footer">
-     
- 
-<div class="post-tags">     
-    
-    <a href="/tags/openwrt" rel="tag" title="openwrt">#openwrt#</a>
-    
-    <a href="/tags/wndr4300" rel="tag" title="wndr4300">#wndr4300#</a>
-    
-    <a href="/tags/shadowsocks" rel="tag" title="shadowsocks">#shadowsocks#</a>
-    
-    <a href="/tags/chinadns" rel="tag" title="chinadns">#chinadns#</a>
-    
-    <a href="/tags/dnscrypt-proxy" rel="tag" title="dnscrypt-proxy">#dnscrypt-proxy#</a>
-    
-</div>
-
-
-
-      
-
-
-<div class="addthis_inline_share_toolbox"></div>
-
-
-
-     
-     
-     <div class="post-nav">
-    <div class="post-nav-next post-nav-item">
-    
-        <a href="/post/science-book-list/" rel="next" title="科普作品列表">
-        <i class="fa fa-chevron-left"></i> 科普作品列表
-        </a>
-    
-    </div>
-
-    <div class="post-nav-prev post-nav-item">
-    
-        <a href="/post/centos_setup_anyconnect/" rel="prev" title="Centos 7 ocserv AnyConnect服务器配置说明">
-        Centos 7 ocserv AnyConnect服务器配置说明 
-        <i class="fa fa-chevron-right"></i>
-        </a>
-    
-    </div>
-</div>  
-     
-
-
-
-
-<div id="wcomments"></div>
-
-
-
-
-
-
-
-    </footer>
-  </article>
-</section>
-
-          </div>
-        </div>
-        <div class="sidebar-toggle">
-  <div class="sidebar-toggle-line-wrap">
-    <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
-    <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
-    <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
-  </div>
-</div>
-<aside id="sidebar" class="sidebar">
-  <div class="sidebar-inner">
-
-    <section class="site-overview sidebar-panel  sidebar-panel-active ">
-      <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-    <img class="site-author-image" itemprop="image"
-        src="/img/avatar.png"
-        alt="mike163" />
-    <p class="site-author-name" itemprop="name">mike163</p>
-    <p class="site-description motion-element" itemprop="description"> 
-      
-        承认自己的无知,是智慧的开始
-      
-    </p>
-</div>
-      <nav class="site-state motion-element">
-    <div class="site-state-item site-state-posts">
-      <a href="/post/">
-        <span class="site-state-item-count">18</span>
-        <span class="site-state-item-name">日志</span>
-      </a>
-    </div>
-    <div class="site-state-item site-state-categories">    
-        <a href="/categories/">      
-         
-        <span class="site-state-item-count">2</span>
-        
-        <span class="site-state-item-name">分类</span>
-        
-        </a>
-    </div>
-
-    <div class="site-state-item site-state-tags">
-        <a href="/tags/">
-         
-        <span class="site-state-item-count">29</span>
-        
-        <span class="site-state-item-name">标签</span>
-        </a>
-    </div>
-</nav>
-      
-      
-<div class="links-of-author motion-element">
-    
-        <span class="links-of-author-item">
-        <a href="https://github.com/mikechen163/" target="_blank" title="GitHub">
-            <i class="fa fa-fw fa-github"></i>
-            GitHub
-        </a>
-        </span>
-    
-</div>
-
-
-      
-    <div class="links-of-blogroll motion-element links-of-blogroll-inline">
-    <div class="links-of-blogroll-title">
-        <i class="fa fa-fw fa-globe"></i>
-        友情链接
-    </div>
-    <ul class="links-of-blogroll-list">
-        
-        <li class="links-of-blogroll-item">
-            <a href="https://nutzam.com/" title="Nutz" target="_blank">Nutz</a>
-        </li>
-        
-        <li class="links-of-blogroll-item">
-            <a href="https://jfinal.com/" title="JFinal" target="_blank">JFinal</a>
-        </li>
-        
-        <li class="links-of-blogroll-item">
-            <a href="http://wendal.net/" title="Wendal" target="_blank">Wendal</a>
-        </li>
-        
-        <li class="links-of-blogroll-item">
-            <a href="https://www.liaoxuefeng.com/" title="廖雪峰" target="_blank">廖雪峰</a>
-        </li>
-        
-        <li class="links-of-blogroll-item">
-            <a href="https://lisenhui.cn/" title="凡梦星尘" target="_blank">凡梦星尘</a>
-        </li>
-        
-    </ul>
-    </div>
-
-
-      
-    <div class="tagcloud-of-blogroll motion-element tagcloud-of-blogroll-inline">
-    <div class="tagcloud-of-blogroll-title">
-        <i class="fa fa-fw fa-tags"></i>
-        标签云
-    </div>
-    <ul class="tagcloud-of-blogroll-list">
-        
-        <li  class="tagcloud-of-blogroll-item">
-            <a href="/tags/dns">Dns
-            <sup>2</sup>
-            </a>
-        </li>
-        
-        <li  class="tagcloud-of-blogroll-item">
-            <a href="/tags/er-x">Er x
-            <sup>2</sup>
-            </a>
-        </li>
-        
-        <li  class="tagcloud-of-blogroll-item">
-            <a href="/tags/iptable">Iptable
-            <sup>2</sup>
-            </a>
-        </li>
-        
-        <li  class="tagcloud-of-blogroll-item">
-            <a href="/tags/nginx">Nginx
-            <sup>2</sup>
-            </a>
-        </li>
-        
-        <li  class="tagcloud-of-blogroll-item">
-            <a href="/tags/ss">Ss
-            <sup>2</sup>
-            </a>
-        </li>
-        
-        <li  class="tagcloud-of-blogroll-item">
-            <a href="/tags/tls">Tls
-            <sup>2</sup>
-            </a>
-        </li>
-        
-        <li  class="tagcloud-of-blogroll-item">
-            <a href="/tags/ubnt">Ubnt
-            <sup>2</sup>
-            </a>
-        </li>
-        
-        <li  class="tagcloud-of-blogroll-item">
-            <a href="/tags/v2ray">V2ray
-            <sup>2</sup>
-            </a>
-        </li>
-        
-        <li  class="tagcloud-of-blogroll-item">
-            <a href="/tags/anyconnect">Anyconnect
-            <sup>1</sup>
-            </a>
-        </li>
-        
-        <li  class="tagcloud-of-blogroll-item">
-            <a href="/tags/certbot">Certbot
-            <sup>1</sup>
-            </a>
-        </li>
-        
-    </ul>
-    </div>
-
-
-      
-    </section>
-    
-  </div>
-</aside>
-
-      </div>
-    </main>
-   
-    <footer id="footer" class="footer">
-      <div class="footer-inner">
-        <div class="copyright" >
-  <span class="copyright-year">  
-    &copy; 2010 - 2022
-  </span>
-  <span class="with-love"><i class="fa fa-heart"></i></span>
-  <span class="copyright-author">麦克的茶馆</span>
-</div>
-<div class="powered-info">
-  <span class="powered-by">
-    Powered by - <a class="powered-link" href="//gohugo.io" target="_blank" title="hugo" >Hugo v0.62.2</a>
-  </span>
-  <span class="separator-line">/</span>
-  <span class="theme-info">
-    Theme by - <a class="powered-link" href="//github.com/elkan1788/hugo-theme-next" target="_blank"> NexT
-    </a>
-  </span>
-</div>
-<div class="vistor-info">
-
-
-
-  <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-  <span class="site-uv">
-    <i class="fa fa-user"></i>
-    <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
-  </span>
-  <span class="separator-line">/</span>
-  <span class="site-pv">
-    <i class="fa fa-eye"></i>
-    <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
-  </span>
-
-
-</div>
-<div class="license-info">
-  <span class="storage-info">
-    Storage by 
-    <a href="https://gitee.com/" style="font-weight:700" target="_blank">Gitee 仓库</a>
-  </span>
-  <span class="separator-line">/</span>
-  <span class="license-num"> 
-    <a href="http://beian.miit.gov.cn" target="_blank">粤 ICP 备 号</a>
-  </span>
-</div>
-      </div>
-    </footer>
-
-    <div class="back-to-top">
-      <i class="fa fa-arrow-up"></i>
-      <span id="scrollpercent"><span>0</span>%</span>
-    </div>
-  </div>
-
-  <script type="text/javascript" src="//unpkg.com/jquery@2.1.4/dist/jquery.min.js"></script>
-<script type="text/javascript" src="/js/search.js"></script>
-<script type="text/javascript" src="/js/affix.js"></script>
-
-
-<script type="text/javascript">
-
-  function detectIE() {
-    var ua = window.navigator.userAgent;
-
-    var msie = ua.indexOf('MSIE ');
-    var trident = ua.indexOf('Trident/');
-    var edge = ua.indexOf('Edge/');
-
-    if (msie>0 || trident>0 || edge>0) {
-      return -1;
-    }
-
-    return 1;
-  }
-
-
-  function getCntViewHeight() {
-    var docHeight = $('#content').height(),
-        winHeight = $(window).height(),
-        cntViewHeight = (docHeight > winHeight) ? (docHeight - winHeight) : ($(document).height() - winHeight);
-    return cntViewHeight;
-  }
-
-  function getScrollbarWidth() {
-    var $div = $('<div />').addClass('scrollbar-measure').prependTo('body');
-    var div = $div[0];
-    var scrollbarWidth = div.offsetWidth - div.clientWidth;
-
-    $div.remove();
-
-    return scrollbarWidth;
-  }
-
-  function registerBackTop() {
-    var THRESHOLD = 50;
-    var $top = $('.back-to-top');
-
-    $(window).on('scroll', function () {
-      $top.toggleClass('back-to-top-on', window.pageYOffset > THRESHOLD);
-
-      var scrollTop = $(window).scrollTop();
-      var cntViewHeight = getCntViewHeight();
-      var scrollPercent = (scrollTop) / (cntViewHeight);
-      var scrollPercentRounded = Math.round(scrollPercent*100);
-      var scrollPercentMaxed = (scrollPercentRounded > 100) ? 100 : scrollPercentRounded;
-      $('#scrollpercent>span').html(scrollPercentMaxed);
-    });
-
-    $top.on('click', function () {
-      $("html,body").animate({
-                 scrollTop: 0,
-                 screenLeft: 0,
-                 }, 800);
-    });
-  }
-
-  function initScrollSpy () {
-    var tocSelector = '.post-toc';
-    var $tocElement = $(tocSelector);
-    var activeCurrentSelector = '.active-current';
-
-    $tocElement
-      .on('activate.bs.scrollspy', function () {
-        var $currentActiveElement = $(tocSelector + ' .active').last();
-
-        removeCurrentActiveClass();
-        $currentActiveElement.addClass('active-current');
-      })
-      .on('clear.bs.scrollspy', removeCurrentActiveClass);
-
-    $('body').scrollspy({ target: tocSelector });
-
-    function removeCurrentActiveClass () {
-      $(tocSelector + ' ' + activeCurrentSelector)
-        .removeClass(activeCurrentSelector.substring(1));
-    }
-  }
-
-  function initAffix () {
-    var headerHeight = $('.header-inner').height();
-    var footerOffset = parseInt($('.footer').outerHeight(true), 10);
-    var sidebarTop = headerHeight + 10;
-
-    $('.sidebar-inner').affix({
-      offset: {
-        top: sidebarTop,
-        bottom: footerOffset 
-      }
-    });
-
-    
-
-  }
-
-  function initTOCDimension () {
-    var updateTOCHeightTimer;
-
-    $(window).on('resize', function () {
-      updateTOCHeightTimer && clearTimeout(updateTOCHeightTimer);
-
-      updateTOCHeightTimer = setTimeout(function () {
-        var tocWrapperHeight = document.body.clientHeight - 100;
-
-        updateTOCHeight(tocWrapperHeight);
-      }, 0);
-    });
-
-    
-    updateTOCHeight(document.body.clientHeight - 100);
-
-    
-    var scrollbarWidth = getScrollbarWidth();
-    $('.post-toc').css('width', 'calc(100% + ' + scrollbarWidth + 'px)');
-  }
-
-  function updateTOCHeight (height) {
-    height = height || 'auto';
-    $('.post-toc').css('max-height', height);
-  }
-
-$(function() {
-
-  var sidebarTop = $('.header-inner').height() + 10;
-  $('#sidebar').css({ 'margin-top': sidebarTop }).show(); 
-
-  
-  var sidebarMt = parseInt($('#sidebar').css('margin-top'));
-  var sidebarInHeight = parseInt($('.sidebar-inner').css('height'));
-  var sideHeight = sidebarMt + sidebarInHeight;
-  var contentHeight = $('.content-wrap').height();
-
-  if (contentHeight < sideHeight) {
-    $('.content-wrap').css('min-height', sideHeight);
-  }
-  
-  
-  $('.site-nav-toggle').on('click', function () {
-    var $siteNav = $('.site-nav');
-    var $toggleLine = $('.toggle');
-    var ON_CLASS_NAME = 'site-nav-on';
-    var CLOSE_CLASS_NAME = 'toggle-close';
-    var isSiteNavOn = $siteNav.hasClass(ON_CLASS_NAME);
-    var animateAction = isSiteNavOn ? 'slideUp' : 'slideDown';
-    var animateCallback = isSiteNavOn ? 'removeClass' : 'addClass';
-
-    $siteNav.stop()[animateAction]('normal', function () {
-      $siteNav[animateCallback](ON_CLASS_NAME);
-      $toggleLine[animateCallback](CLOSE_CLASS_NAME);
-    });
-
-  });
-
-  registerBackTop();
-  
-   
-  initAffix();
-  initTOCDimension();
-
-  $('.sidebar-nav-toc').click(function(){
-    $(this).addClass('sidebar-nav-active');
-    $(this).next().removeClass('sidebar-nav-active');      
-    $('.'+$(this).next().attr('data-target')).toggle(500);
-    $('.'+$(this).attr('data-target')).toggle(500);
-  });
-
-  $('.sidebar-nav-overview').click(function(){
-    $(this).addClass('sidebar-nav-active');
-    $(this).prev().removeClass('sidebar-nav-active');      
-    $('.'+$(this).prev().attr('data-target')).toggle(500);
-    $('.'+$(this).attr('data-target')).toggle(500);
-  });
-});  
-
-</script>
-
-
-
-
-
-<script src="//unpkg.com/imageviewer@1.1.0/dist/viewer.min.js"></script>
-<script type="text/javascript">
-$(function() {
-  $('.post-body').viewer(); 
-});
-</script>
-
-
-
-
-
-
-<script type="text/javascript">
-  const locale = {
-    placeholder: '欢迎留下您的宝贵建议，请填写您的昵称和邮箱便于后续交流. ^_^'
-  };
-  $(function(){
-    if (detectIE()>0) {
-      $.getScript(document.location.protocol+'//unpkg.com/@waline/client@1.6.0/dist/Waline.min.js', function(){
-         new Waline({
-          el: '#wcomments', 
-          visitor: true,
-          emoji: [], 
-          wordLimit: '200', 
-          uploadImage: false,
-          locale, 
-          requiredMeta: ['nick', 'mail'], 
-          serverURL: "Your WalineSerURL", 
-          lang: "zh-cn"
-        });
-      });      
-    } else {
-      $('#wcomments').html('抱歉，Waline插件不支持IE或Edge，建议使用Chrome浏览器。');
-    }
-  });
-</script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=Your%20AddthisId"></script>
-
-
-
-
-
-
-
-<script>
-(function(){
-    var bp = document.createElement('script');
-    var curProtocol = window.location.protocol.split(':')[0];
-    if (curProtocol === 'https'){
-   bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
-  }
-  else{
-    bp.src = 'http://push.zhanzhang.baidu.com/push.js';
-  }
-    var s = document.getElementsByTagName("script")[0];
-    s.parentNode.insertBefore(bp, s);
-})();
-</script>
-
-
-
-</body>
-</html>
+</code></pre><h4 id=7-定时任务>7 定时任务</h4><p>参考：<a href=http://www.slyar.com/blog/openwrt-crontab.html target=_blank rel=noopener>OpenWrt使用crontab执行计划任务 - Slyar Home</a></p><p>每天自动重启：</p><pre><code> 59 02 * * 1-7 /sbin/reboot 
+</code></pre><p>每10分钟重启chinadns</p><pre><code>*/10 * * * * /etc/init.d/chinadns restart &gt;&gt; /dev/null 2&gt;&amp;1
+</code></pre></div><footer class=post-footer><div class=post-tags><a href=/tags/openwrt rel=tag title=openwrt>#openwrt#</a>
+<a href=/tags/wndr4300 rel=tag title=wndr4300>#wndr4300#</a>
+<a href=/tags/shadowsocks rel=tag title=shadowsocks>#shadowsocks#</a>
+<a href=/tags/chinadns rel=tag title=chinadns>#chinadns#</a>
+<a href=/tags/dnscrypt-proxy rel=tag title=dnscrypt-proxy>#dnscrypt-proxy#</a></div><div class=addthis_inline_share_toolbox></div><div class=post-nav><div class="post-nav-next post-nav-item"><a href=/post/setup-hexo-coding/ rel=next title=使用hexo部署个人博客到coding.net><i class="fa fa-chevron-left"></i> 使用hexo部署个人博客到coding.net</a></div><div class="post-nav-prev post-nav-item"><a href=/post/centos_setup_anyconnect/ rel=prev title="Centos 7 ocserv AnyConnect服务器配置说明">Centos 7 ocserv AnyConnect服务器配置说明
+<i class="fa fa-chevron-right"></i></a></div></div><div id=wcomments></div></footer></article></section></div></div><div class=sidebar-toggle><div class=sidebar-toggle-line-wrap><span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+<span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+<span class="sidebar-toggle-line sidebar-toggle-line-last"></span></div></div><aside id=sidebar class=sidebar><div class=sidebar-inner><section class="site-overview sidebar-panel sidebar-panel-active"><div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person><img class=site-author-image itemprop=image src=/img/avatar.png alt=mike163><p class=site-author-name itemprop=name>mike163</p><p class="site-description motion-element" itemprop=description>承认自己的无知,是智慧的开始</p></div><nav class="site-state motion-element"><div class="site-state-item site-state-posts"><a href=/post/><span class=site-state-item-count>19</span>
+<span class=site-state-item-name>日志</span></a></div><div class="site-state-item site-state-categories"><a href=/categories/><span class=site-state-item-count>2</span>
+<span class=site-state-item-name>分类</span></a></div><div class="site-state-item site-state-tags"><a href=/tags/><span class=site-state-item-count>33</span>
+<span class=site-state-item-name>标签</span></a></div></nav><div class="links-of-author motion-element"><span class=links-of-author-item><a href=https://github.com/mikechen163/ target=_blank title=GitHub><i class="fa fa-fw fa-github"></i>
+GitHub</a></span></div><div class="links-of-blogroll motion-element links-of-blogroll-inline"><div class=links-of-blogroll-title><i class="fa fa-fw fa-globe"></i>
+友情链接</div><ul class=links-of-blogroll-list><li class=links-of-blogroll-item><a href=https://nutzam.com/ title=Nutz target=_blank>Nutz</a></li><li class=links-of-blogroll-item><a href=https://jfinal.com/ title=JFinal target=_blank>JFinal</a></li><li class=links-of-blogroll-item><a href=http://wendal.net/ title=Wendal target=_blank>Wendal</a></li><li class=links-of-blogroll-item><a href=https://www.liaoxuefeng.com/ title=廖雪峰 target=_blank>廖雪峰</a></li><li class=links-of-blogroll-item><a href=https://lisenhui.cn/ title=凡梦星尘 target=_blank>凡梦星尘</a></li></ul></div><div class="tagcloud-of-blogroll motion-element tagcloud-of-blogroll-inline"><div class=tagcloud-of-blogroll-title><i class="fa fa-fw fa-tags"></i>
+标签云</div><ul class=tagcloud-of-blogroll-list><li class=tagcloud-of-blogroll-item><a href=/tags/dns>DNS
+<sup>2</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/er-x>Er x
+<sup>2</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/iptable>Iptable
+<sup>2</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/nginx>Nginx
+<sup>2</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/ss>Ss
+<sup>2</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/tls>Tls
+<sup>2</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/ubnt>Ubnt
+<sup>2</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/v2ray>V2ray
+<sup>2</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/anyconnect>Anyconnect
+<sup>1</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/certbot>Certbot
+<sup>1</sup></a></li></ul></div></section></div></aside></div></main><footer id=footer class=footer><div class=footer-inner><div class=copyright><span class=copyright-year>&copy; 2010 - 2022</span>
+<span class=with-love><i class="fa fa-heart"></i></span>
+<span class=copyright-author>麦克的茶馆</span></div><div class=powered-info><span class=powered-by>Powered by - <a class=powered-link href=//gohugo.io target=_blank title=hugo>Hugo v0.104.3</a></span>
+<span class=separator-line>/</span>
+<span class=theme-info>Theme by - <a class=powered-link href=//github.com/elkan1788/hugo-theme-next target=_blank>NexT</a></span></div><div class=vistor-info><script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script>
+<span class=site-uv><i class="fa fa-user"></i>
+<span class=busuanzi-value id=busuanzi_value_site_uv></span></span>
+<span class=separator-line>/</span>
+<span class=site-pv><i class="fa fa-eye"></i>
+<span class=busuanzi-value id=busuanzi_value_site_pv></span></span></div><div class=license-info><span class=storage-info>Storage by
+<a href=https://gitee.com/ style=font-weight:700 target=_blank>Gitee 仓库</a></span>
+<span class=separator-line>/</span>
+<span class=license-num><a href=http://beian.miit.gov.cn target=_blank>粤 ICP 备 号</a></span></div></div></footer><div class=back-to-top><i class="fa fa-arrow-up"></i>
+<span id=scrollpercent><span>0</span>%</span></div></div><script type=text/javascript src=//unpkg.com/jquery@2.1.4/dist/jquery.min.js></script>
+<script type=text/javascript src=/js/search.js></script>
+<script type=text/javascript src=/js/affix.js></script>
+<script type=text/javascript>function detectIE(){var e=window.navigator.userAgent,t=e.indexOf("MSIE "),n=e.indexOf("Trident/"),s=e.indexOf("Edge/");return t>0||n>0||s>0?-1:1}function getCntViewHeight(){var t=$("#content").height(),e=$(window).height(),n=t>e?t-e:$(document).height()-e;return n}function getScrollbarWidth(){var e=$("<div />").addClass("scrollbar-measure").prependTo("body"),t=e[0],n=t.offsetWidth-t.clientWidth;return e.remove(),n}function registerBackTop(){var t=50,e=$(".back-to-top");$(window).on("scroll",function(){e.toggleClass("back-to-top-on",window.pageYOffset>t);var s=$(window).scrollTop(),o=getCntViewHeight(),i=s/o,n=Math.round(i*100),a=n>100?100:n;$("#scrollpercent>span").html(a)}),e.on("click",function(){$("html,body").animate({scrollTop:0,screenLeft:0},800)})}function initScrollSpy(){var e=".post-toc",s=$(e),t=".active-current";s.on("activate.bs.scrollspy",function(){var t=$(e+" .active").last();n(),t.addClass("active-current")}).on("clear.bs.scrollspy",n),$("body").scrollspy({target:e});function n(){$(e+" "+t).removeClass(t.substring(1))}}function initAffix(){var e=$(".header-inner").height(),t=parseInt($(".footer").outerHeight(!0),10),n=e+10;$(".sidebar-inner").affix({offset:{top:n,bottom:t}})}function initTOCDimension(){$(window).on("resize",function(){e&&clearTimeout(e),e=setTimeout(function(){var e=document.body.clientHeight-100;updateTOCHeight(e)},0)}),updateTOCHeight(document.body.clientHeight-100);var e,t=getScrollbarWidth();$(".post-toc").css("width","calc(100% + "+t+"px)")}function updateTOCHeight(e){e=e||"auto",$(".post-toc").css("max-height",e)}$(function(){var e,t,n,s,o=$(".header-inner").height()+10;$("#sidebar").css({"margin-top":o}).show(),t=parseInt($("#sidebar").css("margin-top")),n=parseInt($(".sidebar-inner").css("height")),e=t+n,s=$(".content-wrap").height(),s<e&&$(".content-wrap").css("min-height",e),$(".site-nav-toggle").on("click",function(){var e=$(".site-nav"),o=$(".toggle"),t="site-nav-on",i="toggle-close",n=e.hasClass(t),a=n?"slideUp":"slideDown",s=n?"removeClass":"addClass";e.stop()[a]("normal",function(){e[s](t),o[s](i)})}),registerBackTop(),initAffix(),initTOCDimension(),$(".sidebar-nav-toc").click(function(){$(this).addClass("sidebar-nav-active"),$(this).next().removeClass("sidebar-nav-active"),$("."+$(this).next().attr("data-target")).toggle(500),$("."+$(this).attr("data-target")).toggle(500)}),$(".sidebar-nav-overview").click(function(){$(this).addClass("sidebar-nav-active"),$(this).prev().removeClass("sidebar-nav-active"),$("."+$(this).prev().attr("data-target")).toggle(500),$("."+$(this).attr("data-target")).toggle(500)})})</script><script src=//unpkg.com/imageviewer@1.1.0/dist/viewer.min.js></script>
+<script type=text/javascript>$(function(){$(".post-body").viewer()})</script><script type=text/javascript>const locale={placeholder:"欢迎留下您的宝贵建议，请填写您的昵称和邮箱便于后续交流. ^_^"};$(function(){detectIE()>0?$.getScript(document.location.protocol+"//unpkg.com/@waline/client@1.6.0/dist/Waline.min.js",function(){new Waline({el:"#wcomments",visitor:!0,emoji:[],wordLimit:"200",uploadImage:!1,locale,requiredMeta:["nick","mail"],serverURL:"Your WalineSerURL",lang:"zh-cn"})}):$("#wcomments").html("抱歉，Waline插件不支持IE或Edge，建议使用Chrome浏览器。")})</script><script type=text/javascript src="//s7.addthis.com/js/300/addthis_widget.js#pubid=Your%20AddthisId"></script>
+<script>(function(){var t,e=document.createElement("script"),n=window.location.protocol.split(":")[0];n==="https"?e.src="https://zz.bdstatic.com/linksubmit/push.js":e.src="http://push.zhanzhang.baidu.com/push.js",t=document.getElementsByTagName("script")[0],t.parentNode.insertBefore(e,t)})()</script></body></html>
