@@ -1,31 +1,100 @@
-<!doctype html><html lang=zh-cn dir=zh><head><meta charset=UTF-8><meta http-equiv=X-UA-Compatible content="IE=edge,chrome=1"><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1"><meta http-equiv=Content-Security-Policy content="upgrade-insecure-requests"><title>装修记录（一）：好的设计 - 麦克的茶馆 </title><meta name=keywords content="技术总结 投资 "><meta name=author content="mike163"><meta property="og:title" content="装修记录（一）：好的设计"><meta property="og:site_name" content="麦克的茶馆"><meta property="og:image" content="/img/author.jpg"><meta name=title content="装修记录（一）：好的设计 - 麦克的茶馆"><meta name=description content="mike163's home"><link rel="shortcut icon" href=/img/favicon.ico><link rel=apple-touch-icon href=/img/apple-touch-icon.png><link rel=apple-touch-icon-precomposed href=/img/apple-touch-icon.png><link href=//unpkg.com/font-awesome@4.7.0/css/font-awesome.min.css rel=stylesheet type=text/css><link href=//unpkg.com/imageviewer@1.1.0/dist/viewer.min.css rel=stylesheet><link href=/css/main.css rel=stylesheet type=text/css><link href=/css/syntax.css rel=stylesheet type=text/css></head><body itemscope itemtype=http://schema.org/WebPage lang=zh-Hans><div class="container one-collumn sidebar-position-left page-home"><div class=headband></div><header id=header class=header itemscope itemtype=http://schema.org/WPHeader><div class=header-inner><div class=site-brand-container><div class=site-nav-toggle><div class=toggle role=button style=opacity:1;top:0><span class=toggle-line></span>
+<!doctype html><html lang=zh-cn dir=zh><head><meta charset=UTF-8><meta http-equiv=X-UA-Compatible content="IE=edge,chrome=1"><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1"><meta http-equiv=Content-Security-Policy content="upgrade-insecure-requests"><title>在centos 8安装wireguard - 麦克的茶馆 </title><meta name=keywords content="技术总结 投资 "><meta name=author content="mike163"><meta property="og:title" content="在centos 8安装wireguard"><meta property="og:site_name" content="麦克的茶馆"><meta property="og:image" content="/img/author.jpg"><meta name=title content="在centos 8安装wireguard - 麦克的茶馆"><meta name=description content="mike163's home"><link rel="shortcut icon" href=/img/favicon.ico><link rel=apple-touch-icon href=/img/apple-touch-icon.png><link rel=apple-touch-icon-precomposed href=/img/apple-touch-icon.png><link href=//unpkg.com/font-awesome@4.7.0/css/font-awesome.min.css rel=stylesheet type=text/css><link href=//unpkg.com/imageviewer@1.1.0/dist/viewer.min.css rel=stylesheet><link href=/css/main.css rel=stylesheet type=text/css><link href=/css/syntax.css rel=stylesheet type=text/css></head><body itemscope itemtype=http://schema.org/WebPage lang=zh-Hans><div class="container one-collumn sidebar-position-left page-home"><div class=headband></div><header id=header class=header itemscope itemtype=http://schema.org/WPHeader><div class=header-inner><div class=site-brand-container><div class=site-nav-toggle><div class=toggle role=button style=opacity:1;top:0><span class=toggle-line></span>
 <span class=toggle-line></span>
 <span class=toggle-line></span></div></div><div class=site-meta><div class=custom-logo-site-title><a href=/ class=brand rel=start><span class=logo-line-before><i></i></span>
 <span class=site-title>麦克的茶馆</span>
-<span class=logo-line-after><i></i></span></a></div><p class=site-subtitle></p></div><div class=site-nav-right><div class="toggle popup-trigger" style=opacity:1;top:0><i class="fa fa-search fa-fw fa-lg"></i></div></div></div><nav class=site-nav><ul id=menu class=menu><li class=menu-item><a href=/ rel=section><i class="menu-item-icon fa fa-fw fa-home"></i><br>首页</a></li><li class="menu-item menu-item-active"><a href=/post rel=section><i class="menu-item-icon fa fa-fw fa-archive"></i><br>归档</a></li><li class=menu-item><a href=/about.html rel=section><i class="menu-item-icon fa fa-fw fa-user"></i><br>关于我</a></li><li class="menu-item menu-item-search"><a href=javascript:; class=popup-trigger><i class="menu-item-icon fa fa-search fa-fw"></i><br>搜索</a></li></ul><div class=site-search><div class="popup search-popup local-search-popup"><div class="local-search-header clearfix"><span class=search-icon><i class="fa fa-search"></i> </span><span class=popup-btn-close><i class="fa fa-times-circle"></i></span><div class=local-search-input-wrapper><input autocomplete=off placeholder=搜索关键字... spellcheck=false type=text id=local-search-input autocapitalize=none autocorrect=off></div></div><div id=local-search-result></div></div></div></nav></div></header><main id=main class=main><div class=main-inner><div class=content-wrap><div id=content class=content><section id=posts class=posts-expand><article class="post post-type-normal" itemscope itemtype=http://schema.org/Article><header class=post-header><h1 class=post-title itemprop="name headline"><a class=post-title-link href=/post/2012-03-22-collect-decoration-infomation/ itemprop=url>装修记录（一）：好的设计</a></h1><div class=post-meta><span class=post-pushdate><i class="fa fa-calendar-o fa-fw"></i>
+<span class=logo-line-after><i></i></span></a></div><p class=site-subtitle></p></div><div class=site-nav-right><div class="toggle popup-trigger" style=opacity:1;top:0><i class="fa fa-search fa-fw fa-lg"></i></div></div></div><nav class=site-nav><ul id=menu class=menu><li class=menu-item><a href=/ rel=section><i class="menu-item-icon fa fa-fw fa-home"></i><br>首页</a></li><li class="menu-item menu-item-active"><a href=/post rel=section><i class="menu-item-icon fa fa-fw fa-archive"></i><br>归档</a></li><li class=menu-item><a href=/about.html rel=section><i class="menu-item-icon fa fa-fw fa-user"></i><br>关于我</a></li><li class="menu-item menu-item-search"><a href=javascript:; class=popup-trigger><i class="menu-item-icon fa fa-search fa-fw"></i><br>搜索</a></li></ul><div class=site-search><div class="popup search-popup local-search-popup"><div class="local-search-header clearfix"><span class=search-icon><i class="fa fa-search"></i> </span><span class=popup-btn-close><i class="fa fa-times-circle"></i></span><div class=local-search-input-wrapper><input autocomplete=off placeholder=搜索关键字... spellcheck=false type=text id=local-search-input autocapitalize=none autocorrect=off></div></div><div id=local-search-result></div></div></div></nav></div></header><main id=main class=main><div class=main-inner><div class=content-wrap><div id=content class=content><section id=posts class=posts-expand><article class="post post-type-normal" itemscope itemtype=http://schema.org/Article><header class=post-header><h1 class=post-title itemprop="name headline"><a class=post-title-link href=/post/install-wireguard/ itemprop=url>在centos 8安装wireguard</a></h1><div class=post-meta><span class=post-pushdate><i class="fa fa-calendar-o fa-fw"></i>
 <span class=post-meta-item-text>时间：</span>
-<time itemprop=dateCreated datetime=2016-03-22T13:04:35+08:00 content="2012-03-22">2012-03-22
+<time itemprop=dateCreated datetime=2016-03-22T13:04:35+08:00 content="2023-11-21">2023-11-21
 </time></span><span class=post-category><i class="fa fa-folder-o fa-fw"></i>
 <span class=post-meta-item-text>分类：</span>
-<span itemprop=about itemscope itemtype=https://schema.org/Thing><a class=post-category-a href=/categories/%E7%94%9F%E6%B4%BB itemprop=url rel=index><span itemprop=name>['生活']</span>
+<span itemprop=about itemscope itemtype=https://schema.org/Thing><a class=post-category-a href=/categories/%E6%8A%80%E6%9C%AF itemprop=url rel=index><span itemprop=name>技术</span>
 </a>&nbsp;
 </span></span><span class=post-wordcount><i class="fa fa-file-word-o fa-fw"></i>
 <span class=post-meta-item-text>字数：</span>
-<span class=leancloud-world-count>172 字</span>
+<span class=leancloud-world-count>872 字</span>
 </span><span class=post-readtime><i class="fa fa-eye fa-fw"></i>
 <span class=post-meta-item-text>阅读：</span>
-<span class=leancloud-view-count>1分钟</span>
-</span><span id=/post/2012-03-22-collect-decoration-infomation/ class="leancloud_visitors post-visitor" data-flag-title=装修记录（一）：好的设计><i class="fa fa-binoculars fa-fw"></i>
+<span class=leancloud-view-count>2分钟</span>
+</span><span id=/post/install-wireguard/ class="leancloud_visitors post-visitor" data-flag-title="在centos 8安装wireguard"><i class="fa fa-binoculars fa-fw"></i>
 <span class=post-meta-item-text>阅读次数：</span>
-<span class=leancloud-visitors-count></span></span></div></header><div class=post-body itemprop=articleBody><p>这个帖子用于记录一些装修的信息。有信息可以直接回复在这个帖子</p><p>##1.设计公司##
-三米设计确实还是有不少喜欢的作品</p><p>三米的案例集 <a href="http://www.3mihome.com/wrod.asp?MaxID=2" target=_blank rel=noopener>http://www.3mihome.com/wrod.asp?MaxID=2</a></p><p>喜欢<a href="http://www.3mihome.com/wrodmore.asp?ID=302" target=_blank rel=noopener>这个</a>
-<a href="http://www.3mihome.com/wrodmore.asp?ID=309" target=_blank rel=noopener>这个</a></p><p>##2.喜欢的一些装修图##
-书房，喜欢这个书柜
-<a href=http://www.flickr.com/photos/78243932@N04/7005592715/ title="Flickr 上 mikechen163 的 041101230383"><img src=http://farm7.staticflickr.com/6094/7005592715_65b58fed77_b.jpg width=809 height=618 alt=041101230383></a></p><p>主卧，暗灰色的墙面，弧形的主窗，床后的柜子
-<a href=http://www.flickr.com/photos/78243932@N04/6859474194/ title="Flickr 上 mikechen163 的 20111122154956380"><img src=http://farm8.staticflickr.com/7101/6859474194_a59c904e27_b.jpg width=700 height=642 alt=20111122154956380></a></p><p>厨房，注意地板和前面的颜色，深色的地板看起来没那么脏
-<a href=http://www.flickr.com/photos/78243932@N04/6859473176/ title="Flickr 上 mikechen163 的 0411012715614"><img src=http://farm7.staticflickr.com/6048/6859473176_f46b0595f3_b.jpg width=640 height=774 alt=0411012715614></a></p><p><a href=http://www.flickr.com/photos/78243932@N04/7005592131/ title="Flickr 上 mikechen163 的 0513001029883"><img src=http://farm7.staticflickr.com/6091/7005592131_39b48d4a1c_b.jpg width=900 height=561 alt=0513001029883></a></p><p>儿童房，靠墙的一面全部做成书柜，空间利用合理
-<a href=http://www.flickr.com/photos/78243932@N04/6859473090/ title="Flickr 上 mikechen163 的 0411012356348"><img src=http://farm8.staticflickr.com/7239/6859473090_7826b0002e_b.jpg width=774 height=618 alt=0411012356348></a></p><p>更多图片可以点<a href=http://www.flickr.com/photos/78243932@N04/page1/ target=_blank rel=noopener>这里</a>
-<a href=http://www.flickr.com/photos/78243932@N04/page2/ target=_blank rel=noopener>这里</a></p></div><footer class=post-footer><div class=addthis_inline_share_toolbox></div><div class=post-nav><div class="post-nav-next post-nav-item"><a href=/post/2015-06-22-setup-weblog/ rel=next title=使用octopress搭建个人博客><i class="fa fa-chevron-left"></i> 使用octopress搭建个人博客</a></div><div class="post-nav-prev post-nav-item"><a href=/post/2012-03-21-set-up-octopress/ rel=prev title=使用octopress搭建博客记录>使用octopress搭建博客记录
+<span class=leancloud-visitors-count></span></span></div></header><div class=post-body itemprop=articleBody><h2 id=1-在centos-8安装wireguard>1 在centos 8安装wireguard</h2><h3 id=11-安装kmod-wireguard-wireguard-tools>1.1 安装kmod-wireguard wireguard-tools</h3><p>最简单的办法就是使用 ELRepo的仓库安装. 其他方法比较复杂不推荐.</p><pre><code>sudo yum install elrepo-release epel-release
+sudo yum install kmod-wireguard wireguard-tools
+</code></pre><p>安装完成后,检查wireguard 模块是否正常工作.</p><pre><code>#modprobe wireguard
+#lsmod | grep wireguard
+wireguard             212992  0
+ip6_udp_tunnel         16384  1 wireguard
+udp_tunnel             20480  1 wireguard
+</code></pre><p>启用ip转发功能</p><pre><code>#sudo vi /etc/sysctl.conf
+
+增加一句: 
+net.ipv4.ip_forward=1
+
+#sudo sysctl -p
+</code></pre><h3 id=12-配置服务器端>1.2 配置服务器端</h3><p>生成密匙. 下面的命令,在 /et/wireguard/目录下,生成 privatekey 和 publickey两个密匙</p><pre><code>wg genkey | sudo tee /etc/wireguard/privatekey | wg pubkey | sudo tee /etc/wireguard/publickey
+</code></pre><p>创建 /etc/wireguard/wg0.conf 文件,可以配置多个客户端</p><pre><code>[Interface]
+Address = 192.168.10.1/24
+ListenPort = 服务器端口
+PrivateKey = 服务器生侧使用的 privatekey
+PostUp = iptables -I FORWARD -i wg0 -j ACCEPT
+PostDown = iptables -D FORWARD -i wg0 -j ACCEPT
+
+[Peer]
+PublicKey = 第一个客户端到的publickey
+AllowedIPs = 192.168.10.2/32
+
+[Peer]
+ PublicKey = 第二个客户端到的publickey
+ AllowedIPs = 192.168.10.3/32
+ 
+ ....
+</code></pre><p>如果使用iptables.service打开服务器监听端口</p><pre><code>sudo iptables -I INPUT -p udp -m udp --dport server_listen_port -j ACCEPT
+</code></pre><p>如果使用firewalld,对应命令为:</p><pre><code>sudo firewall-cmd --zone=public --add-port=port/udp
+</code></pre><p>为了保证私钥的安全，请将wg0.conf和privatekey文件对普通用户不可读。</p><pre><code>sudo chmod 600 /etc/wireguard/privatekey
+sudo chmod 600 /etc/wireguard/wg0.conf
+</code></pre><h3 id=13-配置客户端>1.3 配置客户端</h3><p>生成密匙. 下面的命令,在 /et/wireguard/目录下,生成 privatekey 和 publickey两个密匙</p><pre><code>wg genkey | sudo tee /etc/wireguard/privatekey | wg pubkey | sudo tee /etc/wireguard/publickey
+</code></pre><p>创建 /etc/wireguard/wg0.conf 文件</p><pre><code>[Interface]
+Address = 192.168.10.2/24
+PrivateKey = 客户端 privatekey
+
+[Peer]
+PublicKey = 服务器的publickey
+Endpoint = 服务器的ip:port #这个端口和服务器的监听端口一致.
+AllowedIPs = 192.168.10.0/24
+</code></pre><h3 id=14-调试和启动>1.4 调试和启动</h3><p>在服务区和客户端上,都执行</p><pre><code> sudo wg-quick up wg0 
+ 用 sudo wg show wg0 命令,查看状态
+</code></pre><p>服务器的命令结果:</p><pre><code>interface: wg0
+   public key: I5kyw3VgcYe0E9U9qdfsfsdL+/FT6I1gV70Q1ng=
+   private key: (hidden)
+  listening port: xxxx
+
+ peer: Rp7Gus0jhjpaTAHUNiphksdfsdfc/OCLOd3XpNxSYSAY=
+   endpoint: client1_ip:51448
+   allowed ips: 192.168.10.2/32
+   latest handshake: 2 hours, 47 minutes, 44 seconds ago
+   transfer: 103.87 KiB received, 759.56 KiB sent
+
+peer: e6Omxk8D66xZAfasdfgi9HJpTrt64tXwm9zgYE8/1goV0=
+  endpoint: client2_ip:46428
+  allowed ips: 192.168.10.3/32
+  latest handshake: 3 hours, 10 minutes, 24 seconds ago
+  transfer: 1.55 KiB received, 1.46 KiB sent
+</code></pre><p>客户端查询结果</p><pre><code>interface: wg0
+  public key: e6Omxk8D66xZAfasdfgi9HJpTrt64tXwm9zgYE8/1goV0 =
+  private key: (hidden)
+  listening port: xxxx
+
+peer: I5kyw3VgcYe0E9U9qdfsfsdL+/FT6I1gV70Q1ng=
+  endpoint: server_ip:xxxx
+  allowed ips: 192.168.10.0/24
+  latest handshake: 3 hours, 14 minutes, 7 seconds ago
+  transfer: 27.35 KiB received, 39.61 KiB sent
+</code></pre><p>如果没有数据,可以 在客户端 ping 192.168.10.1 这个服务器地址,测试通不通.</p><p>一切顺利后,使用下面的命令,开机启动 wireguard</p><pre><code>sudo systemctl enable wg-quick@wg0
+</code></pre><p>另外一种启动和停止wireguard服务的命令为 (代替 sudo wg-quick up wg0是一次性命令)</p><pre><code>sudo systemctl start wg-quick@wg0
+sudo systemctl stop wg-quick@wg0
+sudo systemctl restart wg-quick@wg0
+</code></pre><h3 id=15-参考文档>1.5 参考文档</h3><p>1 <a href=https://www.myfreax.com/how-to-set-up-wireguard-vpn-on-centos-8/ target=_blank rel=noopener>如何在CentOS 8安装WireGuard VPN</a></p><p>2 <a href=https://www.cnblogs.com/milton/p/14178344.html target=_blank rel=noopener>Wireguard笔记(一) 节点安装配置和参数说明</a></p><p>3 <a href=https://www.llmgo.cn/post/wireguard-docs-practice/ target=_blank rel=noopener>WireGuard 的搭建使用与配置详解</a></p></div><footer class=post-footer><div class=post-tags><a href=/tags/wireguard rel=tag title=wireguard>#wireguard#</a>
+<a href=/tags/centos rel=tag title=centos>#centos#</a>
+<a href=/tags/tun2socks rel=tag title=tun2socks>#tun2socks#</a></div><div class=addthis_inline_share_toolbox></div><div class=post-nav><div class="post-nav-next post-nav-item"></div><div class="post-nav-prev post-nav-item"><a href=/post/ipv6-on-openwrt/ rel=prev title=在openwrt上启动ipv6>在openwrt上启动ipv6
 <i class="fa fa-chevron-right"></i></a></div></div><div id=wcomments></div></footer></article></section></div></div><div class=sidebar-toggle><div class=sidebar-toggle-line-wrap><span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
 <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
 <span class="sidebar-toggle-line sidebar-toggle-line-last"></span></div></div><aside id=sidebar class=sidebar><div class=sidebar-inner><section class="site-overview sidebar-panel sidebar-panel-active"><div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person><img class=site-author-image itemprop=image src=/img/avatar.png alt=mike163><p class=site-author-name itemprop=name>mike163</p><p class="site-description motion-element" itemprop=description>承认自己的无知,是智慧的开始</p></div><nav class="site-state motion-element"><div class="site-state-item site-state-posts"><a href=/post/><span class=site-state-item-count>25</span>
