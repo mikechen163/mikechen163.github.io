@@ -11,7 +11,7 @@
 </a>&nbsp;
 </span></span><span class=post-wordcount><i class="fa fa-file-word-o fa-fw"></i>
 <span class=post-meta-item-text>字数：</span>
-<span class=leancloud-world-count>359 字</span>
+<span class=leancloud-world-count>406 字</span>
 </span><span class=post-readtime><i class="fa fa-eye fa-fw"></i>
 <span class=post-meta-item-text>阅读：</span>
 <span class=leancloud-view-count>1分钟</span>
@@ -25,6 +25,9 @@
 
 假设 192.168.5.1 和 ens33 是原来的以太网设备接口 ip ,把缺省路由添加到udp_table
 #sudo ip route add default via 192.168.5.1 dev ens33 table udp_table
+
+为了不影响tcp,让tcp流量继续走tun设备,也就是原来 main 路由表的缺省路由.
+#sudo ip rule add ipproto TCP table main
 </code></pre><p>执行下面的命令,检查结果</p><pre><code>#p route show table udp_table
 default via 192.168.5.1 dev ens33
 
