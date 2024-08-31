@@ -1,1 +1,9 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>systemd on 麦克的茶馆</title><link>/tags/systemd/</link><description>Recent content in systemd on 麦克的茶馆</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Sat, 08 Oct 2022 00:00:00 +0000</lastBuildDate><atom:link href="/tags/systemd/index.xml" rel="self" type="application/rss+xml"/><item><title>在vmware虚拟机安装gentoo linux,使用systemd方案</title><link>/post/gentoo-linux-install/</link><pubDate>Sat, 08 Oct 2022 00:00:00 +0000</pubDate><guid>/post/gentoo-linux-install/</guid><description>1 步骤记录 主要流程参考了 Gentoo虚拟机安装教程 本文主要记录差异的地方. 1.1 vmware启动efi 主要是修改vmx文件,增加一句: firmware=&amp;quot;efi&amp;quot; 有了这句</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>systemd on 麦克的茶馆</title><link>/tags/systemd/</link><description>Recent content in systemd on 麦克的茶馆</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Sat, 08 Oct 2022 00:00:00 +0000</lastBuildDate><atom:link href="/tags/systemd/index.xml" rel="self" type="application/rss+xml"/><item><title>在vmware虚拟机安装gentoo linux,使用systemd方案</title><link>/post/gentoo-linux-install/</link><pubDate>Sat, 08 Oct 2022 00:00:00 +0000</pubDate><guid>/post/gentoo-linux-install/</guid><description>&lt;h2 id="1-步骤记录">1 步骤记录&lt;/h2>
+&lt;p>主要流程参考了 &lt;a href="https://segmentfault.com/a/1190000021830333" target="_blank" rel="noopener">Gentoo虚拟机安装教程&lt;/a>
+&lt;/p>
+&lt;p>本文主要记录差异的地方.&lt;/p>
+&lt;h3 id="11-vmware启动efi">1.1 vmware启动efi&lt;/h3>
+&lt;p>主要是修改vmx文件,增加一句:&lt;/p>
+&lt;pre>&lt;code>firmware=&amp;quot;efi&amp;quot;
+&lt;/code>&lt;/pre>
+&lt;p>有了这句，虚拟机才能用efi方式启动. 否则后面grub安装不到efi去.&lt;/p></description></item></channel></rss>
