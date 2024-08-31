@@ -1,0 +1,175 @@
+<!doctype html><html lang=zh-cn dir=zh><head><meta charset=UTF-8><meta http-equiv=X-UA-Compatible content="IE=edge,chrome=1"><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1"><meta http-equiv=Content-Security-Policy content="upgrade-insecure-requests"><title>Nginx配置指南：支持多域名HTTPS和代理协议 - 麦克的茶馆 </title><meta name=keywords content="技术总结 投资 "><meta name=author content="mike163"><meta property="og:title" content="Nginx配置指南：支持多域名HTTPS和代理协议"><meta property="og:site_name" content="麦克的茶馆"><meta property="og:image" content="/img/author.jpg"><meta name=title content="Nginx配置指南：支持多域名HTTPS和代理协议 - 麦克的茶馆"><meta name=description content="mike163's home"><link rel="shortcut icon" href=/img/favicon.ico><link rel=apple-touch-icon href=/img/apple-touch-icon.png><link rel=apple-touch-icon-precomposed href=/img/apple-touch-icon.png><link href=//unpkg.com/font-awesome@4.7.0/css/font-awesome.min.css rel=stylesheet type=text/css><link href=//unpkg.com/imageviewer@1.1.0/dist/viewer.min.css rel=stylesheet><link href=/css/main.css rel=stylesheet type=text/css><link href=/css/syntax.css rel=stylesheet type=text/css></head><body itemscope itemtype=http://schema.org/WebPage lang=zh-Hans><div class="container one-collumn sidebar-position-left page-home"><div class=headband></div><header id=header class=header itemscope itemtype=http://schema.org/WPHeader><div class=header-inner><div class=site-brand-container><div class=site-nav-toggle><div class=toggle role=button style=opacity:1;top:0><span class=toggle-line></span>
+<span class=toggle-line></span>
+<span class=toggle-line></span></div></div><div class=site-meta><div class=custom-logo-site-title><a href=/ class=brand rel=start><span class=logo-line-before><i></i></span>
+<span class=site-title>麦克的茶馆</span>
+<span class=logo-line-after><i></i></span></a></div><p class=site-subtitle></p></div><div class=site-nav-right><div class="toggle popup-trigger" style=opacity:1;top:0><i class="fa fa-search fa-fw fa-lg"></i></div></div></div><nav class=site-nav><ul id=menu class=menu><li class=menu-item><a href=/ rel=section><i class="menu-item-icon fa fa-fw fa-home"></i><br>首页</a></li><li class="menu-item menu-item-active"><a href=/post rel=section><i class="menu-item-icon fa fa-fw fa-archive"></i><br>归档</a></li><li class=menu-item><a href=/about.html rel=section><i class="menu-item-icon fa fa-fw fa-user"></i><br>关于我</a></li><li class="menu-item menu-item-search"><a href=javascript:; class=popup-trigger><i class="menu-item-icon fa fa-search fa-fw"></i><br>搜索</a></li></ul><div class=site-search><div class="popup search-popup local-search-popup"><div class="local-search-header clearfix"><span class=search-icon><i class="fa fa-search"></i> </span><span class=popup-btn-close><i class="fa fa-times-circle"></i></span><div class=local-search-input-wrapper><input autocomplete=off placeholder=搜索关键字... spellcheck=false type=text id=local-search-input autocapitalize=none autocorrect=off></div></div><div id=local-search-result></div></div></div></nav></div></header><main id=main class=main><div class=main-inner><div class=content-wrap><div id=content class=content><section id=posts class=posts-expand><article class="post post-type-normal" itemscope itemtype=http://schema.org/Article><header class=post-header><h1 class=post-title itemprop="name headline"><a class=post-title-link href=/post/config-nginx-detail-case/ itemprop=url>Nginx配置指南：支持多域名HTTPS和代理协议</a></h1><div class=post-meta><span class=post-pushdate><i class="fa fa-calendar-o fa-fw"></i>
+<span class=post-meta-item-text>时间：</span>
+<time itemprop=dateCreated datetime=2016-03-22T13:04:35+08:00 content="2024-08-31">2024-08-31
+</time></span><span class=post-category><i class="fa fa-folder-o fa-fw"></i>
+<span class=post-meta-item-text>分类：</span>
+<span itemprop=about itemscope itemtype=https://schema.org/Thing><a class=post-category-a href=/categories/%E6%8A%80%E6%9C%AF itemprop=url rel=index><span itemprop=name>技术</span>
+</a>&nbsp;
+</span></span><span class=post-wordcount><i class="fa fa-file-word-o fa-fw"></i>
+<span class=post-meta-item-text>字数：</span>
+<span class=leancloud-world-count>1111 字</span>
+</span><span class=post-readtime><i class="fa fa-eye fa-fw"></i>
+<span class=post-meta-item-text>阅读：</span>
+<span class=leancloud-view-count>3分钟</span>
+</span><span id=/post/config-nginx-detail-case/ class="leancloud_visitors post-visitor" data-flag-title=Nginx配置指南：支持多域名HTTPS和代理协议><i class="fa fa-binoculars fa-fw"></i>
+<span class=post-meta-item-text>阅读次数：</span>
+<span class=leancloud-visitors-count></span></span></div></header><div class=post-body itemprop=articleBody><h1 id=nginx配置指南支持多域名https和proxy_protocol协议>Nginx配置指南：支持多域名HTTPS和proxy_protocol协议</h1><p>引言
+在当今的web服务架构中，Nginx作为一个强大的web服务器和反向代理服务器，扮演着至关重要的角色。本文将详细介绍如何配置Nginx以支持多域名HTTPS和代理协议，涵盖了几种常见的场景。我们将从基本的配置开始，逐步深入到更复杂的设置。</p><h2 id=场景1多域名https和sni>场景1：多域名HTTPS和SNI</h2><p>首先，让我们看看如何配置Nginx来支持多个HTTPS域名，并使用SNI（服务器名称指示）将流量路由到不同的后端服务器。</p><pre><code>stream {
+log_format basic '$remote_addr [$time_local] '
+                 '$protocol $status $bytes_sent $bytes_received '
+                 '$session_time &quot;$upstream_addr&quot; '
+                 '&quot;$ssl_preread_server_name&quot;';
+
+access_log /var/log/nginx/stream-access.log basic;
+error_log /var/log/nginx/stream-error.log;
+
+map $ssl_preread_server_name $backend_name {
+    example1.com backend1;
+    example2.com backend2;
+    default backend_default;
+}
+
+upstream backend1 {
+    server 192.168.1.10:443;
+}
+
+upstream backend2 {
+    server 192.168.1.20:443;
+}
+
+upstream backend_default {
+    server 192.168.1.30:443;
+}
+
+server {
+    listen 443;
+    proxy_pass $backend_name;
+    ssl_preread on;
+    proxy_protocol on;
+}
+</code></pre><p>}
+这个配置的主要特点：</p><p>使用stream模块处理TCP流量。
+定义自定义日志格式，包含SNI信息。
+使用map指令根据SNI选择后端服务器。
+配置多个上游服务器组。
+在服务器块中启用SSL预读和代理协议。</p><h2 id=场景2后端nginx-https服务器配置>场景2：后端Nginx HTTPS服务器配置</h2><p>当后端服务器也使用Nginx时，我们需要配置它来处理HTTPS请求并支持代理协议。以下是一个示例配置：</p><pre><code>http {
+log_format main '$remote_addr - $remote_user [$time_local] &quot;$request&quot; '
+                '$status $body_bytes_sent &quot;$http_referer&quot; '
+                '&quot;$http_user_agent&quot; &quot;$http_x_forwarded_for&quot;';
+
+access_log /var/log/nginx/access.log main;
+error_log /var/log/nginx/error.log;
+
+set_real_ip_from 192.168.1.0/24;
+real_ip_header proxy_protocol;
+
+server {
+    listen 443 ssl proxy_protocol;
+    server_name example1.com;
+
+    ssl_certificate /path/to/your/fullchain.pem;
+    ssl_certificate_key /path/to/your/privkey.pem;
+
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_prefer_server_ciphers on;
+    ssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384;
+
+    add_header Strict-Transport-Security &quot;max-age=31536000; includeSubDomains&quot; always;
+    add_header X-Frame-Options DENY;
+    add_header X-Content-Type-Options nosniff;
+    add_header X-XSS-Protection &quot;1; mode=block&quot;;
+
+    root /var/www/example1.com;
+    index index.html index.htm;
+
+    location / {
+        try_files $uri $uri/ =404;
+    }
+}
+</code></pre><p>}
+这个配置的主要特点：</p><p>启用代理协议以获取真实客户端IP。
+配置SSL证书和安全选项。
+添加安全相关的HTTP头。
+设置网站根目录和默认文件。</p><h2 id=场景3后端http服务代理>场景3：后端HTTP服务代理</h2><p>有时，后端服务可能运行在HTTP上，而我们希望在前端提供HTTPS。以下是如何配置Nginx作为SSL终止代理：</p><pre><code>http {
+# ... 之前的日志和IP配置 ...
+
+upstream backend {
+    server 127.0.0.1:8200;
+}
+
+server {
+    listen 443 ssl proxy_protocol;
+    server_name example1.com;
+
+    # ... SSL配置和安全头部 ...
+
+    location / {
+        proxy_pass http://backend;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+</code></pre><p>}
+这个配置将HTTPS请求转发到本地运行的HTTP服务，同时保留客户端信息。</p><h2 id=场景4处理不支持代理协议的后端https服务>场景4：处理不支持代理协议的后端HTTPS服务</h2><p>最后，让我们看看如何处理前端使用代理协议，但后端HTTPS服务不支持代理协议的情况：</p><pre><code>stream {
+# ... 之前的日志配置 ...
+
+upstream backend_with_proxy_protocol {
+    server 127.0.0.1:8443;
+}
+
+upstream real_backend {
+    server 192.168.1.10:443;
+}
+
+server {
+    listen 443;
+    proxy_pass backend_with_proxy_protocol;
+    ssl_preread on;
+    proxy_protocol on;
+}
+
+server {
+    listen 8443 proxy_protocol;
+    proxy_pass real_backend;
+}
+</code></pre><p>}
+这个配置创建了一个中间层，它接收带有代理协议的连接，然后将纯HTTPS流量转发给后端服务。</p><h2 id=结论>结论</h2><p>通过这些配置示例，我们展示了Nginx在处理HTTPS流量、支持多域名、使用代理协议以及作为SSL终止代理方面的灵活性。根据您的具体需求，您可以混合和匹配这些配置来创建适合您的架构的设置。</p><p>记住，在应用这些配置时，始终要根据您的实际环境调整IP地址、域名和证书路径。此外，定期更新Nginx和SSL证书，并关注最新的安全最佳实践，以确保您的服务器配置始终安全和高效。</p></div><footer class=post-footer><div class=post-tags><a href=/tags/nginx rel=tag title=nginx>#nginx#</a>
+<a href=/tags/stream rel=tag title=stream>#stream#</a>
+<a href=/tags/https rel=tag title=https>#https#</a></div><div class=addthis_inline_share_toolbox></div><div class=post-nav><div class="post-nav-next post-nav-item"></div><div class="post-nav-prev post-nav-item"><a href=/post/config-nginx-stream-realip/ rel=prev title="配置nginx,使用stream 模式,并且传递realip 给server">配置nginx,使用stream 模式,并且传递realip 给server
+<i class="fa fa-chevron-right"></i></a></div></div><div id=wcomments></div></footer></article></section></div></div><div class=sidebar-toggle><div class=sidebar-toggle-line-wrap><span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+<span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+<span class="sidebar-toggle-line sidebar-toggle-line-last"></span></div></div><aside id=sidebar class=sidebar><div class=sidebar-inner><section class="site-overview sidebar-panel sidebar-panel-active"><div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person><img class=site-author-image itemprop=image src=/img/avatar.png alt=mike163><p class=site-author-name itemprop=name>mike163</p><p class="site-description motion-element" itemprop=description></p></div><nav class="site-state motion-element"><div class="site-state-item site-state-posts"><a href=/post/><span class=site-state-item-count>28</span>
+<span class=site-state-item-name>日志</span></a></div><div class="site-state-item site-state-categories"><a href=/categories/><span class=site-state-item-count>2</span>
+<span class=site-state-item-name>分类</span></a></div><div class="site-state-item site-state-tags"><a href=/tags/><span class=site-state-item-count>53</span>
+<span class=site-state-item-name>标签</span></a></div></nav><div class="links-of-author motion-element"><span class=links-of-author-item><a href=https://github.com/mikechen163/ target=_blank title=GitHub><i class="fa fa-fw fa-github"></i>
+GitHub</a></span></div><div class="links-of-blogroll motion-element links-of-blogroll-inline"><div class=links-of-blogroll-title><i class="fa fa-fw fa-globe"></i>
+友情链接</div><ul class=links-of-blogroll-list><li class=links-of-blogroll-item><a href=https://jfinal.com/ title=JFinal target=_blank>JFinal</a></li><li class=links-of-blogroll-item><a href=/Bookmarks.html title=Bookmarks target=_blank>Bookmarks</a></li></ul></div><div class="tagcloud-of-blogroll motion-element tagcloud-of-blogroll-inline"><div class=tagcloud-of-blogroll-title><i class="fa fa-fw fa-tags"></i>
+标签云</div><ul class=tagcloud-of-blogroll-list><li class=tagcloud-of-blogroll-item><a href=/tags/nginx>Nginx
+<sup>5</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/centos>Centos
+<sup>3</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/stream>Stream
+<sup>3</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/tls>Tls
+<sup>3</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/cloudflare>Cloudflare
+<sup>2</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/dns>DNS
+<sup>2</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/er-x>Er x
+<sup>2</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/iptable>Iptable
+<sup>2</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/ipv6>Ipv6
+<sup>2</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/openwrt>Openwrt
+<sup>2</sup></a></li></ul></div></section></div></aside></div></main><footer id=footer class=footer><div class=footer-inner><div class=copyright><span class=copyright-year>&copy; 2010 - 2024
+</span><span class=with-love><i class="fa fa-heart"></i></span>
+<span class=copyright-author>麦克的茶馆</span></div><div class=powered-info><span class=powered-by>Powered by - <a class=powered-link href=//gohugo.io target=_blank title=hugo>Hugo v0.120.4</a>
+</span><span class=separator-line>/</span>
+<span class=theme-info>Theme by - <a class=powered-link href=//github.com/elkan1788/hugo-theme-next target=_blank>NexT</a></span></div><div class=vistor-info><script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script><span class=site-uv><i class="fa fa-user"></i>
+<span class=busuanzi-value id=busuanzi_value_site_uv></span>
+</span><span class=separator-line>/</span>
+<span class=site-pv><i class="fa fa-eye"></i>
+<span class=busuanzi-value id=busuanzi_value_site_pv></span></span></div><div class=license-info><span class=storage-info>Storage by
+<a href=https://gitee.com/ style=font-weight:700 target=_blank>Gitee 仓库</a>
+</span><span class=separator-line>/</span>
+<span class=license-num><a href=http://beian.miit.gov.cn target=_blank>粤 ICP 备 号</a></span></div></div></footer><div class=back-to-top><i class="fa fa-arrow-up"></i>
+<span id=scrollpercent><span>0</span>%</span></div></div><script type=text/javascript src=//unpkg.com/jquery@2.1.4/dist/jquery.min.js></script><script type=text/javascript src=/js/search.js></script><script type=text/javascript src=/js/affix.js></script><script type=text/javascript>function detectIE(){var e=window.navigator.userAgent,t=e.indexOf("MSIE "),n=e.indexOf("Trident/"),s=e.indexOf("Edge/");return t>0||n>0||s>0?-1:1}function getCntViewHeight(){var t=$("#content").height(),e=$(window).height(),n=t>e?t-e:$(document).height()-e;return n}function getScrollbarWidth(){var e=$("<div />").addClass("scrollbar-measure").prependTo("body"),t=e[0],n=t.offsetWidth-t.clientWidth;return e.remove(),n}function registerBackTop(){var t=50,e=$(".back-to-top");$(window).on("scroll",function(){e.toggleClass("back-to-top-on",window.pageYOffset>t);var s=$(window).scrollTop(),o=getCntViewHeight(),i=s/o,n=Math.round(i*100),a=n>100?100:n;$("#scrollpercent>span").html(a)}),e.on("click",function(){$("html,body").animate({scrollTop:0,screenLeft:0},800)})}function initScrollSpy(){var e=".post-toc",s=$(e),t=".active-current";s.on("activate.bs.scrollspy",function(){var t=$(e+" .active").last();n(),t.addClass("active-current")}).on("clear.bs.scrollspy",n),$("body").scrollspy({target:e});function n(){$(e+" "+t).removeClass(t.substring(1))}}function initAffix(){var e=$(".header-inner").height(),t=parseInt($(".footer").outerHeight(!0),10),n=e+10;$(".sidebar-inner").affix({offset:{top:n,bottom:t}})}function initTOCDimension(){$(window).on("resize",function(){e&&clearTimeout(e),e=setTimeout(function(){var e=document.body.clientHeight-100;updateTOCHeight(e)},0)}),updateTOCHeight(document.body.clientHeight-100);var e,t=getScrollbarWidth();$(".post-toc").css("width","calc(100% + "+t+"px)")}function updateTOCHeight(e){e=e||"auto",$(".post-toc").css("max-height",e)}$(function(){var e,t,n,s,o=$(".header-inner").height()+10;$("#sidebar").css({"margin-top":o}).show(),t=parseInt($("#sidebar").css("margin-top")),n=parseInt($(".sidebar-inner").css("height")),e=t+n,s=$(".content-wrap").height(),s<e&&$(".content-wrap").css("min-height",e),$(".site-nav-toggle").on("click",function(){var e=$(".site-nav"),o=$(".toggle"),t="site-nav-on",i="toggle-close",n=e.hasClass(t),a=n?"slideUp":"slideDown",s=n?"removeClass":"addClass";e.stop()[a]("normal",function(){e[s](t),o[s](i)})}),registerBackTop(),initAffix(),initTOCDimension(),$(".sidebar-nav-toc").click(function(){$(this).addClass("sidebar-nav-active"),$(this).next().removeClass("sidebar-nav-active"),$("."+$(this).next().attr("data-target")).toggle(500),$("."+$(this).attr("data-target")).toggle(500)}),$(".sidebar-nav-overview").click(function(){$(this).addClass("sidebar-nav-active"),$(this).prev().removeClass("sidebar-nav-active"),$("."+$(this).prev().attr("data-target")).toggle(500),$("."+$(this).attr("data-target")).toggle(500)})})</script><script src=//unpkg.com/imageviewer@1.1.0/dist/viewer.min.js></script><script type=text/javascript>$(function(){$(".post-body").viewer()})</script><script type=text/javascript>const locale={placeholder:"欢迎留下您的宝贵建议，请填写您的昵称和邮箱便于后续交流. ^_^"};$(function(){detectIE()>0?$.getScript(document.location.protocol+"//unpkg.com/@waline/client@1.6.0/dist/Waline.min.js",function(){new Waline({el:"#wcomments",visitor:!0,emoji:[],wordLimit:"200",uploadImage:!1,locale,requiredMeta:["nick","mail"],serverURL:"Your WalineSerURL",lang:"zh-cn"})}):$("#wcomments").html("抱歉，Waline插件不支持IE或Edge，建议使用Chrome浏览器。")})</script><script type=text/javascript src="//s7.addthis.com/js/300/addthis_widget.js#pubid=Your%20AddthisId"></script><script>(function(){var t,e=document.createElement("script"),n=window.location.protocol.split(":")[0];n==="https"?e.src="https://zz.bdstatic.com/linksubmit/push.js":e.src="http://push.zhanzhang.baidu.com/push.js",t=document.getElementsByTagName("script")[0],t.parentNode.insertBefore(e,t)})()</script></body></html>
