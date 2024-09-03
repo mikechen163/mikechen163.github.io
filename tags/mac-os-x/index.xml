@@ -1,1 +1,34 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Mac OS X on 麦克的茶馆</title><link>/tags/mac-os-x/</link><description>Recent content in Mac OS X on 麦克的茶馆</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Tue, 04 Aug 2015 00:00:00 +0000</lastBuildDate><atom:link href="/tags/mac-os-x/index.xml" rel="self" type="application/rss+xml"/><item><title>MAC OS X下的一些小技巧</title><link>/post/how_to_change_partion_size_for_mac_with_mbr_format/</link><pubDate>Tue, 04 Aug 2015 00:00:00 +0000</pubDate><guid>/post/how_to_change_partion_size_for_mac_with_mbr_format/</guid><description>1 MAC OS X下修改NTFS分区大小 一个移动硬盘，买来后格式为NTFS格式，就一个分区。使用mac磁盘工具，提示分区格式为MBR主引导记录格式，无</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Mac OS X on 麦克的茶馆</title><link>/tags/mac-os-x/</link><description>Recent content in Mac OS X on 麦克的茶馆</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Tue, 04 Aug 2015 00:00:00 +0000</lastBuildDate><atom:link href="/tags/mac-os-x/index.xml" rel="self" type="application/rss+xml"/><item><title>MAC OS X下的一些小技巧</title><link>/post/how_to_change_partion_size_for_mac_with_mbr_format/</link><pubDate>Tue, 04 Aug 2015 00:00:00 +0000</pubDate><guid>/post/how_to_change_partion_size_for_mac_with_mbr_format/</guid><description>&lt;h3 id="1-mac-os-x下修改ntfs分区大小">1 MAC OS X下修改NTFS分区大小&lt;/h3>
+&lt;p>一个移动硬盘，买来后格式为NTFS格式，就一个分区。使用mac磁盘工具，提示分区格式为MBR主引导记录格式，无法改变大小。&lt;/p>
+&lt;p>解决方法如下：&lt;/p>
+&lt;p>1、首先在windows系统下，通过diskpart压缩分区大小&lt;/p>
+&lt;p>2、把空出来的空间，创建一个格式为exFAT的分区&lt;/p>
+&lt;p>3、在MAC 磁盘工具中，抹去这个exFAT格式的分区，重新格式化为HFS+&lt;/p>
+&lt;h3 id="2-mac-支持ntfs写操作">2 MAC 支持NTFS写操作&lt;/h3>
+&lt;p>mac os x是原生支持ntfs读操作的，但由于某些原因，写操作被屏蔽了。有的时候我们需要打开ntfs的写操作。可以通过修改 /etc/fstab实现。&lt;/p>
+&lt;pre>&lt;code>#假设移动硬盘的卷标是My Passport,那么修改如下
+LABEL=My\040Passport none ntfs rw,auto,nobrowse
+&lt;/code>&lt;/pre>
+&lt;h3 id="3-itunes-photo支持多个资料库">3 iTunes Photo支持多个资料库&lt;/h3>
+&lt;p>检查了一下磁盘空间，photo资料库居然达到80个G了，考虑把photo资料库转移到移动硬盘上去，留出空间给其他磁盘用。&lt;/p>
+&lt;p>1、考虑资料库到移动硬盘。移动硬盘的分区最好为HFS+格式&lt;/p>
+&lt;pre>&lt;code>cd /Volume/backup/&amp;quot;照片 Library.photoslibrary&amp;quot;
+ruby /Users/mike/work/tools/sync.rb -c /Users/mike/Pictures/&amp;quot;照片 Library.photoslibrary&amp;quot; .
+&lt;/code>&lt;/pre>
+&lt;p>2 按住option键，打开照片应用，此时会出现一个对话框让你选择资料库。此时可以检查备份的照片是否都OK了。&lt;/p>
+&lt;p>3 iTunes的资料库也可以同样处理。&lt;/p>
+&lt;pre>&lt;code>cd /Volume/backup/iTunes
+ruby /Users/mike/work/tools/sync.rb -c /Users/mike/Music/iTunes .
+&lt;/code>&lt;/pre>
+&lt;p>4 目录同步的小工具
+这个工具会递归的坚持目标路径、文件是否存在，如果不存在，则创建目录、复制文件；如果存在，再检查判断文件大小是否和源文件一致，如果不一致，就覆盖目标文件。&lt;/p>
+&lt;!-- more -->
+&lt;p>{% include_code ruby/sync.rb %}&lt;/p>
+&lt;p>参考文档
+&lt;a href="http://www.uc.hk/post/87.shtml" target="_blank" rel="noopener">在Mac中Option键 的 使用技巧&lt;/a>
+&lt;/p>
+&lt;h3 id="4-locate命令使用spotlight数据库">4 locate命令使用spotlight数据库&lt;/h3>
+&lt;p>在 .bashrc 或者 .zshrc 文件中加入：&lt;/p>
+&lt;pre>&lt;code>function locate { mdfind &amp;quot;kMDItemDisplayName == '$@'wc&amp;quot;; }
+&lt;/code>&lt;/pre>
+&lt;p>就可以让locate命令使用spotlight的数据库了&lt;/p></description></item></channel></rss>

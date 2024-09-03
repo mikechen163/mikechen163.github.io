@@ -1,1 +1,258 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>ss on 麦克的茶馆</title><link>/tags/ss/</link><description>Recent content in ss on 麦克的茶馆</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Sat, 18 Jan 2020 00:00:00 +0000</lastBuildDate><atom:link href="/tags/ss/index.xml" rel="self" type="application/rss+xml"/><item><title>UBNT ERX v2ray 配置透明代理</title><link>/post/setup-new-vps/</link><pubDate>Sat, 18 Jan 2020 00:00:00 +0000</pubDate><guid>/post/setup-new-vps/</guid><description>1 安装v2ray 自动安装脚本应该是不行的。因此需要手工操作。还好都已经编译好了。路径 Releases · v2ray/v2ray-core 选择v2ry-linux-mipsle.zip 解压</description></item><item><title>使用UBNT ER-X路由器的一些总结</title><link>/post/using-ubnt-erx-router/</link><pubDate>Mon, 13 Feb 2017 00:00:00 +0000</pubDate><guid>/post/using-ubnt-erx-router/</guid><description>以前是用wndr4300，加载openwrt，完成科学上网的任务。然而，长期使用下来，存在几个问题： 1 访问国外网站太慢，由于丢包太多，导致看</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>ss on 麦克的茶馆</title><link>/tags/ss/</link><description>Recent content in ss on 麦克的茶馆</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Sat, 18 Jan 2020 00:00:00 +0000</lastBuildDate><atom:link href="/tags/ss/index.xml" rel="self" type="application/rss+xml"/><item><title>UBNT ERX v2ray 配置透明代理</title><link>/post/setup-new-vps/</link><pubDate>Sat, 18 Jan 2020 00:00:00 +0000</pubDate><guid>/post/setup-new-vps/</guid><description>&lt;h3 id="1-安装v2ray">1 安装v2ray&lt;/h3>
+&lt;p>自动安装脚本应该是不行的。因此需要手工操作。还好都已经编译好了。路径
+&lt;a href="https://github.com/v2ray/v2ray-core/releases" target="_blank" rel="noopener">Releases · v2ray/v2ray-core&lt;/a>
+&lt;/p>
+&lt;p>选择v2ry-linux-mipsle.zip 解压后，手工拷贝到路由器的相关目录。假设erx是路由器的hostname&lt;/p>
+&lt;pre>&lt;code>scp v2ray root@erx:/usr/bin/v2ray/v2ray
+scp v2ctl root@erx:/usr/bin/v2ray/v2ctl
+scp geoip.dat root@erx:/usr/bin/v2ray/geoip.dat
+scp geosite.dat root@erx:/usr/bin/v2ray/geosite.dat
+scp config.json root@erx:/etc/v2ray/config.json
+&lt;/code>&lt;/pre>
+&lt;p>修改配置文件，参考本帖。本文的配置是 v2ray+ws+tls+nginx的客户端配置&lt;/p>
+&lt;p>在路由器/etc/init.d目录下，建立v2ray文件,修改内容&lt;/p>
+&lt;pre>&lt;code>...
+DESC=v2ray
+NAME=v2ray
+DAEMON=/usr/bin/v2ray/v2ray
+PIDFILE=/var/run/$NAME.pid
+SCRIPTNAME=/etc/init.d/$NAME
+DAEMON_OPTS=&amp;quot;-config /etc/v2ray/config.json&amp;quot;
+...
+&lt;/code>&lt;/pre>
+&lt;p>启动v2ray服务&lt;/p>
+&lt;pre>&lt;code> /etc/init.d/v2ray start
+&lt;/code>&lt;/pre>
+&lt;p>记得把启动命令写入 /config/scripts/post-config.d/update_iptables&lt;/p>
+&lt;p>用下面的命令测试一下是否成功&lt;/p>
+&lt;pre>&lt;code>curl -vx socks5://127.0.0.1:1080 https://www.google.com
+&lt;/code>&lt;/pre>
+&lt;p>用netstat -tupn 命令检查是否成功建立本地1080端口的连接&lt;/p>
+&lt;p>成功的话,可以看到ssl tls的握手过程和google返回的内容&lt;/p>
+&lt;!-- more -->
+&lt;h3 id="2-客户端修改">2 客户端修改&lt;/h3>
+&lt;p>config.json 修改为&lt;/p>
+&lt;pre>&lt;code>&amp;quot;inbounds&amp;quot;: [
+{
+&amp;quot;port&amp;quot;: 1080,
+&amp;quot;listen&amp;quot;: &amp;quot;0.0.0.0&amp;quot;,
+&amp;quot;protocol&amp;quot;: &amp;quot;socks&amp;quot;,
+&amp;quot;settings&amp;quot;: {
+&amp;quot;auth&amp;quot;: &amp;quot;noauth&amp;quot;,
+&amp;quot;udp&amp;quot;: false, // dns使用了doh tls 因此不转发 udp 53端口
+&amp;quot;ip&amp;quot;: &amp;quot;127.0.0.1&amp;quot;
+}
+},
+{
+&amp;quot;port&amp;quot;: 12345, //开放的端口号
+&amp;quot;protocol&amp;quot;: &amp;quot;dokodemo-door&amp;quot;,
+&amp;quot;settings&amp;quot;: {
+&amp;quot;network&amp;quot;: &amp;quot;tcp,udp&amp;quot;,
+&amp;quot;followRedirect&amp;quot;: true // 这里要为 true 才能接受来自 iptables 的流量
+},
+&amp;quot;sniffing&amp;quot;: { //从ip包里面得到url
+&amp;quot;enabled&amp;quot;: true,
+&amp;quot;destOverride&amp;quot;: [&amp;quot;http&amp;quot;, &amp;quot;tls&amp;quot;]
+},
+&amp;quot;streamSettings&amp;quot;: {
+&amp;quot;sockopt&amp;quot;: {
+&amp;quot;tproxy&amp;quot;: &amp;quot;redirect&amp;quot;
+}
+}
+}
+],
+&amp;quot;outbound&amp;quot;: {
+&amp;quot;protocol&amp;quot;: &amp;quot;vmess&amp;quot;,
+&amp;quot;settings&amp;quot;: {
+&amp;quot;vnext&amp;quot;: [
+{
+// 你的服务器ip
+&amp;quot;address&amp;quot;: &amp;quot;xxx.xxx.xxx.xxx&amp;quot;,
+&amp;quot;port&amp;quot;: 443, // 服务器端口
+&amp;quot;users&amp;quot;: [
+{
+//你得id
+&amp;quot;id&amp;quot;: &amp;quot;xxxx&amp;quot;,
+&amp;quot;alterId&amp;quot;: 64,
+&amp;quot;security&amp;quot;: &amp;quot;aes-128-gcm&amp;quot;
+}
+]
+}
+]
+},
+&amp;quot;streamSettings&amp;quot;:{
+&amp;quot;network&amp;quot;: &amp;quot;ws&amp;quot;,
+&amp;quot;security&amp;quot;: &amp;quot;tls&amp;quot;,
+&amp;quot;tlsSettings&amp;quot;: {
+&amp;quot;serverName&amp;quot;: &amp;quot;www.example.com&amp;quot; //修改你的tls 域名&amp;quot;
+},
+&amp;quot;wsSettings&amp;quot;: {
+&amp;quot;path&amp;quot;: &amp;quot;/v2ray“ //修改你的路径
+},
+&amp;quot;sockopt&amp;quot;: {
+&amp;quot;mark&amp;quot;: 255 //这里是 SO_MARK，用于 iptables 识别，每个 outbound 都要配置；255可以改成其他数值，但要与下面的 iptables 规则对应；如果有多个 outbound，最好奖所有 outbound 的 SO_MARK 都设置成一样的数值
+}
+},
+&amp;quot;tag&amp;quot;: &amp;quot;forgin&amp;quot;
+},
+&amp;quot;outboundDetour&amp;quot;: [
+{
+&amp;quot;protocol&amp;quot;: &amp;quot;freedom&amp;quot;,
+&amp;quot;settings&amp;quot;: {},
+//这里一定要修改，否则国内流量不能出去
+&amp;quot;streamSettings&amp;quot;: {
+&amp;quot;sockopt&amp;quot;: {
+&amp;quot;mark&amp;quot;: 255
+}
+},
+&amp;quot;tag&amp;quot;: &amp;quot;direct&amp;quot;
+}
+],
+&amp;quot;dns&amp;quot;: {
+&amp;quot;servers&amp;quot;: [
+&amp;quot;localhost&amp;quot; //使用系统的dns
+]
+},
+&amp;quot;routing&amp;quot;: {
+&amp;quot;strategy&amp;quot;: &amp;quot;rules&amp;quot;,
+&amp;quot;settings&amp;quot;: {
+&amp;quot;domainStrategy&amp;quot;: &amp;quot;IPIfNonMatch&amp;quot;,
+&amp;quot;rules&amp;quot;: [
+{
+&amp;quot;type&amp;quot;: &amp;quot;field&amp;quot;,
+&amp;quot;ip&amp;quot;: [
+&amp;quot;0.0.0.0/8&amp;quot;,
+&amp;quot;10.0.0.0/8&amp;quot;,
+&amp;quot;100.64.0.0/10&amp;quot;,
+&amp;quot;127.0.0.0/8&amp;quot;,
+&amp;quot;169.254.0.0/16&amp;quot;,
+&amp;quot;172.16.0.0/12&amp;quot;,
+&amp;quot;192.0.0.0/24&amp;quot;,
+&amp;quot;192.0.2.0/24&amp;quot;,
+&amp;quot;192.168.0.0/16&amp;quot;,
+&amp;quot;198.18.0.0/15&amp;quot;,
+&amp;quot;198.51.100.0/24&amp;quot;,
+&amp;quot;203.0.113.0/24&amp;quot;,
+&amp;quot;::1/128&amp;quot;,
+&amp;quot;fc00::/7&amp;quot;,
+&amp;quot;fe80::/10&amp;quot;
+],
+&amp;quot;outboundTag&amp;quot;: &amp;quot;direct&amp;quot;
+},
+{
+&amp;quot;type&amp;quot;: &amp;quot;chinasites&amp;quot;,
+&amp;quot;outboundTag&amp;quot;: &amp;quot;direct&amp;quot;
+},
+{
+&amp;quot;type&amp;quot;: &amp;quot;chinaip&amp;quot;,
+&amp;quot;outboundTag&amp;quot;: &amp;quot;direct&amp;quot;
+}
+]
+}
+}
+&lt;/code>&lt;/pre>
+&lt;h3 id="3-修改iptables">3 修改iptables&lt;/h3>
+&lt;p>命令：&lt;/p>
+&lt;pre>&lt;code>iptables -t nat -N V2RAY # V2RAY config.json
+iptables -t nat -A V2RAY -d 192.168.0.0/16 -j RETURN # config.json 192.168.0.0/16
+iptables -t nat -A V2RAY -p tcp -j RETURN -m mark --mark 0xff
+#你自己的服务器地址，修改xxx.xxx.xxx.xxx为你得服务器地址
+iptables -t nat -A V2RAY -d xxx.xxx.xxx.xxx -j RETURN
+#由于dns使用了doh tls，因此允许tls 853端口通过
+iptables -t nat -A V2RAY -p tcp -m tcp --dport 853 -j RETURN
+iptables -t nat -A V2RAY -d 0.0.0.0/8 -j RETURN
+iptables -t nat -A V2RAY -d 10.0.0.0/8 -j RETURN
+iptables -t nat -A V2RAY -d 127.0.0.0/8 -j RETURN
+iptables -t nat -A V2RAY -d 169.254.0.0/16 -j RETURN
+iptables -t nat -A V2RAY -d 172.16.0.0/12 -j RETURN
+iptables -t nat -A V2RAY -d 192.168.0.0/16 -j RETURN
+iptables -t nat -A V2RAY -d 224.0.0.0/4 -j RETURN
+iptables -t nat -A V2RAY -d 240.0.0.0/4 -j RETURN
+#把所有tcp流量都发给12345端口
+iptables -t nat -A V2RAY -p tcp -j REDIRECT --to-ports 12345
+#激活命令
+iptables -t nat -A PREROUTING -p tcp -j V2RAY
+iptables -t nat -A OUTPUT -p tcp -j V2RAY
+&lt;/code>&lt;/pre>
+&lt;h3 id="4-保存配置">4 保存配置&lt;/h3>
+&lt;p>把上面的命令写到 /config/scripts/post-config.d/update_iptables，这样重启路由器之后，可以自动更新。&lt;/p>
+&lt;p>需要说明的是，如果以前配置了gfwlist，需要注释掉原来的配置 /config/scripts/post-config.d/update_iptables这几句&lt;/p>
+&lt;pre>&lt;code>注释掉这几句。
+#ipset -N gfwlist iphash
+#iptables -t nat -A PREROUTING -p tcp -m set --match-set gfwlist dst -j REDIRECT --to-port 1080
+#iptables -t nat -A OUTPUT -p tcp -m set --match-set gfwlist dst -j REDIRECT --to-port 1080
+&lt;/code>&lt;/pre>
+&lt;p>如果原来有gfwlist配置，用下面命令删除&lt;/p>
+&lt;pre>&lt;code>iptables -t nat -D PREROUTING -p tcp -m set --match-set gfwlist dst -j REDIRECT --to-port 1080
+iptables -t nat -D OUTPUT -p tcp -m set --match-set gfwlist dst -j REDIRECT --to-port 1080
+&lt;/code>&lt;/pre>
+&lt;p>记得随时用下面的命令查看数据&lt;/p>
+&lt;pre>&lt;code>iptables -t nat -L -nvx
+&lt;/code>&lt;/pre>
+&lt;h3 id="参考文章">参考文章&lt;/h3>
+&lt;p>&lt;a href="https://xdays.me/V2RAY%E9%80%8F%E6%98%8E%E4%BB%A3%E7%90%86/" target="_blank" rel="noopener">V2RAY透明代理 | xdays&lt;/a>
+&lt;/p>
+&lt;p>&lt;a href="https://www.v2ray.com/en/configuration/protocols/dokodemo.html" target="_blank" rel="noopener">Dokodemo · Project V Official&lt;/a>
+&lt;/p>
+&lt;p>&lt;a href="https://toutyrater.github.io/app/transparent_proxy.html" target="_blank" rel="noopener">透明代理(REDIRECT) · V2Ray 配置指南|V2Ray 白话文教程&lt;/a>
+&lt;/p></description></item><item><title>使用UBNT ER-X路由器的一些总结</title><link>/post/using-ubnt-erx-router/</link><pubDate>Mon, 13 Feb 2017 00:00:00 +0000</pubDate><guid>/post/using-ubnt-erx-router/</guid><description>&lt;p>以前是用wndr4300，加载openwrt，完成科学上网的任务。然而，长期使用下来，存在几个问题：&lt;/p>
+&lt;pre>&lt;code>1 访问国外网站太慢，由于丢包太多，导致看视频的速率只有几百kbps，根本无法看。
+2 流量大的时候，路由器CPU使用率会升的很高，导致无线网络故障。
+&lt;/code>&lt;/pre>
+&lt;p>经过一段时间的搜索，终于发现了路由神器ubnt的ER-X，价格也很便宜，更关键的是，完全运行linux debian，需要什么功能，apt-get出手立即搞定，而且二层交换纯硬件转发，ip转发速率达到130Kbps，对于家用来说完全满足。京东下单后，第二天就到货，实际大小相当于一个巴掌。这么小的硬件，这么强大的功能和性能，真当得起神器二字。&lt;/p>
+&lt;h4 id="1-er-x基本设置">1 ER-X基本设置。&lt;/h4>
+&lt;p>步骤如下：&lt;/p>
+&lt;p>1 有物理网口的计算机一部，网线一根&lt;/p>
+&lt;p>2 计算机物理端口配置静态ip地址，192.168.1.X，X可以2到254任意配置。&lt;/p>
+&lt;p>3 路由器上电，通过eth0端口连接网线到计算机的网络接口&lt;/p>
+&lt;p>4 在计算机上ping 192.168.1.1，收到应到后，表示网络已经OK。&lt;/p>
+&lt;p>5 通过浏览器访问192.168.1.1，系统会提示证书不可用。在mac 上，safari点击高级，选择信任证书，出现登录窗口。用户名和密码都是ubnt，进入web管理界面&lt;/p>
+&lt;p>6 在最右侧的wizards标签上，左边的列表选择WAN+2LAN2,然后在右边的内容处，选择你的上网方式，我是DHCP，最关键是设定lan地址，设定为192.168.8.1（为了避免和上行的电信接入路由器冲突），掩码为255.255.255.0，选择Enable the DHCP server.见下图。
+&lt;img src="https://coding.net/u/mike163/p/mike163/git/raw/coding-pages/images/erx-basic-config.png" alt="">
+然后点击最下面的apply按钮，保存配置。 同时重启路由器（关掉电源再插上）&lt;/p>
+&lt;p>7 修改计算机的物理网口的ip地址方式为dhcp，同时把网线从路由器的eth0端口拔出插入到剩下eth1-4的任何一个端口。&lt;/p>
+&lt;p>8 在计算机上ping 192.168.8.1地址，等ping命令有了正常应答，就可以通过web浏览器再次访问192.168.8.1，重新进入管理界面。也可以通过ssh &lt;a href="mailto:ubnt@192.168.8.1">ubnt@192.168.8.1&lt;/a>
+命令，通过命令行访问路由器。&lt;/p>
+&lt;p>9 把路由器的eth0网口和接入路由器端口通过网线链接。在计算机上ping &lt;a href="https://www.baidu.com" target="_blank" rel="noopener">www.baidu.com&lt;/a>
+，等ping命令有响应后，此时基本配置已经OK。&lt;/p>
+&lt;p>10 把旧的无线路由器的上行网口，通过网线连接erx路由器的eth1-4任意一个端口。 之后可以通过旧路由器的无线网络，访问互联网了。&lt;/p>
+&lt;!-- more -->
+&lt;h4 id="2-固件版本升级">2 固件版本升级&lt;/h4>
+&lt;p>web界面失败，通过cli处理。核心要点在于先把固件文件拷贝到/tmp目录下。&lt;/p>
+&lt;p>参考：&lt;/p>
+&lt;p>&lt;a href="https://help.ubnt.com/hc/en-us/articles/205146110-EdgeRouter-Upgrading-EdgeOS-firmware" target="_blank" rel="noopener">EdgeRouter - Upgrading EdgeOS firmware&lt;/a>
+&lt;/p>
+&lt;p>&lt;a href="https://community.ubnt.com/t5/EdgeMAX/EdgeMax-Firmware-Upgrade-Not-enough-disk-space-for-root-file/td-p/1533512" target="_blank" rel="noopener">Solved: EdgeMax Firmware Upgrade - Not enough disk space for root file system&lt;/a>
+&lt;/p>
+&lt;h4 id="3-常用命令">3 常用命令&lt;/h4>
+&lt;p>show dhcp leases 检查IP地址分配情况&lt;/p>
+&lt;p>设置debian源&lt;/p>
+&lt;pre>&lt;code>configure
+set system package repository wheezy components 'main contrib non-free'
+set system package repository wheezy distribution wheezy
+set system package repository wheezy url http://http.us.debian.org/debian
+commit
+save
+exit
+&lt;/code>&lt;/pre>
+&lt;h4 id="4-ssr-配置参考">4 SSR 配置参考&lt;/h4>
+&lt;p>主要参考链接：&lt;a href="http://bbs.ubnt.com.cn/forum.php?mod=viewthread&amp;amp;tid=16879&amp;amp;page=1" target="_blank" rel="noopener">ER-X $$集成包&lt;/a>
+。但集成包的一个问题就是把所有未识别的ip流量都走了ss，建议修改为只把墙掉的流量改成走ss即可。&lt;/p>
+&lt;p>1 /config/scripts/post-config.d/update_iptables 脚本修改如下：&lt;/p>
+&lt;pre>&lt;code>#！/bin/bash
+cp -f /home/ubnt/dnsmasq/dnsmasq.conf /etc/dnsmasq.conf
+/etc/init.d/dnsmasq restart
+ipset -N gfwlist iphash
+iptables -t nat -A PREROUTING -p tcp -m set --match-set gfwlist dst -j REDIRECT --to-port 1080
+iptables -t nat -A OUTPUT -p tcp -m set --match-set gfwlist dst -j REDIRECT --to-port 1080
+alias l='ls -l'
+&lt;/code>&lt;/pre>
+&lt;p>2 /home/ubnt/dnsmasq/dnsmasq.conf 增加下面的内容：&lt;/p>
+&lt;pre>&lt;code>server=127.0.0.1#5353 # 使用chinadns作为dns服务
+server=/trailers.apple.com/180.153.225.136 # 苹果atv3使用
+conf-dir=/etc/dnsmasq.d #增加包含目录
+&lt;/code>&lt;/pre>
+&lt;p>3 修改 /etc/dnsmasq.conf ，在最后加入 conf-dir=/etc/dnsmasq.d ，新建并进入目录 /etc/dnsmasq.d ，下载&lt;a href="http://pan.baidu.com/s/1qWDVbfY" target="_blank" rel="noopener">dnsmasq_list.conf&lt;/a>
+后放入该目录&lt;/p>
+&lt;p>附：&lt;a href="https://github.com/cokebar/gfwlist2dnsmasq" target="_blank" rel="noopener">自动生成dnsmasq_list.conf 的脚本&lt;/a>
+&lt;/p></description></item></channel></rss>

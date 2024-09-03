@@ -6,4 +6,72 @@
 &lt;p>主要是修改vmx文件,增加一句:&lt;/p>
 &lt;pre>&lt;code>firmware=&amp;quot;efi&amp;quot;
 &lt;/code>&lt;/pre>
-&lt;p>有了这句，虚拟机才能用efi方式启动. 否则后面grub安装不到efi去.&lt;/p></description></item></channel></rss>
+&lt;p>有了这句，虚拟机才能用efi方式启动. 否则后面grub安装不到efi去.&lt;/p>
+&lt;h3 id="12-第一次ip地址分配使用下载的iso文件启动">1.2 第一次ip地址分配(使用下载的iso文件启动)&lt;/h3>
+&lt;pre>&lt;code>第一次iso文件启动之后,需要启动sshd服务,才能分配到ip地址.
+rc-service sshd start
+使用ip a命令,查看得到的ip地址,
+nano /etc/ssh/sshd_config文件,增加
+PermitRootLogin yes
+然后重启 sshd
+rc-service sshd restart
+&lt;/code>&lt;/pre>
+&lt;h3 id="13-第二次ip地址分配systemd">1.3 第二次ip地址分配(systemd)&lt;/h3>
+&lt;pre>&lt;code>设定systemid,必须执行,否则后面网络起不来
+systemd-machine-id-setup
+编辑主机名字
+/etc/hostname
+创建dhcp配置文件
+/etc/systemd/network/50-dhcp.network
+[Match]
+Name=en*
+[Network]
+DHCP=yes
+//如果是静态ip
+[Match]
+Name=enp1s0
+[Network]
+Address=192.168.1.10/24
+Gateway=192.168.1.1
+DNS=192.168.1.1
+//启动网络服务
+systemctl enable systemd-networkd.service
+systemctl start systemd-networkd.service
+&lt;/code>&lt;/pre>
+&lt;h3 id="14-安装二进制核心包不编译核心">1.4 安装二进制核心包,不编译核心&lt;/h3>
+&lt;p>因为gentoo编译内核很慢,因此第一次安装直接用 二进制格式,不编译.执行下面的命令&lt;/p>
+&lt;pre>&lt;code>emerge --ask sys-kernel/gentoo-kernel-bin
+如果是新手,强烈建议不要编译内核.非常耗时间,而且可能启动失败.先用标准二进制包启动系统,后面有时间再慢慢编译内核.
+&lt;/code>&lt;/pre>
+&lt;h2 id="2-编译内核">2 编译内核&lt;/h2>
+&lt;pre>&lt;code>使用二进制内核启动之后,有时间可以自行编译内核了.需要首先安装内核源代码
+emerge --ask sys-kernel/gentoo-sources
+//得到一个缺省配置
+make defconfig
+//得到一个当前全部正确的模块的核心配置参数
+make localmodconfig
+//核心模块全部编译到内核,推荐使用
+make localyesconfig
+&lt;/code>&lt;/pre>
+&lt;p>然后按照这篇文章 &lt;a href="https://segmentfault.com/a/1190000021830333" target="_blank" rel="noopener">Gentoo虚拟机安装教程&lt;/a>
+，修改内核参数，保存.config&lt;/p>
+&lt;pre>&lt;code> //注意这里把systemd选上.缺省没有.是rc init
+make menuconfig
+//清除上次编译的中间结果
+make clean
+make
+make modules_install
+make install
+//检查一下 /boot目录下是否有编译好的内核
+//把initramfs放进目录
+genkernel --kernel-config=/usr/src/linux/.config initramfs
+//重新生成grub菜单
+grub-mkconfig -o /boot/grub/grub.cfg
+//用这个工具,保存系统当前所有的模块数据
+/usr/bin/modprobed-db store
+//这个命令恢复.然后就一直执行make localmodconfig
+/usr/bin/modprobed-db recall
+&lt;/code>&lt;/pre>
+&lt;h2 id="3-参考文档">3 参考文档&lt;/h2>
+&lt;p>&lt;a href="https://zhuanlan.zhihu.com/p/164910411" target="_blank" rel="noopener">知乎医学生学习gentoo&lt;/a>
+&lt;/p></description></item></channel></rss>

@@ -6,4 +6,21 @@ rails importmap:install
 rails turbo:install stimulus:install
 rails tailwindcss:install
 rails s -b 0.0.0.0 -p 4000 在4000端口上，启动rails.
-&lt;/code>&lt;/pre></description></item></channel></rss>
+&lt;/code>&lt;/pre>
+&lt;h3 id="12-创建model和daily_records-控制器和模型">1.2 创建model和daily_records 控制器和模型。&lt;/h3>
+&lt;p>因为打算使用现有的数据库，因此只创建控制器，模型，不创建数据库。&lt;/p>
+&lt;pre>&lt;code>vi config/database.yml 修改这个文件对应的数据库为现有的数据库。
+rails g scaffold market
+rails g model Dailyrecord --skip-migration
+rails g model basicinfo --skip-migration
+rails g model Name --skip-migration
+修改模型的数据库映射关系。
+app/models/dailyrecord.rb
+self.table_name = 'stock_basic_info'
+app/models、market.rb
+self.table_name = 'name'
+app/models/dailyrecord.rb
+self.table_name = 'daily_records'
+&lt;/code>&lt;/pre>
+&lt;h3 id="13-修改market-index-controller">1.3 修改market index controller&lt;/h3>
+&lt;h2 id="添加用户登录">添加用户登录&lt;/h2></description></item></channel></rss>

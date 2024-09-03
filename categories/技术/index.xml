@@ -1,17 +1,407 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>['技术'] on 麦克的茶馆</title><link>/categories/%E6%8A%80%E6%9C%AF/</link><description>Recent content in ['技术'] on 麦克的茶馆</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Sat, 31 Aug 2024 00:00:00 +0000</lastBuildDate><atom:link href="/categories/%E6%8A%80%E6%9C%AF/index.xml" rel="self" type="application/rss+xml"/><item><title>Nginx配置指南：支持多域名HTTPS和代理协议</title><link>/post/config-nginx-detail-case/</link><pubDate>Sat, 31 Aug 2024 00:00:00 +0000</pubDate><guid>/post/config-nginx-detail-case/</guid><description>&lt;h1 id="nginx配置指南支持多域名https和proxy_protocol协议">Nginx配置指南：支持多域名HTTPS和proxy_protocol协议&lt;/h1>
 &lt;p>引言
-在当今的web服务架构中，Nginx作为一个强大的web服务器和反向代理服务器，扮演着至关重要的角色。本文将详细介绍如何配置Nginx以支持多域名HTTPS和代理协议，涵盖了几种常见的场景。我们将从基本的配置开始，逐步深入到更复杂的设置。&lt;/p></description></item><item><title>配置nginx,使用stream 模式,并且传递realip 给server</title><link>/post/config-nginx-stream-realip/</link><pubDate>Fri, 30 Aug 2024 00:00:00 +0000</pubDate><guid>/post/config-nginx-stream-realip/</guid><description>&lt;h1 id="如何配置-nginx-stream-realip-传递并隐藏真实域名">如何配置 Nginx Stream RealIP 传递并隐藏真实域名&lt;/h1>
-&lt;p>在现代的网络架构中，使用 Nginx 作为反向代理服务器是非常常见的。为了增强安全性并隐藏真实的域名，我们可以配置 Nginx 的 real_ip 模块来传递客户端的真实 IP 地址，并通过 SSL/TLS 加密来保护数据传输。本文将详细介绍如何配置 Nginx 来实现这一目标。&lt;/p></description></item><item><title>在Linux下, 路由udp包,选择不同的路由</title><link>/post/route-udp/</link><pubDate>Thu, 23 Nov 2023 00:00:00 +0000</pubDate><guid>/post/route-udp/</guid><description>&lt;h2 id="1-linux路由udp包选择不同的路由">1 linux路由udp包,选择不同的路由&lt;/h2>
+在当今的web服务架构中，Nginx作为一个强大的web服务器和反向代理服务器，扮演着至关重要的角色。本文将详细介绍如何配置Nginx以支持多域名HTTPS和代理协议，涵盖了几种常见的场景。我们将从基本的配置开始，逐步深入到更复杂的设置。&lt;/p>
+&lt;h2 id="场景1多域名https和sni">场景1：多域名HTTPS和SNI&lt;/h2>
+&lt;p>首先，让我们看看如何配置Nginx来支持多个HTTPS域名，并使用SNI（服务器名称指示）将流量路由到不同的后端服务器。&lt;/p>
+&lt;pre>&lt;code>stream {
+log_format basic '$remote_addr [$time_local] '
+'$protocol $status $bytes_sent $bytes_received '
+'$session_time &amp;quot;$upstream_addr&amp;quot; '
+'&amp;quot;$ssl_preread_server_name&amp;quot;';
+access_log /var/log/nginx/stream-access.log basic;
+error_log /var/log/nginx/stream-error.log;
+map $ssl_preread_server_name $backend_name {
+example1.com backend1;
+example2.com backend2;
+default backend_default;
+}
+upstream backend1 {
+server 192.168.1.10:443;
+}
+upstream backend2 {
+server 192.168.1.20:443;
+}
+upstream backend_default {
+server 192.168.1.30:443;
+}
+server {
+listen 443;
+proxy_pass $backend_name;
+ssl_preread on;
+proxy_protocol on;
+}
+&lt;/code>&lt;/pre>
+&lt;p>}
+这个配置的主要特点：&lt;/p>
+&lt;p>使用stream模块处理TCP流量。
+定义自定义日志格式，包含SNI信息。
+使用map指令根据SNI选择后端服务器。
+配置多个上游服务器组。
+在服务器块中启用SSL预读和代理协议。&lt;/p>
+&lt;h2 id="场景2后端nginx-https服务器配置">场景2：后端Nginx HTTPS服务器配置&lt;/h2>
+&lt;p>当后端服务器也使用Nginx时，我们需要配置它来处理HTTPS请求并支持代理协议。以下是一个示例配置：&lt;/p>
+&lt;pre>&lt;code>http {
+log_format main '$remote_addr - $remote_user [$time_local] &amp;quot;$request&amp;quot; '
+'$status $body_bytes_sent &amp;quot;$http_referer&amp;quot; '
+'&amp;quot;$http_user_agent&amp;quot; &amp;quot;$http_x_forwarded_for&amp;quot;';
+access_log /var/log/nginx/access.log main;
+error_log /var/log/nginx/error.log;
+set_real_ip_from 192.168.1.0/24;
+real_ip_header proxy_protocol;
+server {
+listen 443 ssl proxy_protocol;
+server_name example1.com;
+ssl_certificate /path/to/your/fullchain.pem;
+ssl_certificate_key /path/to/your/privkey.pem;
+ssl_protocols TLSv1.2 TLSv1.3;
+ssl_prefer_server_ciphers on;
+ssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384;
+add_header Strict-Transport-Security &amp;quot;max-age=31536000; includeSubDomains&amp;quot; always;
+add_header X-Frame-Options DENY;
+add_header X-Content-Type-Options nosniff;
+add_header X-XSS-Protection &amp;quot;1; mode=block&amp;quot;;
+root /var/www/example1.com;
+index index.html index.htm;
+location / {
+try_files $uri $uri/ =404;
+}
+}
+&lt;/code>&lt;/pre>
+&lt;p>}
+这个配置的主要特点：&lt;/p>
+&lt;p>启用代理协议以获取真实客户端IP。
+配置SSL证书和安全选项。
+添加安全相关的HTTP头。
+设置网站根目录和默认文件。&lt;/p>
+&lt;h2 id="场景3后端http服务代理">场景3：后端HTTP服务代理&lt;/h2>
+&lt;p>有时，后端服务可能运行在HTTP上，而我们希望在前端提供HTTPS。以下是如何配置Nginx作为SSL终止代理：&lt;/p>
+&lt;pre>&lt;code>http {
+# ... 之前的日志和IP配置 ...
+upstream backend {
+server 127.0.0.1:8200;
+}
+server {
+listen 443 ssl proxy_protocol;
+server_name example1.com;
+# ... SSL配置和安全头部 ...
+location / {
+proxy_pass http://backend;
+proxy_set_header Host $host;
+proxy_set_header X-Real-IP $remote_addr;
+proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+proxy_set_header X-Forwarded-Proto $scheme;
+}
+}
+&lt;/code>&lt;/pre>
+&lt;p>}
+这个配置将HTTPS请求转发到本地运行的HTTP服务，同时保留客户端信息。&lt;/p>
+&lt;h2 id="场景4处理不支持代理协议的后端https服务">场景4：处理不支持代理协议的后端HTTPS服务&lt;/h2>
+&lt;p>最后，让我们看看如何处理前端使用代理协议，但后端HTTPS服务不支持代理协议的情况：&lt;/p>
+&lt;pre>&lt;code>stream {
+# ... 之前的日志配置 ...
+upstream backend_with_proxy_protocol {
+server 127.0.0.1:8443;
+}
+upstream real_backend {
+server 192.168.1.10:443;
+}
+server {
+listen 443;
+proxy_pass backend_with_proxy_protocol;
+ssl_preread on;
+proxy_protocol on;
+}
+server {
+listen 8443 proxy_protocol;
+proxy_pass real_backend;
+}
+&lt;/code>&lt;/pre>
+&lt;p>}
+这个配置创建了一个中间层，它接收带有代理协议的连接，然后将纯HTTPS流量转发给后端服务。&lt;/p>
+&lt;h2 id="结论">结论&lt;/h2>
+&lt;p>通过这些配置示例，我们展示了Nginx在处理HTTPS流量、支持多域名、使用代理协议以及作为SSL终止代理方面的灵活性。根据您的具体需求，您可以混合和匹配这些配置来创建适合您的架构的设置。&lt;/p>
+&lt;p>记住，在应用这些配置时，始终要根据您的实际环境调整IP地址、域名和证书路径。此外，定期更新Nginx和SSL证书，并关注最新的安全最佳实践，以确保您的服务器配置始终安全和高效。&lt;/p></description></item><item><title>配置nginx,使用stream 模式,并且传递realip 给server</title><link>/post/config-nginx-stream-realip/</link><pubDate>Fri, 30 Aug 2024 00:00:00 +0000</pubDate><guid>/post/config-nginx-stream-realip/</guid><description>&lt;h1 id="如何配置-nginx-stream-realip-传递并隐藏真实域名">如何配置 Nginx Stream RealIP 传递并隐藏真实域名&lt;/h1>
+&lt;p>在现代的网络架构中，使用 Nginx 作为反向代理服务器是非常常见的。为了增强安全性并隐藏真实的域名，我们可以配置 Nginx 的 real_ip 模块来传递客户端的真实 IP 地址，并通过 SSL/TLS 加密来保护数据传输。本文将详细介绍如何配置 Nginx 来实现这一目标。&lt;/p>
+&lt;h2 id="stream部分配置概述">stream部分配置概述&lt;/h2>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-nginx" data-lang="nginx">&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a2f;font-weight:bold">stream&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#080;font-style:italic"># 这里就是 SNI 识别，将域名映射成一个配置名
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#080;font-style:italic">&lt;/span> &lt;span style="color:#a2f;font-weight:bold">map&lt;/span> &lt;span style="color:#b8860b">$ssl_preread_server_name&lt;/span> &lt;span style="color:#b8860b">$backend_name&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a2f;font-weight:bold">domain1.example.com&lt;/span> 127.0.0.1:&lt;span style="color:#666">8888&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#080;font-style:italic">#这个服务本机提供
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#080;font-style:italic">&lt;/span> &lt;span style="color:#a2f;font-weight:bold">domain2.example.com&lt;/span> 127.0.0.1:&lt;span style="color:#666">8890&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a2f;font-weight:bold">default&lt;/span> &lt;span style="color:#b44">naive&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#080;font-style:italic"># 监听 443 并开启 ssl_preread
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#080;font-style:italic">&lt;/span> &lt;span style="color:#a2f;font-weight:bold">server&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a2f;font-weight:bold">listen&lt;/span> &lt;span style="color:#666">443&lt;/span> &lt;span style="color:#b44">reuseport&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#080;font-style:italic"># listen [::]:443 reuseport;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#080;font-style:italic">&lt;/span> &lt;span style="color:#a2f;font-weight:bold">proxy_pass&lt;/span> &lt;span style="color:#b8860b">$backend_name&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a2f;font-weight:bold">proxy_protocol&lt;/span> &lt;span style="color:#800">on&lt;/span>;&lt;span style="color:#080;font-style:italic"># send ip info to http server
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#080;font-style:italic">&lt;/span> &lt;span style="color:#a2f;font-weight:bold">ssl_preread&lt;/span> &lt;span style="color:#800">on&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#080;font-style:italic"># 这里的SNI不需要自己处理,之间转发给8889端口上的服务处理,,相当于把 443端口的服务,转发到8889服务
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#080;font-style:italic">&lt;/span> &lt;span style="color:#a2f;font-weight:bold">server&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a2f;font-weight:bold">listen&lt;/span> &lt;span style="color:#666">8888&lt;/span> &lt;span style="color:#b44">proxy_protocol&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a2f;font-weight:bold">proxy_pass&lt;/span> 127.0.0.1:&lt;span style="color:#666">8889&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>##配置本机服务,终结ssl,并且使用用户的真实ip&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-nginx" data-lang="nginx">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a2f;font-weight:bold">http&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a2f;font-weight:bold">set_real_ip_from&lt;/span> &lt;span style="color:#666">127&lt;/span>&lt;span style="color:#b44">.0.0.1/32&lt;/span>; &lt;span style="color:#080;font-style:italic"># 前端 Nginx 的 IP 范围
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#080;font-style:italic">&lt;/span> &lt;span style="color:#a2f;font-weight:bold">real_ip_header&lt;/span> &lt;span style="color:#b44">proxy_protocol&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a2f;font-weight:bold">server&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a2f;font-weight:bold">listen&lt;/span> &lt;span style="color:#666">8890&lt;/span> &lt;span style="color:#b44">ssl&lt;/span> &lt;span style="color:#b44">http2&lt;/span> &lt;span style="color:#b44">proxy_protocol&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a2f;font-weight:bold">listen&lt;/span> &lt;span style="color:#b44">[::]:8890&lt;/span> &lt;span style="color:#b44">ssl&lt;/span> &lt;span style="color:#b44">http2&lt;/span> &lt;span style="color:#b44">proxy_protocol&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a2f;font-weight:bold">server_name&lt;/span> &lt;span style="color:#b44">domain2.example.com&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#080;font-style:italic">#改成你的ssl证书路径
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#080;font-style:italic">&lt;/span> &lt;span style="color:#a2f;font-weight:bold">ssl_certificate&lt;/span> &lt;span style="color:#b44">/path/to/fullchain.pem&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a2f;font-weight:bold">ssl_certificate_key&lt;/span> &lt;span style="color:#b44">/path/to/privkey.pem&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a2f;font-weight:bold">ssl_protocols&lt;/span> &lt;span style="color:#b44">TLSv1.2&lt;/span> &lt;span style="color:#b44">TLSv1.3&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a2f;font-weight:bold">location&lt;/span> &lt;span style="color:#b44">/&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#080;font-style:italic"># 假设真实服务在8200端口
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#080;font-style:italic">&lt;/span> &lt;span style="color:#a2f;font-weight:bold">proxy_pass&lt;/span> &lt;span style="color:#b44">http://localhost:8200&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a2f;font-weight:bold">proxy_set_header&lt;/span> &lt;span style="color:#b44">Host&lt;/span> &lt;span style="color:#b8860b">$host&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a2f;font-weight:bold">proxy_set_header&lt;/span> &lt;span style="color:#b44">X-Real-IP&lt;/span> &lt;span style="color:#b8860b">$remote_addr&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a2f;font-weight:bold">proxy_set_header&lt;/span> &lt;span style="color:#b44">X-Forwarded-For&lt;/span> &lt;span style="color:#b8860b">$proxy_add_x_forwarded_for&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a2f;font-weight:bold">proxy_set_header&lt;/span> &lt;span style="color:#b44">X-Forwarded-Proto&lt;/span> &lt;span style="color:#b8860b">$scheme&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>##总结
+通过以上配置，我们可以实现以下目标：&lt;/p>
+&lt;ul>
+&lt;li>使用 ssl_preread 和 proxy_protocol 在 HTTPS 连接中传递客户端的真实 IP 地址。&lt;/li>
+&lt;li>配置 real_ip 模块以正确识别客户端的真实 IP 地址。&lt;/li>
+&lt;li>使用 SSL/TLS 加密来保护数据传输，并隐藏真实的域名。&lt;/li>
+&lt;li>通过这些步骤，您可以确保 Nginx 能够安全地传递客户端的真实 IP 地址，并隐藏真实的域名，从而提高系统的安全性和隐私保护。&lt;/li>
+&lt;/ul></description></item><item><title>在Linux下, 路由udp包,选择不同的路由</title><link>/post/route-udp/</link><pubDate>Thu, 23 Nov 2023 00:00:00 +0000</pubDate><guid>/post/route-udp/</guid><description>&lt;h2 id="1-linux路由udp包选择不同的路由">1 linux路由udp包,选择不同的路由&lt;/h2>
 &lt;h3 id="11-背景">1.1 背景&lt;/h3>
-&lt;p>linux启用tun接口后, 例如启动 tun2sock, 系统会把所有的包,默认转发到 tun设备上. 但有些tun设备,只能处理tcp连接,无法处理udp,这种情况下,需要把 udp包路由到系统原来的网络接口上.&lt;/p></description></item><item><title>在centos 8安装wireguard</title><link>/post/install-wireguard/</link><pubDate>Tue, 21 Nov 2023 00:00:00 +0000</pubDate><guid>/post/install-wireguard/</guid><description>&lt;h2 id="1-在centos-8安装wireguard">1 在centos 8安装wireguard&lt;/h2>
+&lt;p>linux启用tun接口后, 例如启动 tun2sock, 系统会把所有的包,默认转发到 tun设备上. 但有些tun设备,只能处理tcp连接,无法处理udp,这种情况下,需要把 udp包路由到系统原来的网络接口上.&lt;/p>
+&lt;h3 id="12-配置命令">1.2 配置命令&lt;/h3>
+&lt;pre>&lt;code>在rt_tables中,增加一个 udp_table表项目
+#sudo echo &amp;quot;200 udp_table&amp;quot; &amp;gt;&amp;gt; /etc/iproute2/rt_tables
+把udp协议都是用udp_table路由
+#sudo ip rule add ipproto UDP table udp_table
+假设 192.168.5.1 和 ens33 是原来的以太网设备接口 ip ,把缺省路由添加到udp_table
+#sudo ip route add default via 192.168.5.1 dev ens33 table udp_table
+&lt;/code>&lt;/pre>
+&lt;p>执行下面的命令,检查结果&lt;/p>
+&lt;pre>&lt;code>#p route show table udp_table
+default via 192.168.5.1 dev ens33
+#ip rule show table udp_table
+9498: from all ipproto udp lookup udp_table
+&lt;/code>&lt;/pre>
+&lt;p>测试一下&lt;/p>
+&lt;pre>&lt;code> #ip route get 223.5.5.5
+223.5.5.5 via 192.168.5.1 dev ens33 table udp_table src 192.168.5.239 uid 1000
+cache
+&lt;/code>&lt;/pre>
+&lt;h2 id="2-google-voice-and-wifi-call支持">2 google voice and wifi call支持&lt;/h2>
+&lt;p>在路由器上增加路由, 注意这里的 route_ip,需要能够真正到达 目的IP.&lt;/p>
+&lt;pre>&lt;code>#for ultra mobile wifi call
+route add -net 208.54.4.0/24 gw router_ip
+route add -net 208.54.39.0/24 gw router_ip
+#for google voice call
+route add -net 74.125.0.0/16 gw router_ip
+&lt;/code>&lt;/pre></description></item><item><title>在centos 8安装wireguard</title><link>/post/install-wireguard/</link><pubDate>Tue, 21 Nov 2023 00:00:00 +0000</pubDate><guid>/post/install-wireguard/</guid><description>&lt;h2 id="1-在centos-8安装wireguard">1 在centos 8安装wireguard&lt;/h2>
 &lt;h3 id="11-安装kmod-wireguard-wireguard-tools">1.1 安装kmod-wireguard wireguard-tools&lt;/h3>
 &lt;p>最简单的办法就是使用 ELRepo的仓库安装. 其他方法比较复杂不推荐.&lt;/p>
 &lt;pre>&lt;code>sudo yum install elrepo-release epel-release
 sudo yum install kmod-wireguard wireguard-tools
-&lt;/code>&lt;/pre></description></item><item><title>在openwrt上启动ipv6</title><link>/post/ipv6-on-openwrt/</link><pubDate>Sun, 19 Nov 2023 00:00:00 +0000</pubDate><guid>/post/ipv6-on-openwrt/</guid><description>&lt;h2 id="1-在openwrt启动ipv6">1 在openwrt启动ipv6&lt;/h2>
+&lt;/code>&lt;/pre>
+&lt;p>安装完成后,检查wireguard 模块是否正常工作.&lt;/p>
+&lt;pre>&lt;code>#modprobe wireguard
+#lsmod | grep wireguard
+wireguard 212992 0
+ip6_udp_tunnel 16384 1 wireguard
+udp_tunnel 20480 1 wireguard
+&lt;/code>&lt;/pre>
+&lt;p>启用ip转发功能&lt;/p>
+&lt;pre>&lt;code>#sudo vi /etc/sysctl.conf
+增加一句:
+net.ipv4.ip_forward=1
+#sudo sysctl -p
+&lt;/code>&lt;/pre>
+&lt;h3 id="12-配置服务器端">1.2 配置服务器端&lt;/h3>
+&lt;p>生成密匙. 下面的命令,在 /et/wireguard/目录下,生成 privatekey 和 publickey两个密匙&lt;/p>
+&lt;pre>&lt;code>wg genkey | sudo tee /etc/wireguard/privatekey | wg pubkey | sudo tee /etc/wireguard/publickey
+&lt;/code>&lt;/pre>
+&lt;p>创建 /etc/wireguard/wg0.conf 文件,可以配置多个客户端&lt;/p>
+&lt;pre>&lt;code>[Interface]
+Address = 192.168.10.1/24
+ListenPort = 服务器端口
+PrivateKey = 服务器生侧使用的 privatekey
+PostUp = iptables -I FORWARD -i wg0 -j ACCEPT
+PostDown = iptables -D FORWARD -i wg0 -j ACCEPT
+[Peer]
+PublicKey = 第一个客户端到的publickey
+AllowedIPs = 192.168.10.2/32
+[Peer]
+PublicKey = 第二个客户端到的publickey
+AllowedIPs = 192.168.10.3/32
+....
+&lt;/code>&lt;/pre>
+&lt;p>如果使用iptables.service打开服务器监听端口&lt;/p>
+&lt;pre>&lt;code>sudo iptables -I INPUT -p udp -m udp --dport server_listen_port -j ACCEPT
+&lt;/code>&lt;/pre>
+&lt;p>如果使用firewalld,对应命令为:&lt;/p>
+&lt;pre>&lt;code>sudo firewall-cmd --zone=public --add-port=port/udp
+&lt;/code>&lt;/pre>
+&lt;p>为了保证私钥的安全，请将wg0.conf和privatekey文件对普通用户不可读。&lt;/p>
+&lt;pre>&lt;code>sudo chmod 600 /etc/wireguard/privatekey
+sudo chmod 600 /etc/wireguard/wg0.conf
+&lt;/code>&lt;/pre>
+&lt;h3 id="13-配置客户端">1.3 配置客户端&lt;/h3>
+&lt;p>生成密匙. 下面的命令,在 /et/wireguard/目录下,生成 privatekey 和 publickey两个密匙&lt;/p>
+&lt;pre>&lt;code>wg genkey | sudo tee /etc/wireguard/privatekey | wg pubkey | sudo tee /etc/wireguard/publickey
+&lt;/code>&lt;/pre>
+&lt;p>创建 /etc/wireguard/wg0.conf 文件&lt;/p>
+&lt;pre>&lt;code>[Interface]
+Address = 192.168.10.2/24
+PrivateKey = 客户端 privatekey
+[Peer]
+PublicKey = 服务器的publickey
+Endpoint = 服务器的ip:port #这个端口和服务器的监听端口一致.
+AllowedIPs = 192.168.10.0/24
+&lt;/code>&lt;/pre>
+&lt;h3 id="14-调试和启动">1.4 调试和启动&lt;/h3>
+&lt;p>在服务区和客户端上,都执行&lt;/p>
+&lt;pre>&lt;code> sudo wg-quick up wg0
+用 sudo wg show wg0 命令,查看状态
+&lt;/code>&lt;/pre>
+&lt;p>服务器的命令结果:&lt;/p>
+&lt;pre>&lt;code>interface: wg0
+public key: I5kyw3VgcYe0E9U9qdfsfsdL+/FT6I1gV70Q1ng=
+private key: (hidden)
+listening port: xxxx
+peer: Rp7Gus0jhjpaTAHUNiphksdfsdfc/OCLOd3XpNxSYSAY=
+endpoint: client1_ip:51448
+allowed ips: 192.168.10.2/32
+latest handshake: 2 hours, 47 minutes, 44 seconds ago
+transfer: 103.87 KiB received, 759.56 KiB sent
+peer: e6Omxk8D66xZAfasdfgi9HJpTrt64tXwm9zgYE8/1goV0=
+endpoint: client2_ip:46428
+allowed ips: 192.168.10.3/32
+latest handshake: 3 hours, 10 minutes, 24 seconds ago
+transfer: 1.55 KiB received, 1.46 KiB sent
+&lt;/code>&lt;/pre>
+&lt;p>客户端查询结果&lt;/p>
+&lt;pre>&lt;code>interface: wg0
+public key: e6Omxk8D66xZAfasdfgi9HJpTrt64tXwm9zgYE8/1goV0 =
+private key: (hidden)
+listening port: xxxx
+peer: I5kyw3VgcYe0E9U9qdfsfsdL+/FT6I1gV70Q1ng=
+endpoint: server_ip:xxxx
+allowed ips: 192.168.10.0/24
+latest handshake: 3 hours, 14 minutes, 7 seconds ago
+transfer: 27.35 KiB received, 39.61 KiB sent
+&lt;/code>&lt;/pre>
+&lt;p>如果没有数据,可以 在客户端 ping 192.168.10.1 这个服务器地址,测试通不通.&lt;/p>
+&lt;p>一切顺利后,使用下面的命令,开机启动 wireguard&lt;/p>
+&lt;pre>&lt;code>sudo systemctl enable wg-quick@wg0
+&lt;/code>&lt;/pre>
+&lt;p>另外一种启动和停止wireguard服务的命令为 (代替 sudo wg-quick up wg0是一次性命令)&lt;/p>
+&lt;pre>&lt;code>sudo systemctl start wg-quick@wg0
+sudo systemctl stop wg-quick@wg0
+sudo systemctl restart wg-quick@wg0
+&lt;/code>&lt;/pre>
+&lt;h3 id="15-参考文档">1.5 参考文档&lt;/h3>
+&lt;p>1 &lt;a href="https://www.myfreax.com/how-to-set-up-wireguard-vpn-on-centos-8/" target="_blank" rel="noopener">如何在CentOS 8安装WireGuard VPN&lt;/a>
+&lt;/p>
+&lt;p>2 &lt;a href="https://www.cnblogs.com/milton/p/14178344.html" target="_blank" rel="noopener">Wireguard笔记(一) 节点安装配置和参数说明&lt;/a>
+&lt;/p>
+&lt;p>3 &lt;a href="https://www.llmgo.cn/post/wireguard-docs-practice/" target="_blank" rel="noopener">WireGuard 的搭建使用与配置详解&lt;/a>
+&lt;/p></description></item><item><title>在openwrt上启动ipv6</title><link>/post/ipv6-on-openwrt/</link><pubDate>Sun, 19 Nov 2023 00:00:00 +0000</pubDate><guid>/post/ipv6-on-openwrt/</guid><description>&lt;h2 id="1-在openwrt启动ipv6">1 在openwrt启动ipv6&lt;/h2>
 &lt;h3 id="11-启动openwrt-ipv6">1.1 启动openwrt ipv6&lt;/h3>
 &lt;p>为什么要使用ipv6,主要是国内的一些服务,例如iptv电视,现在提供了ipv6的映射,为了方便使用.
-关键点在于,不要启动openwrt本身的dhcp ipv6,而是使用中继的方式,直接把运营商分配的ipv6地址,再下发给内网的每个设备. openwrt只作为ipv6的中介设备. 本身不分配ipv6地址.&lt;/p></description></item><item><title>centos 8安装postgresql 数据库</title><link>/post/install-postgresql/</link><pubDate>Tue, 14 Nov 2023 00:00:00 +0000</pubDate><guid>/post/install-postgresql/</guid><description>&lt;h2 id="1-安装记录">1 安装记录&lt;/h2>
+关键点在于,不要启动openwrt本身的dhcp ipv6,而是使用中继的方式,直接把运营商分配的ipv6地址,再下发给内网的每个设备. openwrt只作为ipv6的中介设备. 本身不分配ipv6地址.&lt;/p>
+&lt;p>###具体操作.&lt;/p>
+&lt;p>直接修改 /etc/config/dhcp (修改前做好备份,万一有问题可以恢复)&lt;/p>
+&lt;pre>&lt;code>cd /etc/config/
+cp dhcp dhcp.ipv6
+vi dhcp
+#在 lan这段下面,增加三个 option
+config dhcp 'lan'
+...
+option ra 'relay'
+option dhcpv6 'relay'
+option ndp 'relay'
+#在 wan6这段下面,增加三个option
+config dhcp 'wan6'
+option interface 'wan6'
+option ra 'relay'
+option dhcpv6 'relay'
+option ndp 'relay'
+option master '1'
+&lt;/code>&lt;/pre>
+&lt;p>执行odhcpd,重新启动 dhcp&lt;/p>
+&lt;pre>&lt;code> /etc/init.d/odhcpd restart
+&lt;/code>&lt;/pre>
+&lt;p>然后让内网设备重新加入网络,如果是wifi设备,关闭wifi再打开,就能看到 每个设备分配到ipv6地址了.这时候一些基于ipv6的业务就能正常运行了.&lt;/p>
+&lt;p>访问 &lt;a href="https://testipv6.cn/" target="_blank" rel="noopener">https://testipv6.cn/&lt;/a>
+看看是不是可以访问.&lt;/p>
+&lt;h3 id="12-解决访问-外网的问题">1.2 解决访问 外网的问题&lt;/h3>
+&lt;p>主要是ipv6地址,如果不禁用,就无法访问外网. 因此,最好在clash dns设置中, “允许IPV6类型DNS解析” 这项关闭.不要选中.&lt;/p>
+&lt;p>另外一个比较重要的是 模式设置中, “禁用 quic协议”. 因为 youtube chrome缺省都会启动 quic,入股启动就会导致网络连接失败.&lt;/p>
+&lt;pre>&lt;code>在clash配置文件中,增加下面的段落.
+script:
+shortcuts:
+quic: network == 'udp' and dst_port == 443
+rules:
+#user rules
+- SCRIPT,quic,REJECT
+&lt;/code>&lt;/pre>
+&lt;h3 id="13-chatgpt访问问题">1.3 chatgpt访问问题.&lt;/h3>
+&lt;p>修改配置文件,增加下面的域名:&lt;/p>
+&lt;pre>&lt;code>- name: Chatgpt
+type: &amp;quot;select&amp;quot;
+interval: 600
+url: &amp;quot;http://www.gstatic.cn/generate_204&amp;quot;
+proxies:
+- proxy name which could valid access chatgpt
+rules:
+# openai
+- DOMAIN-SUFFIX,openai.com,Chatgpt
+- DOMAIN-SUFFIX,platform.openai.com,Chatgpt
+- DOMAIN-SUFFIX,pay.openai.com,Chatgpt
+- DOMAIN-SUFFIX,chat.openai.com,Chatgpt
+- DOMAIN-SUFFIX,sentry.io,Chatgpt
+- DOMAIN-SUFFIX,stripe.com,Chatgpt
+- DOMAIN-SUFFIX,auth0.com,Chatgpt
+- DOMAIN-SUFFIX,auth0.openai.com,Chatgpt
+- DOMAIN-SUFFIX,invoice.stripe.com,Chatgpt
+- DOMAIN-SUFFIX,ai.com,Chatgpt
+- DOMAIN-SUFFIX,cdn.oaistatic.com,Chatgpt
+- DOMAIN-SUFFIX,cdn.openai.com,Chatgpt
+- DOMAIN-SUFFIX,cdn.auth0.com,Chatgpt
+- DOMAIN-SUFFIX,events.statsigapi.net,Chatgpt
+- DOMAIN-SUFFIX,featuregates.org,Chatgpt
+- DOMAIN-SUFFIX,passwordsleakcheck-pa.googleapis.com,Chatgpt
+- DOMAIN-SUFFIX,content-autofill.googleapis.com,Chatgpt
+- DOMAIN-SUFFIX,js.intercomcdn.com,Chatgpt
+- DOMAIN-SUFFIX,clientservices.googleapis.com,Chatgpt
+- DOMAIN-SUFFIX,api.getkoala.com,Chatgpt
+- DOMAIN-SUFFIX,api.knock.app,Chatgpt
+- DOMAIN-SUFFIX,googleapis.com,Chatgpt
+- DOMAIN-SUFFIX,clients4.google.com,Chatgpt
+- DOMAIN-SUFFIX,intercom.io,Chatgpt
+- DOMAIN-SUFFIX,config.immersivetranslate.com,Chatgpt
+- DOMAIN-SUFFIX,google.com,Chatgpt
+- DOMAIN-SUFFIX,googleusercontent.com,Chatgpt
+- DOMAIN-SUFFIX,i0.wp.com,Chatgpt
+&lt;/code>&lt;/pre></description></item><item><title>centos 8安装postgresql 数据库</title><link>/post/install-postgresql/</link><pubDate>Tue, 14 Nov 2023 00:00:00 +0000</pubDate><guid>/post/install-postgresql/</guid><description>&lt;h2 id="1-安装记录">1 安装记录&lt;/h2>
 &lt;h3 id="11-安装">1.1 安装&lt;/h3>
 &lt;p>依次执行下面的命令&lt;/p>
 &lt;pre>&lt;code>dnf module list postgresql
@@ -20,7 +410,172 @@ sudo dnf install postgresql-server
 sudo postgresql-setup --initdb
 sudo systemctl start postgresql
 sudo systemctl enable postgresql
-&lt;/code>&lt;/pre></description></item><item><title>centos 8启用nginx stream ssl preread module</title><link>/post/nginx-stream-preread-enable/</link><pubDate>Mon, 13 Nov 2023 00:00:00 +0000</pubDate><guid>/post/nginx-stream-preread-enable/</guid><description>&lt;p>目标: 为了让nginx服务器,根据不同的域名,转发到不同的app服务器. tls并不终结在nginx,而是转发到最终的app服务器.&lt;/p></description></item><item><title>rails 7 使用 hotwire turbo-rails tailwind css访问现有的数据库</title><link>/post/create-rails-tailwind-hotwire/</link><pubDate>Tue, 30 May 2023 00:00:00 +0000</pubDate><guid>/post/create-rails-tailwind-hotwire/</guid><description>&lt;h2 id="1-安装-rails-7">1 安装 rails 7&lt;/h2>
+&lt;/code>&lt;/pre>
+&lt;h3 id="12-创建用户">1.2 创建用户&lt;/h3>
+&lt;pre>&lt;code> sudo -u postgres psql -c &amp;quot;SELECT version();&amp;quot;
+输出:
+PostgreSQL 13.5 on x86_64-redhat-linux-gnu, compiled by gcc (GCC) 8.5.0 20210514 (Red Hat 8.5.0-4), 64-bit
+创建用户
+sudo -u postgres createuser --interactive
+&lt;/code>&lt;/pre>
+&lt;p>登陆后修改用户密码
+sudo -i -u postgres
+psql&lt;/p>
+&lt;pre>&lt;code>postgres=# 输入 \password 用户名 ,改用户密码
+&lt;/code>&lt;/pre>
+&lt;h3 id="13-创建数据库">1.3 创建数据库&lt;/h3>
+&lt;p>在 项目 config/database.yml 配置好数据库的基本参数后:&lt;/p>
+&lt;pre>&lt;code>default: &amp;amp;default
+adapter: postgresql
+encoding: unicode
+pool: &amp;lt;%= ENV.fetch(&amp;quot;RAILS_MAX_THREADS&amp;quot;) { 5 } %&amp;gt;
+timeout: 5000
+username: username
+password: PASSWORD
+development:
+&amp;lt;&amp;lt;: *default
+database: stock_dev_db
+&lt;/code>&lt;/pre>
+&lt;p>执行rails db:create 创建数据库&lt;/p>
+&lt;h3 id="14-进入数据库">1.4 进入数据库&lt;/h3>
+&lt;pre>&lt;code>执行
+psql -d stock_dev_db 进入数据库
+执行,创建数据库的表格
+psql -d stock_dev_db -f db/create_postdb.sql
+&lt;/code>&lt;/pre>
+&lt;h3 id="15-把sqlite数据导入到postgresql数据中">1.5 把sqlite数据导入到postgresql数据中.&lt;/h3>
+&lt;p>首先要修改一下sqlite的数据库&lt;/p>
+&lt;pre>&lt;code>UPDATE stock_basic_info set code = 'hk' || code where market = 'HK';
+CREATE INDEX idx_code ON daily_records(code);
+sqlite3 db_daily.db &amp;lt; update-sa-sqlite-database-format.sql
+&lt;/code>&lt;/pre>
+&lt;h3 id="16-备份postgresql数据库">1.6 备份postgresql数据库&lt;/h3>
+&lt;pre>&lt;code>备份数据库
+pg_dump stock_dev_db &amp;gt; db115.sql
+恢复数据库
+psql -d stock_dev_db -f db115.sql
+&lt;/code>&lt;/pre></description></item><item><title>centos 8启用nginx stream ssl preread module</title><link>/post/nginx-stream-preread-enable/</link><pubDate>Mon, 13 Nov 2023 00:00:00 +0000</pubDate><guid>/post/nginx-stream-preread-enable/</guid><description>&lt;p>目标: 为了让nginx服务器,根据不同的域名,转发到不同的app服务器. tls并不终结在nginx,而是转发到最终的app服务器.&lt;/p>
+&lt;p>在centos 8上,运行&lt;/p>
+&lt;pre>&lt;code>#nginx -V
+结果:
+nginx version: nginx/1.14.1
+built by gcc 8.5.0 20210514 (Red Hat 8.5.0-3) (GCC)
+built with OpenSSL 1.1.1k FIPS 25 Mar 2021
+TLS SNI support enabled
+configure arguments: --prefix=/usr/share/nginx --sbin-path=/usr/sbin/nginx --modules-path=/usr/lib64/nginx/modules --conf-path=/etc/nginx/nginx.conf \
+--error-log-path=/var/log/nginx/error.log --http-log-path=/var/log/nginx/access.log --http-client-body-temp-path=/var/lib/nginx/tmp/client_body \
+--http-proxy-temp-path=/var/lib/nginx/tmp/proxy --http-fastcgi-temp-path=/var/lib/nginx/tmp/fastcgi \
+--http-uwsgi-temp-path=/var/lib/nginx/tmp/uwsgi --http-scgi-temp-path=/var/lib/nginx/tmp/scgi --pid-path=/run/nginx.pid --lock-path=/run/lock/subsys/nginx \
+--user=nginx --group=nginx --with-file-aio --with-ipv6 --with-http_ssl_module \
+--with-http_v2_module --with-http_realip_module --with-http_addition_module --with-http_xslt_module=dynamic --with-http_image_filter_module=dynamic \
+--with-http_sub_module --with-http_dav_module --with-http_flv_module --with-http_mp4_module --with-http_gunzip_module --with-http_gzip_static_module \
+--with-http_random_index_module --with-http_secure_link_module --with-http_degradation_module --with-http_slice_module --with-http_stub_status_module \
+--with-http_perl_module=dynamic --with-http_auth_request_module --with-mail=dynamic --with-mail_ssl_module --with-pcre --with-pcre-jit --with-stream=dynamic \
+--with-stream_ssl_module --with-debug --with-cc-opt='-O2 -g -pipe -Wall -Werror=format-security -Wp,\
+-D_FORTIFY_SOURCE=2 -Wp,-D_GLIBCXX_ASSERTIONS -fexceptions -fstack-protector-strong -grecord-gcc-switches \
+-specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1 -m64 -mtune=generic \
+-fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection' --with-ld-opt='-Wl,-z,relro -Wl,-z,now -specs=/usr/lib/rpm/redhat/redhat-hardened-ld -Wl,-E
+&lt;/code>&lt;/pre>
+&lt;p>这里面,主要是看有没有 &amp;ldquo;&amp;ndash;with-stream_ssl_preread_module&amp;rdquo; 这个参数,没有这个参数,nginx没法提前从流里面得到域名,也就无法转发,需要重新编译nginx&lt;/p>
+&lt;h2 id="1-重新编译nginx">1 重新编译nginx&lt;/h2>
+&lt;h3 id="11-下载nginx的源码">1.1 下载nginx的源码.&lt;/h3>
+&lt;p>为了最小改动,选择1.14.2版本&lt;/p>
+&lt;pre>&lt;code>wget https://nginx.org/download/nginx-1.14.2.tar.gz
+tar zxvf nginx-1.14.2.tar.gz
+cd nginx-1.14.2
+&lt;/code>&lt;/pre>
+&lt;h3 id="12-安装编译环境以及需要的包">1.2 安装编译环境,以及需要的包.&lt;/h3>
+&lt;pre>&lt;code>sudo yum -y groupinstall &amp;quot;Development Tools&amp;quot;
+sudo yum -y install libxslt-devel
+sudo yum -y install gd gd-devel
+sudo yum -y install pcre-devel
+sudo yum -y install perl-ExtUtils-Embed
+&lt;/code>&lt;/pre>
+&lt;h3 id="13-编译nginx">1.3 编译nginx&lt;/h3>
+&lt;pre>&lt;code>/configure --prefix=/usr/share/nginx --sbin-path=/usr/sbin/nginx --modules-path=/usr/lib64/nginx/modules --conf-path=/etc/nginx/nginx.conf \
+--error-log-path=/var/log/nginx/error.log --http-log-path=/var/log/nginx/access.log --http-client-body-temp-path=/var/lib/nginx/tmp/client_body --http-proxy-temp-path=/var/lib/nginx/tmp/proxy \
+--http-fastcgi-temp-path=/var/lib/nginx/tmp/fastcgi --http-uwsgi-temp-path=/var/lib/nginx/tmp/uwsgi --http-scgi-temp-path=/var/lib/nginx/tmp/scgi --pid-path=/run/nginx.pid \
+--lock-path=/run/lock/subsys/nginx --user=nginx --group=nginx --with-file-aio --with-ipv6 --with-http_ssl_module --with-http_v2_module --with-http_realip_module --with-http_addition_module \
+--with-http_xslt_module=dynamic --with-http_image_filter_module=dynamic --with-http_sub_module --with-http_dav_module --with-http_flv_module --with-http_mp4_module --with-http_gunzip_module\
+--with-http_gzip_static_module --with-http_random_index_module --with-http_secure_link_module --with-http_degradation_module --with-http_slice_module --with-http_stub_status_module \
+--with-stream_ssl_preread_module --with-http_perl_module=dynamic --with-http_auth_request_module --with-mail=dynamic \
+--with-mail_ssl_module --with-pcre --with-pcre-jit --with-stream=dynamic --with-stream_ssl_module --with-debug \
+--with-cc-opt='-O2 -g -pipe -Wall -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -Wp,-D_GLIBCXX_ASSERTIONS -fexceptions -fstack-protector-strong -grecord-gcc-switches\
+-specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1 -m64 \
+-mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection' \
+--with-ld-opt='-Wl,-z,relro -Wl,-z,now -specs=/usr/lib/rpm/redhat/redhat-hardened-ld -Wl,-E'
+成功之后
+make
+成功之后,先删掉原来的nginx
+sudo yum remove nginx
+安装新编译好的nginx
+sudo make install
+&lt;/code>&lt;/pre>
+&lt;h3 id="14-修改配置文件">1.4 修改配置文件&lt;/h3>
+&lt;pre>&lt;code>sudo vi /etc/systemd/system/nginx.service
+内容如下:
+[Unit]
+Description=The nginx HTTP and reverse proxy server
+After=network-online.target remote-fs.target nss-lookup.target
+Wants=network-online.target
+[Service]
+Type=forking
+PIDFile=/run/nginx.pid
+# Nginx will fail to start if /run/nginx.pid already exists but has the wrong
+# SELinux context. This might happen when running `nginx -t` from the cmdline.
+# https://bugzilla.redhat.com/show_bug.cgi?id=1268621
+ExecStartPre=/usr/bin/rm -f /run/nginx.pid
+ExecStartPre=/usr/sbin/nginx -t
+ExecStart=/usr/sbin/nginx
+ExecReload=/usr/sbin/nginx -s reload
+KillSignal=SIGQUIT
+TimeoutStopSec=5
+KillMode=mixed
+PrivateTmp=true
+[Install]
+WantedBy=multi-user.target
+&lt;/code>&lt;/pre>
+&lt;p>然后执行&lt;/p>
+&lt;pre>&lt;code> sudo systemctl daemon-reload
+&lt;/code>&lt;/pre>
+&lt;p>编辑 /etc/nginx/nginx.conf
+在文件第一行,增加&lt;/p>
+&lt;pre>&lt;code>load_module /usr/lib64/nginx/modules/ngx_stream_module.so;
+stream {
+# 这里就是 SNI 识别，将域名映射成一个配置名
+map $ssl_preread_server_name $backend_name {
+www.domain1.com web1;
+www.domain2.com web2;
+# 域名都不匹配情况下的默认值
+default web1;
+}
+# web1，配置转发详情,端口与下面server字段中www.mydomain.com监听端口一致
+upstream web1 {
+server ip:port;
+}
+#
+# web2，配置转发详情,端口与下面server字段中www.mydomain.com监听端口一致
+upstream web2 {
+server ip:port;
+}
+#
+# 监听 443 并开启 ssl_preread
+server {
+listen 443 reuseport;
+# listen [::]:443 reuseport;
+proxy_pass $backend_name;
+ssl_preread on;
+}
+}
+&lt;/code>&lt;/pre>
+&lt;h3 id="15-加载配置文件">1.5 加载配置文件&lt;/h3>
+&lt;pre>&lt;code>sudo systemctl daemon-reload
+sudo sytemctl start nginx
+然后检查启动是否正常
+sudo sytemctl status nginx
+sudo sytemctl enable nginx
+&lt;/code>&lt;/pre>
+&lt;p>访问https://www.domain1.com 看看是否正常.&lt;/p></description></item><item><title>rails 7 使用 hotwire turbo-rails tailwind css访问现有的数据库</title><link>/post/create-rails-tailwind-hotwire/</link><pubDate>Tue, 30 May 2023 00:00:00 +0000</pubDate><guid>/post/create-rails-tailwind-hotwire/</guid><description>&lt;h2 id="1-安装-rails-7">1 安装 rails 7&lt;/h2>
 &lt;p>略。&lt;/p>
 &lt;h3 id="11-安装hotwire-tailwind-css">1.1 安装hotwire tailwind css&lt;/h3>
 &lt;pre>&lt;code>rails new stockquery --css tailwind
@@ -28,13 +583,46 @@ rails importmap:install
 rails turbo:install stimulus:install
 rails tailwindcss:install
 rails s -b 0.0.0.0 -p 4000 在4000端口上，启动rails.
-&lt;/code>&lt;/pre></description></item><item><title>通过cloudflare warp给ipv4 vps添加ipv6</title><link>/post/cloudflare-warp-add-ipv6/</link><pubDate>Fri, 02 Dec 2022 00:00:00 +0000</pubDate><guid>/post/cloudflare-warp-add-ipv6/</guid><description>&lt;h2 id="1-安装wireguard">1 安装wireguard&lt;/h2>
+&lt;/code>&lt;/pre>
+&lt;h3 id="12-创建model和daily_records-控制器和模型">1.2 创建model和daily_records 控制器和模型。&lt;/h3>
+&lt;p>因为打算使用现有的数据库，因此只创建控制器，模型，不创建数据库。&lt;/p>
+&lt;pre>&lt;code>vi config/database.yml 修改这个文件对应的数据库为现有的数据库。
+rails g scaffold market
+rails g model Dailyrecord --skip-migration
+rails g model basicinfo --skip-migration
+rails g model Name --skip-migration
+修改模型的数据库映射关系。
+app/models/dailyrecord.rb
+self.table_name = 'stock_basic_info'
+app/models、market.rb
+self.table_name = 'name'
+app/models/dailyrecord.rb
+self.table_name = 'daily_records'
+&lt;/code>&lt;/pre>
+&lt;h3 id="13-修改market-index-controller">1.3 修改market index controller&lt;/h3>
+&lt;h2 id="添加用户登录">添加用户登录&lt;/h2></description></item><item><title>通过cloudflare warp给ipv4 vps添加ipv6</title><link>/post/cloudflare-warp-add-ipv6/</link><pubDate>Fri, 02 Dec 2022 00:00:00 +0000</pubDate><guid>/post/cloudflare-warp-add-ipv6/</guid><description>&lt;h2 id="1-安装wireguard">1 安装wireguard&lt;/h2>
 &lt;p>主要流程参考了 &lt;a href="https://p3terx.com/archives/use-cloudflare-warp-to-add-extra-ipv4-or-ipv6-network-support-to-vps-servers-for-free.html" target="_blank" rel="noopener">Cloudflare WARP 给 Linux VPS 云服务器添加原生 IPv4/IPv6 双栈网络&lt;/a>
 &lt;/p>
 &lt;h3 id="11-centos-7安装-wireguard">1.1 centos 7安装 wireguard&lt;/h3>
 &lt;pre>&lt;code>$ sudo yum install epel-release elrepo-release
 $ sudo yum install yum-plugin-elrepo
 $ sudo yum install kmod-wireguard wireguard-tools
+&lt;/code>&lt;/pre>
+&lt;h3 id="12-申请cloudflare-warp">1.2 申请cloudflare warp&lt;/h3>
+&lt;p>下载wgcf最新版本&lt;/p>
+&lt;pre>&lt;code> wget https://github.com/ViRb3/wgcf/releases/download/v2.2.15/wgcf_2.2.15_linux_386
+&lt;/code>&lt;/pre>
+&lt;p>注册新用户&lt;/p>
+&lt;pre>&lt;code> ./wgcf_2.2.15_linux_386 register
+&lt;/code>&lt;/pre>
+&lt;p>生成wireguard配置&lt;/p>
+&lt;pre>&lt;code>./wgcf_2.2.15_linux_386 generate
+&lt;/code>&lt;/pre>
+&lt;p>将配置文件中的 engage.cloudflareclient.com 替换为 162.159.192.1，并删除 AllowedIPs = 0.0.0.0/0。即配置文件中 [Peer] 部分为：&lt;/p>
+&lt;pre>&lt;code>[Peer]
+PublicKey = bmXOC+F1FxEMF9dyiK2H5/1SUtzH0JuVo51h2wPfgyo=
+AllowedIPs = ::/0
+Endpoint = 162.159.192.1:2408
 &lt;/code>&lt;/pre></description></item><item><title>在vmware虚拟机安装gentoo linux,使用systemd方案</title><link>/post/gentoo-linux-install/</link><pubDate>Sat, 08 Oct 2022 00:00:00 +0000</pubDate><guid>/post/gentoo-linux-install/</guid><description>&lt;h2 id="1-步骤记录">1 步骤记录&lt;/h2>
 &lt;p>主要流程参考了 &lt;a href="https://segmentfault.com/a/1190000021830333" target="_blank" rel="noopener">Gentoo虚拟机安装教程&lt;/a>
 &lt;/p>
@@ -43,8 +631,1433 @@ $ sudo yum install kmod-wireguard wireguard-tools
 &lt;p>主要是修改vmx文件,增加一句:&lt;/p>
 &lt;pre>&lt;code>firmware=&amp;quot;efi&amp;quot;
 &lt;/code>&lt;/pre>
-&lt;p>有了这句，虚拟机才能用efi方式启动. 否则后面grub安装不到efi去.&lt;/p></description></item><item><title>优化tcp性能</title><link>/post/tcp-performance-tune/</link><pubDate>Thu, 15 Sep 2022 00:00:00 +0000</pubDate><guid>/post/tcp-performance-tune/</guid><description>&lt;h3 id="1-目标">1 目标&lt;/h3>
+&lt;p>有了这句，虚拟机才能用efi方式启动. 否则后面grub安装不到efi去.&lt;/p>
+&lt;h3 id="12-第一次ip地址分配使用下载的iso文件启动">1.2 第一次ip地址分配(使用下载的iso文件启动)&lt;/h3>
+&lt;pre>&lt;code>第一次iso文件启动之后,需要启动sshd服务,才能分配到ip地址.
+rc-service sshd start
+使用ip a命令,查看得到的ip地址,
+nano /etc/ssh/sshd_config文件,增加
+PermitRootLogin yes
+然后重启 sshd
+rc-service sshd restart
+&lt;/code>&lt;/pre>
+&lt;h3 id="13-第二次ip地址分配systemd">1.3 第二次ip地址分配(systemd)&lt;/h3>
+&lt;pre>&lt;code>设定systemid,必须执行,否则后面网络起不来
+systemd-machine-id-setup
+编辑主机名字
+/etc/hostname
+创建dhcp配置文件
+/etc/systemd/network/50-dhcp.network
+[Match]
+Name=en*
+[Network]
+DHCP=yes
+//如果是静态ip
+[Match]
+Name=enp1s0
+[Network]
+Address=192.168.1.10/24
+Gateway=192.168.1.1
+DNS=192.168.1.1
+//启动网络服务
+systemctl enable systemd-networkd.service
+systemctl start systemd-networkd.service
+&lt;/code>&lt;/pre>
+&lt;h3 id="14-安装二进制核心包不编译核心">1.4 安装二进制核心包,不编译核心&lt;/h3>
+&lt;p>因为gentoo编译内核很慢,因此第一次安装直接用 二进制格式,不编译.执行下面的命令&lt;/p>
+&lt;pre>&lt;code>emerge --ask sys-kernel/gentoo-kernel-bin
+如果是新手,强烈建议不要编译内核.非常耗时间,而且可能启动失败.先用标准二进制包启动系统,后面有时间再慢慢编译内核.
+&lt;/code>&lt;/pre>
+&lt;h2 id="2-编译内核">2 编译内核&lt;/h2>
+&lt;pre>&lt;code>使用二进制内核启动之后,有时间可以自行编译内核了.需要首先安装内核源代码
+emerge --ask sys-kernel/gentoo-sources
+//得到一个缺省配置
+make defconfig
+//得到一个当前全部正确的模块的核心配置参数
+make localmodconfig
+//核心模块全部编译到内核,推荐使用
+make localyesconfig
+&lt;/code>&lt;/pre>
+&lt;p>然后按照这篇文章 &lt;a href="https://segmentfault.com/a/1190000021830333" target="_blank" rel="noopener">Gentoo虚拟机安装教程&lt;/a>
+，修改内核参数，保存.config&lt;/p>
+&lt;pre>&lt;code> //注意这里把systemd选上.缺省没有.是rc init
+make menuconfig
+//清除上次编译的中间结果
+make clean
+make
+make modules_install
+make install
+//检查一下 /boot目录下是否有编译好的内核
+//把initramfs放进目录
+genkernel --kernel-config=/usr/src/linux/.config initramfs
+//重新生成grub菜单
+grub-mkconfig -o /boot/grub/grub.cfg
+//用这个工具,保存系统当前所有的模块数据
+/usr/bin/modprobed-db store
+//这个命令恢复.然后就一直执行make localmodconfig
+/usr/bin/modprobed-db recall
+&lt;/code>&lt;/pre>
+&lt;h2 id="3-参考文档">3 参考文档&lt;/h2>
+&lt;p>&lt;a href="https://zhuanlan.zhihu.com/p/164910411" target="_blank" rel="noopener">知乎医学生学习gentoo&lt;/a>
+&lt;/p></description></item><item><title>优化tcp性能</title><link>/post/tcp-performance-tune/</link><pubDate>Thu, 15 Sep 2022 00:00:00 +0000</pubDate><guid>/post/tcp-performance-tune/</guid><description>&lt;h3 id="1-目标">1 目标&lt;/h3>
 &lt;p>提高tcp传输速率&lt;/p>
 &lt;p>具体措施&lt;/p>
 &lt;p>修改/etc/sysctl.conf&lt;/p>
-&lt;p>然后执行 sudo sysctl -p 落实.&lt;/p></description></item><item><title>在centos 7配置trojan go</title><link>/post/trojan-go-setup/</link><pubDate>Mon, 12 Sep 2022 00:00:00 +0000</pubDate><guid>/post/trojan-go-setup/</guid><description>1 前置条件 需要一个域名 需要一个 vps，安装好centos 7 或者 8 1 安装nginx sudo yum install -y epel-release sudo yum update -y sudo yum install nginx sudo systemctl start nginx sudo systemctl status nginx 检查nginx 版本</description></item><item><title>启用tcp转发</title><link>/post/enable-tcp-forwarding/</link><pubDate>Fri, 10 Jul 2020 00:00:00 +0000</pubDate><guid>/post/enable-tcp-forwarding/</guid><description>最近的一些技术总结 1 启用TCP 端口转发 服务器需要新增一个ip，记录一下： 打开包转发开关 #sudo sysctl -w net.ipv4.ip_forward=1 net.ipv4.ip_forward = 1 #iptables -A PREROUTING -t nat -i eth0 -p tcp --dport 8080 -j DNAT --to 2.56.184.31:8080 #iptables -t nat -A POSTROUTING</description></item><item><title>Centos 7 增加第二个IP</title><link>/post/add-2nd-ip/</link><pubDate>Wed, 01 Jul 2020 00:00:00 +0000</pubDate><guid>/post/add-2nd-ip/</guid><description>最近的一些技术总结 1 Centos 7 增加第二个ip 服务器需要新增一个ip，记录一下： 检查服务器是否启用了NetworkManager服务 #ls /etc/sysconfig/network-scripts/ifcfg* #grep 'NM_CONTROLLED' /etc/sysconfig/network-scripts/ifcfg-eth0 没找到</description></item><item><title>UBNT ERX dns配置</title><link>/post/setup-coredns-unbt-erx/</link><pubDate>Sat, 18 Jan 2020 00:00:00 +0000</pubDate><guid>/post/setup-coredns-unbt-erx/</guid><description>主要使用了这个项目 https://github.com/mikechen163/dohproxy 1 下载和编译 备注:go版本大于1.13 git clone --depth 1 https://github.com/mikechen163/dohproxy.git cd mikechen163/dohproxy GOOS=linux GOARCH=mipsle go build 2 copy到erx路由器上 scp cn.txt root@erx:/usr/local/bin/ scp block.txt root@erx:/usr/local/bin/ scp dohproxy root@erx:/usr/local/bin/mydns 3 启用mydns</description></item><item><title>UBNT ERX v2ray 配置透明代理</title><link>/post/setup-new-vps/</link><pubDate>Sat, 18 Jan 2020 00:00:00 +0000</pubDate><guid>/post/setup-new-vps/</guid><description>1 安装v2ray 自动安装脚本应该是不行的。因此需要手工操作。还好都已经编译好了。路径 Releases · v2ray/v2ray-core 选择v2ry-linux-mipsle.zip 解压</description></item><item><title>配置v2ray+ws+tls1.3+nginx</title><link>/post/setup-v2ray-ws-tls-nginx/</link><pubDate>Sat, 18 Jan 2020 00:00:00 +0000</pubDate><guid>/post/setup-v2ray-ws-tls-nginx/</guid><description>1 安装nginx sudo yum install nginx sudo systemctl start nginx sudo systemctl status nginx 检查nginx 版本,重点是检查 openssl是否支持1.1.1,只有1.1.1之后的版本,才能支持t</description></item><item><title>使用UBNT ER-X路由器的一些总结</title><link>/post/using-ubnt-erx-router/</link><pubDate>Mon, 13 Feb 2017 00:00:00 +0000</pubDate><guid>/post/using-ubnt-erx-router/</guid><description>以前是用wndr4300，加载openwrt，完成科学上网的任务。然而，长期使用下来，存在几个问题： 1 访问国外网站太慢，由于丢包太多，导致看</description></item><item><title>WNDR4300安装Openwrt，使用shadowsocks配置透明代理,使用chinadns+dnscrypt-proxy处理DNS污染</title><link>/post/openwrt-shadowsocks-chinadns-setup/</link><pubDate>Wed, 12 Aug 2015 00:00:00 +0000</pubDate><guid>/post/openwrt-shadowsocks-chinadns-setup/</guid><description>1 wndr4300刷openwrt固件 wndr4300在openwrt的官方支持列表中，但官方固件可使用空间只有12M，所以需要打一些补丁。</description></item><item><title>Centos 7 ocserv AnyConnect服务器配置说明</title><link>/post/centos_setup_anyconnect/</link><pubDate>Tue, 04 Aug 2015 00:00:00 +0000</pubDate><guid>/post/centos_setup_anyconnect/</guid><description>参考文件 在 CentOS 7 上搭建 Cisco AnyConnect VPN Gentoo编译安装Ocserv上Cisco AnyConnect VPN 折腾笔记：架设OpenConnect Server给iPhone提供</description></item><item><title>MAC OS X下的一些小技巧</title><link>/post/how_to_change_partion_size_for_mac_with_mbr_format/</link><pubDate>Tue, 04 Aug 2015 00:00:00 +0000</pubDate><guid>/post/how_to_change_partion_size_for_mac_with_mbr_format/</guid><description>1 MAC OS X下修改NTFS分区大小 一个移动硬盘，买来后格式为NTFS格式，就一个分区。使用mac磁盘工具，提示分区格式为MBR主引导记录格式，无</description></item><item><title>Centos 7 VPS服务器配置说明</title><link>/post/vps-setup/</link><pubDate>Sat, 01 Aug 2015 00:00:00 +0000</pubDate><guid>/post/vps-setup/</guid><description>vps 配置主要包括 安全、科学上网、应用相关。相关命令以centos 7为基准 1 安全配置 参考文档 Additional Recommended Steps for New CentOS 7 Servers Securing Your Server Linux Security Basics 1.1 添加常用用户 新增一个t</description></item><item><title>ssh攻击辅助分析程序</title><link>/post/2015-06-22-xun-zhao-sshgong-ji-xiu-gai-iptablesjin-xing-ping-bi/</link><pubDate>Mon, 22 Jun 2015 00:00:00 +0000</pubDate><guid>/post/2015-06-22-xun-zhao-sshgong-ji-xiu-gai-iptablesjin-xing-ping-bi/</guid><description>每次登录到系统，使用 netstat -an | grep LIS cd /var/log tail -n 1000 secure | grep Failed 命令，都可以发现很多尝试登录系统的请求。 对于普通的扫描就算了，然而对于某个攻击的ip，会疯狂</description></item><item><title>使用octopress搭建个人博客</title><link>/post/2015-06-22-setup-weblog/</link><pubDate>Mon, 22 Jun 2015 00:00:00 +0000</pubDate><guid>/post/2015-06-22-setup-weblog/</guid><description>1 在本地系统安装octopress系统。具体步骤参考 Mac环境下部署Octopress个人博客到Heroku 2 创建新文章 rake new_post[</description></item><item><title>使用octopress搭建博客记录</title><link>/post/2012-03-21-set-up-octopress/</link><pubDate>Tue, 20 Mar 2012 00:00:00 +0000</pubDate><guid>/post/2012-03-21-set-up-octopress/</guid><description>打算建一个博客站很久了，由于种种原因，一直没有启动。作为技术人员，把博客搭建在新浪、百度上，总感觉不专业，现在有了octopress，又是用</description></item></channel></rss>
+&lt;p>然后执行 sudo sysctl -p 落实.&lt;/p>
+&lt;h3 id="2-具体参数">2 具体参数&lt;/h3>
+&lt;pre>&lt;code># fastopen = 3 ,此时服务器启用 tcp fast open
+net.ipv4.tcp_fastopen = 3
+# socket的最大数目
+net.core.somaxconn=3276
+net.ipv4.tcp_keepalive_time = 900
+net.ipv4.tcp_fin_timeout = 15
+net.ipv4.tcp_max_syn_backlog = 8192
+net.core.netdev_max_backlog =300000
+# 发送最大缓冲区 6M
+net.core.wmem_max = 6291456
+#接受最大缓冲区,设置为2M
+net.core.rmem_max = 2097152
+#单个tcp链接接收, 最小,缺省,最大缓冲区参数
+net.ipv4.tcp_rmem = 10240 262144 2097152
+#单个tcp链接发送, 最小,缺省,最大缓冲区参数
+net.ipv4.tcp_wmem = 10240 524288 6291456
+#打开之后,发送窗口可以大于64k
+net.ipv4.tcp_window_scaling = 1
+net.ipv4.tcp_sack = 1
+然后执行 sudo sysctl -p 落实.
+&lt;/code>&lt;/pre>
+&lt;h3 id="3-参考文档">3 参考文档&lt;/h3>
+&lt;p>&lt;a href="https://www.linode.com/docs/guides/ss/" target="_blank" rel="noopener">Learning to Use the ss Tool to its Full Potential&lt;/a>
+&lt;/p>
+&lt;p>&lt;a href="https://man7.org/linux/man-pages/man8/ss.8.html" target="_blank" rel="noopener">ss(8) — Linux manual page&lt;/a>
+&lt;/p>
+&lt;p>&lt;a href="https://segmentfault.com/a/1190000022275523" target="_blank" rel="noopener">linux查看网络流量&lt;/a>
+&lt;/p></description></item><item><title>在centos 7配置trojan go</title><link>/post/trojan-go-setup/</link><pubDate>Mon, 12 Sep 2022 00:00:00 +0000</pubDate><guid>/post/trojan-go-setup/</guid><description>&lt;h3 id="1-前置条件">1 前置条件&lt;/h3>
+&lt;p>需要一个域名
+需要一个 vps，安装好centos 7 或者 8&lt;/p>
+&lt;h3 id="1-安装nginx">1 安装nginx&lt;/h3>
+&lt;pre>&lt;code>sudo yum install -y epel-release
+sudo yum update -y
+sudo yum install nginx
+sudo systemctl start nginx
+sudo systemctl status nginx
+&lt;/code>&lt;/pre>
+&lt;p>检查nginx 版本,重点是检查 openssl是否支持1.1.1,只有1.1.1之后的版本,才能支持tls1.3&lt;/p>
+&lt;pre>&lt;code> nginx -V
+built by gcc 8.2.1 20180905 (Red Hat 8.2.1-3) (GCC)
+built with OpenSSL 1.1.1 FIPS 11 Sep 2018 (running with OpenSSL 1.1.1c FIPS 28 May 2019)
+TLS SNI support enabled
+&lt;/code>&lt;/pre>
+&lt;h3 id="2-申请证书">2 申请证书&lt;/h3>
+&lt;pre>&lt;code>sudo yum install epel-release
+sudo yum install certbot
+&lt;/code>&lt;/pre>
+&lt;p>打开 80 443 端口&lt;/p>
+&lt;pre>&lt;code>sudo iptables -I INPUT -p tcp -m tcp --dport 443 -j ACCEPT
+sudo iptables -I INPUT -p tcp -m tcp --dport 80 -j ACCEPT
+#保存防火墙配置文件
+sudo service iptables save
+&lt;/code>&lt;/pre>
+&lt;p>申请证书 ,修改email地址 和 域名 参数&lt;/p>
+&lt;pre>&lt;code>#申请证书前，确保nginx工作正常
+sudo systemctl start nginx
+sudo systemctl status nginx
+# 修改下面命令中的， email地址 和 域名
+sudo certbot certonly --webroot --email your_email@xxx -w /usr/share/nginx/html -d xxx.your.site
+&lt;/code>&lt;/pre>
+&lt;p>如果看到&lt;/p>
+&lt;pre>&lt;code>Congratulations! Your certificate and chain have been saved at:
+/etc/letsencrypt/live/xxx.site/fullchain.pem
+Your key file has been saved at:
+/etc/letsencrypt/live/xxx.site/privkey.pem
+说明申请成功了
+&lt;/code>&lt;/pre>
+&lt;!-- more -->
+&lt;p>设定certbot自动更新证书&lt;/p>
+&lt;pre>&lt;code>#执行下面的命令
+SLEEPTIME=$(awk 'BEGIN{srand(); print int(rand()*(3600+1))}'); echo &amp;quot;0 0,12 * * * root sleep $SLEEPTIME &amp;amp;&amp;amp; certbot renew -q&amp;quot; | sudo tee -a /etc/crontab &amp;gt; /dev/null
+#检查/etc/crontab
+sudo cat /etc/crontab
+#如果有下面这句，说明自动更新证明任务已经注册
+0 0,12 * * * root sleep 2380 &amp;amp;&amp;amp; certbot renew -q
+#证书更新完成后，重启nginx和trojan-go
+cd /etc/letsencrypt/renewal-hooks/post
+sudo touch renew_post.sh
+sudo chmod +x renew_post.sh
+#在renew_post.sh文件中，增加
+#!/bin/bash
+nginx -s reload
+#!/bin/bash
+systemctl restart trojan-go
+#测试一下证书更新流程。 如果后面trojian-go失败，不要担心，因为还没有安装，等trojan更新成功后，再执行一遍就行了。
+sudo certbot renew --dry-run
+&lt;/code>&lt;/pre>
+&lt;p>修改/etc/nginx/conf.d/defaul.conf文件 ,注意把所有xxx.site修改为你自己的域名&lt;/p>
+&lt;p>注意端口是4443，因为443留给了trojan-go，这里的4443是trojan-go回落后的端口&lt;/p>
+&lt;pre>&lt;code>server {
+# SSL configuration
+listen 4443 ssl http2 default_server;
+listen [::]:4443 ssl http2 default_server;
+ssl_certificate /etc/letsencrypt/live/Yoursite.com/fullchain.pem;
+ssl_certificate_key /etc/letsencrypt/live/Yoursite.com/privkey.pem;
+ssl_protocols TLSv1.2 TLSv1.3;
+root /usr/share/nginx/html;
+# Add index.php to the list if you are using PHP
+index index.html index.htm index.nginx-debian.html;
+server_name Yoursite.com;
+&lt;/code>&lt;/pre>
+&lt;p>}&lt;/p>
+&lt;p>重启nginx&lt;/p>
+&lt;pre>&lt;code>sudo systemctl restart nginx
+&lt;/code>&lt;/pre>
+&lt;p>如果成功,这时候可以访问https://xxx.site/&lt;/p>
+&lt;h3 id="3-在centos-7上配置trojan-go">3 在centos 7上配置trojan-go&lt;/h3>
+&lt;p>下载trojan-go，并解压&lt;/p>
+&lt;pre>&lt;code>cd
+mkdir trojan-go
+cd trojan-go
+wget https://github.com/p4gefau1t/trojan-go/releases/download/v0.10.6/trojan-go-linux-amd64.zip
+unzip trojan-go-linux-amd64.zip
+sudo mkdir /etc/trojan-go
+sudo cp trojan-go /etc/trojan-go
+sudo cp *.dat /etc/trojan-go
+&lt;/code>&lt;/pre>
+&lt;p>服务器配置文件 /etc/trojan-go/server.json，注意修改yousite.com为你自己的站点域名&lt;/p>
+&lt;pre>&lt;code>{
+&amp;quot;run_type&amp;quot;: &amp;quot;server&amp;quot;,
+&amp;quot;local_addr&amp;quot;: &amp;quot;0.0.0.0&amp;quot;,
+&amp;quot;local_port&amp;quot;: 443,
+&amp;quot;remote_addr&amp;quot;: &amp;quot;127.0.0.1&amp;quot;,
+&amp;quot;remote_port&amp;quot;: 80,
+&amp;quot;password&amp;quot;: [
+&amp;quot;修改为你的密码&amp;quot;
+],
+&amp;quot;ssl&amp;quot;: {
+&amp;quot;cert&amp;quot;: &amp;quot;/etc/letsencrypt/live/Yousite.com/fullchain.pem&amp;quot;,
+&amp;quot;key&amp;quot;: &amp;quot;/etc/letsencrypt/live/Yousite.com/privkey.pem&amp;quot;,
+&amp;quot;sni&amp;quot;: &amp;quot;Yousite.com&amp;quot;,
+&amp;quot;fallback&amp;quot;:&amp;quot;4443&amp;quot; #注意，这里的4443和前面nginx的端口对应。
+},
+&amp;quot;websocket&amp;quot;: {
+&amp;quot;enabled&amp;quot;: true,
+&amp;quot;path&amp;quot;: &amp;quot;/ws_path&amp;quot;,
+&amp;quot;hostname&amp;quot;: &amp;quot;Yousite.com&amp;quot;
+},
+&amp;quot;router&amp;quot;:{
+&amp;quot;enabled&amp;quot;: true,
+&amp;quot;block&amp;quot;: [
+&amp;quot;geoip:private&amp;quot;
+]
+}
+}
+&lt;/code>&lt;/pre>
+&lt;p>建立trojan-go服务&lt;/p>
+&lt;pre>&lt;code> sudo vi /etc/systemd/system/trojan-go.service
+#文件内容如下
+[Unit]
+Description=Trojan-Go - An unidentifiable mechanism that helps you bypass GFW
+Documentation=https://p4gefau1t.github.io/trojan-go/
+After=network.target nss-lookup.target
+[Service]
+Type=simple
+StandardError=journal
+PIDFile=/usr/src/trojan/trojan/trojan.pid
+ExecStart=/etc/trojan-go/trojan-go -config /etc/trojan-go/server.json
+ExecReload=
+ExecStop=/etc/trojan-go/trojan-go
+Restart=on-failure
+RestartSec=10s
+LimitNOFILE=infinity
+[Install]
+WantedBy=multi-user.target
+sudo systemctl daemon-reload
+sudo systemctl start trojan-go
+#检查trojan-go正常运行
+sudo systemctl status trojan-go
+#设置为启动后自动执行
+sudo systemctl enable trojan-go
+sudo systemctl enable nginx
+#此时，再执行一下证书更新测试，应该一切正常了
+sudo certbot renew --dry-run
+&lt;/code>&lt;/pre>
+&lt;h3 id="4-客户端配置trojan-go">4 客户端配置trojan-go&lt;/h3>
+&lt;pre>&lt;code>{
+&amp;quot;run_type&amp;quot;: &amp;quot;client&amp;quot;,
+&amp;quot;local_addr&amp;quot;: &amp;quot;127.0.0.1&amp;quot;,
+&amp;quot;local_port&amp;quot;: 1082,
+&amp;quot;remote_addr&amp;quot;: &amp;quot;yousite.com&amp;quot;,
+&amp;quot;remote_port&amp;quot;: 443,
+&amp;quot;password&amp;quot;: [
+&amp;quot;你的密码&amp;quot;
+],
+&amp;quot;ssl&amp;quot;: {
+&amp;quot;sni&amp;quot;: &amp;quot;yousite.com&amp;quot;
+},
+&amp;quot;mux&amp;quot; :{
+&amp;quot;enabled&amp;quot;: true,
+&amp;quot;concurrency&amp;quot;: 8,
+&amp;quot;idle_timeout&amp;quot;: 60
+},
+&amp;quot;websocket&amp;quot;: {
+#如果想用cdn加速，把下面这行改成true
+&amp;quot;enabled&amp;quot;: false,
+&amp;quot;path&amp;quot;: &amp;quot;/ws_path&amp;quot;,
+&amp;quot;hostname&amp;quot;: &amp;quot;yousite.com&amp;quot;
+},
+&amp;quot;router&amp;quot;:{
+&amp;quot;enabled&amp;quot;: true,
+&amp;quot;bypass&amp;quot;: [
+&amp;quot;geoip:cn&amp;quot;,
+&amp;quot;geoip:private&amp;quot;,
+&amp;quot;geosite:cn&amp;quot;,
+&amp;quot;geosite:geolocation-cn&amp;quot;
+],
+&amp;quot;block&amp;quot;: [
+&amp;quot;geosite:category-ads&amp;quot;
+],
+&amp;quot;proxy&amp;quot;: [
+&amp;quot;geosite:geolocation-!cn&amp;quot;
+],
+&amp;quot;default_policy&amp;quot;: &amp;quot;proxy&amp;quot;
+}
+}
+&lt;/code>&lt;/pre></description></item><item><title>启用tcp转发</title><link>/post/enable-tcp-forwarding/</link><pubDate>Fri, 10 Jul 2020 00:00:00 +0000</pubDate><guid>/post/enable-tcp-forwarding/</guid><description>&lt;p>最近的一些技术总结&lt;/p>
+&lt;h3 id="1-启用tcp-端口转发">1 启用TCP 端口转发&lt;/h3>
+&lt;p>服务器需要新增一个ip，记录一下：&lt;/p>
+&lt;pre>&lt;code>打开包转发开关
+#sudo sysctl -w net.ipv4.ip_forward=1
+net.ipv4.ip_forward = 1
+#iptables -A PREROUTING -t nat -i eth0 -p tcp --dport 8080 -j DNAT --to 2.56.184.31:8080
+#iptables -t nat -A POSTROUTING -d 2.56.184.31 -p tcp --dport 8080 -j SNAT --to 106.52.195.213
+# iptables -A FORWARD -p tcp -d 2.56.184.31 --dport 8080 -j ACCEPT
+&lt;/code>&lt;/pre></description></item><item><title>Centos 7 增加第二个IP</title><link>/post/add-2nd-ip/</link><pubDate>Wed, 01 Jul 2020 00:00:00 +0000</pubDate><guid>/post/add-2nd-ip/</guid><description>&lt;p>最近的一些技术总结&lt;/p>
+&lt;h3 id="1-centos-7-增加第二个ip">1 Centos 7 增加第二个ip&lt;/h3>
+&lt;p>服务器需要新增一个ip，记录一下：&lt;/p>
+&lt;p>检查服务器是否启用了NetworkManager服务&lt;/p>
+&lt;pre>&lt;code>#ls /etc/sysconfig/network-scripts/ifcfg*
+#grep 'NM_CONTROLLED' /etc/sysconfig/network-scripts/ifcfg-eth0
+没找到
+#sudo systemctl -a | grep NetworkManager
+没启用
+not-found inactive dead NetworkManager.service
+#sudo systemctl -a | grep network
+还是旧的方式
+network.service loaded active exited LSB: Bring up/down networking
+&lt;/code>&lt;/pre>
+&lt;p>直接增加一个配置文件：&lt;/p>
+&lt;pre>&lt;code> #sudo vi /etc/sysconfig/network-scripts/ifcfg-eth0:0
+BOOTPROTO=none
+DEVICE=&amp;quot;eth0:0&amp;quot;
+IPADDR=xx.xx.xx.xx #第二个ip地址
+NETMASK=255.255.255.0
+ONBOOT=yes
+&lt;/code>&lt;/pre>
+&lt;p>启用命令：&lt;/p>
+&lt;pre>&lt;code> #sudo ifdown eth0; ifup eth0
+#ifconfig 命令检查新的ip
+eth0:0: flags=4163&amp;lt;UP,BROADCAST,RUNNING,MULTICAST&amp;gt; mtu 1500
+inet xx.xx.xx.xx netmask 255.255.255.0 broadcast xx.xx.xx.255
+&lt;/code>&lt;/pre>
+&lt;p>另外一套体系是ip&lt;/p>
+&lt;pre>&lt;code> #ip addr show 检查ip地址
+#sudo ip addr add xx.xx.xx.xx/24 broadcast xx.xx.xx.255 dev eth0 添加一个新的ip地址，关机就没有了。
+#ip route show 检查路由
+# sudo ip route add 8.8.4.4/32 via xx.xx.xx.xx 添加一个新的路由，
+#ip route get 8.8.8.8 检查到8.8.8.8 的路由
+&lt;/code>&lt;/pre>
+&lt;h3 id="2-在路由器上转发udp端口">2 在路由器上，转发udp端口&lt;/h3>
+&lt;pre>&lt;code>#转发 8.8.8.8的 dns 查询请求到192.168.1.1
+iptables -t nat -A PREROUTING -p udp -d 8.8.8.8 --dport 53 -j DNAT --to 192.168.1.1:53
+&lt;/code>&lt;/pre>
+&lt;h3 id="3-v2ray增加直达的域名">3 v2ray增加直达的域名&lt;/h3>
+&lt;p>客户段配置&lt;/p>
+&lt;pre>&lt;code>&amp;quot;routing&amp;quot;: {
+&amp;quot;domainStrategy&amp;quot;: &amp;quot;IPOnDemand&amp;quot;,
+&amp;quot;rules&amp;quot;:[
+{
+// Blocks access to private IPs. Remove this if you want to access your router.
+&amp;quot;type&amp;quot;: &amp;quot;field&amp;quot;,
+&amp;quot;ip&amp;quot;: [&amp;quot;geoip:private&amp;quot;],
+&amp;quot;outboundTag&amp;quot;: &amp;quot;direct&amp;quot;
+},
+{
+&amp;quot;type&amp;quot;: &amp;quot;field&amp;quot;,
+&amp;quot;ip&amp;quot;: [&amp;quot;geoip:cn&amp;quot;],
+&amp;quot;outboundTag&amp;quot;: &amp;quot;direct&amp;quot;
+},
+{
+&amp;quot;type&amp;quot;: &amp;quot;field&amp;quot;,
+&amp;quot;domain&amp;quot;: [&amp;quot;geosite:cn&amp;quot;,
+&amp;quot;github.com&amp;quot;,
+&amp;quot;apple.com&amp;quot;
+],
+&amp;quot;outboundTag&amp;quot;: &amp;quot;direct&amp;quot;
+},
+&lt;/code>&lt;/pre>
+&lt;h3 id="4-启用cloudflare">4 启用cloudflare&lt;/h3>
+&lt;p>注册用户，属于你的域名，cloudflare会自动识别现有的地址绑定。&lt;/p>
+&lt;p>然后在域名登记的网站，修改域名的解析服务器为 cloudflare的域名服务器。&lt;/p>
+&lt;p>设定 ssl的加密方式为 full(strict)&lt;/p>
+&lt;p>增加一个防火墙规则，识别你的流量，allow。 没有这个，cloudflare可能会限制流量。&lt;/p></description></item><item><title>UBNT ERX dns配置</title><link>/post/setup-coredns-unbt-erx/</link><pubDate>Sat, 18 Jan 2020 00:00:00 +0000</pubDate><guid>/post/setup-coredns-unbt-erx/</guid><description>&lt;p>主要使用了这个项目
+&lt;a href="https://github.com/mikechen163/dohproxy" target="_blank" rel="noopener">https://github.com/mikechen163/dohproxy&lt;/a>
+&lt;/p>
+&lt;h3 id="1-下载和编译">1 下载和编译&lt;/h3>
+&lt;p>备注:go版本大于1.13&lt;/p>
+&lt;pre>&lt;code>git clone --depth 1 https://github.com/mikechen163/dohproxy.git
+cd mikechen163/dohproxy
+GOOS=linux GOARCH=mipsle go build
+&lt;/code>&lt;/pre>
+&lt;h3 id="2-copy到erx路由器上">2 copy到erx路由器上&lt;/h3>
+&lt;pre>&lt;code>scp cn.txt root@erx:/usr/local/bin/
+scp block.txt root@erx:/usr/local/bin/
+scp dohproxy root@erx:/usr/local/bin/mydns
+&lt;/code>&lt;/pre>
+&lt;h3 id="3-启用mydns">3 启用mydns&lt;/h3>
+&lt;p>创建一个/etc/init.d/mydns 文件,前面的内容修改为:&lt;/p>
+&lt;pre>&lt;code> ....
+DESC=mydns
+NAME=mydns
+DAEMON=/usr/local/bin/mydns
+DAEMON_OPTS=&amp;quot;-port 5353 -block /usr/local/bin/block.txt -chn /usr/local/bin/cn.txt
+...
+&lt;/code>&lt;/pre>
+&lt;p>然后/etc/init.d/mydns restart启用服务.&lt;/p>
+&lt;pre>&lt;code> dig @localhost -p 5353 www.google.com
+&lt;/code>&lt;/pre>
+&lt;p>测试是否成功.&lt;/p>
+&lt;p>修改 /etc/dnsmasq.conf ,也可以通过配置实现&lt;/p>
+&lt;pre>&lt;code> server=127.0.0.1#5353 # statically configured
+&lt;/code>&lt;/pre>
+&lt;p>测试是否成功&lt;/p>
+&lt;pre>&lt;code>/etc/init.d/dnsmasq restart
+dig @localhost www.google.com
+&lt;/code>&lt;/pre>
+&lt;h3 id="4-设置开机脚本">4 设置开机脚本&lt;/h3>
+&lt;p>/config/scripts/post-config.d/update_iptables
+增加一行,保证mydns重启之后服务启动&lt;/p>
+&lt;pre>&lt;code>/etc/init.d/mydns restart
+&lt;/code>&lt;/pre></description></item><item><title>UBNT ERX v2ray 配置透明代理</title><link>/post/setup-new-vps/</link><pubDate>Sat, 18 Jan 2020 00:00:00 +0000</pubDate><guid>/post/setup-new-vps/</guid><description>&lt;h3 id="1-安装v2ray">1 安装v2ray&lt;/h3>
+&lt;p>自动安装脚本应该是不行的。因此需要手工操作。还好都已经编译好了。路径
+&lt;a href="https://github.com/v2ray/v2ray-core/releases" target="_blank" rel="noopener">Releases · v2ray/v2ray-core&lt;/a>
+&lt;/p>
+&lt;p>选择v2ry-linux-mipsle.zip 解压后，手工拷贝到路由器的相关目录。假设erx是路由器的hostname&lt;/p>
+&lt;pre>&lt;code>scp v2ray root@erx:/usr/bin/v2ray/v2ray
+scp v2ctl root@erx:/usr/bin/v2ray/v2ctl
+scp geoip.dat root@erx:/usr/bin/v2ray/geoip.dat
+scp geosite.dat root@erx:/usr/bin/v2ray/geosite.dat
+scp config.json root@erx:/etc/v2ray/config.json
+&lt;/code>&lt;/pre>
+&lt;p>修改配置文件，参考本帖。本文的配置是 v2ray+ws+tls+nginx的客户端配置&lt;/p>
+&lt;p>在路由器/etc/init.d目录下，建立v2ray文件,修改内容&lt;/p>
+&lt;pre>&lt;code>...
+DESC=v2ray
+NAME=v2ray
+DAEMON=/usr/bin/v2ray/v2ray
+PIDFILE=/var/run/$NAME.pid
+SCRIPTNAME=/etc/init.d/$NAME
+DAEMON_OPTS=&amp;quot;-config /etc/v2ray/config.json&amp;quot;
+...
+&lt;/code>&lt;/pre>
+&lt;p>启动v2ray服务&lt;/p>
+&lt;pre>&lt;code> /etc/init.d/v2ray start
+&lt;/code>&lt;/pre>
+&lt;p>记得把启动命令写入 /config/scripts/post-config.d/update_iptables&lt;/p>
+&lt;p>用下面的命令测试一下是否成功&lt;/p>
+&lt;pre>&lt;code>curl -vx socks5://127.0.0.1:1080 https://www.google.com
+&lt;/code>&lt;/pre>
+&lt;p>用netstat -tupn 命令检查是否成功建立本地1080端口的连接&lt;/p>
+&lt;p>成功的话,可以看到ssl tls的握手过程和google返回的内容&lt;/p>
+&lt;!-- more -->
+&lt;h3 id="2-客户端修改">2 客户端修改&lt;/h3>
+&lt;p>config.json 修改为&lt;/p>
+&lt;pre>&lt;code>&amp;quot;inbounds&amp;quot;: [
+{
+&amp;quot;port&amp;quot;: 1080,
+&amp;quot;listen&amp;quot;: &amp;quot;0.0.0.0&amp;quot;,
+&amp;quot;protocol&amp;quot;: &amp;quot;socks&amp;quot;,
+&amp;quot;settings&amp;quot;: {
+&amp;quot;auth&amp;quot;: &amp;quot;noauth&amp;quot;,
+&amp;quot;udp&amp;quot;: false, // dns使用了doh tls 因此不转发 udp 53端口
+&amp;quot;ip&amp;quot;: &amp;quot;127.0.0.1&amp;quot;
+}
+},
+{
+&amp;quot;port&amp;quot;: 12345, //开放的端口号
+&amp;quot;protocol&amp;quot;: &amp;quot;dokodemo-door&amp;quot;,
+&amp;quot;settings&amp;quot;: {
+&amp;quot;network&amp;quot;: &amp;quot;tcp,udp&amp;quot;,
+&amp;quot;followRedirect&amp;quot;: true // 这里要为 true 才能接受来自 iptables 的流量
+},
+&amp;quot;sniffing&amp;quot;: { //从ip包里面得到url
+&amp;quot;enabled&amp;quot;: true,
+&amp;quot;destOverride&amp;quot;: [&amp;quot;http&amp;quot;, &amp;quot;tls&amp;quot;]
+},
+&amp;quot;streamSettings&amp;quot;: {
+&amp;quot;sockopt&amp;quot;: {
+&amp;quot;tproxy&amp;quot;: &amp;quot;redirect&amp;quot;
+}
+}
+}
+],
+&amp;quot;outbound&amp;quot;: {
+&amp;quot;protocol&amp;quot;: &amp;quot;vmess&amp;quot;,
+&amp;quot;settings&amp;quot;: {
+&amp;quot;vnext&amp;quot;: [
+{
+// 你的服务器ip
+&amp;quot;address&amp;quot;: &amp;quot;xxx.xxx.xxx.xxx&amp;quot;,
+&amp;quot;port&amp;quot;: 443, // 服务器端口
+&amp;quot;users&amp;quot;: [
+{
+//你得id
+&amp;quot;id&amp;quot;: &amp;quot;xxxx&amp;quot;,
+&amp;quot;alterId&amp;quot;: 64,
+&amp;quot;security&amp;quot;: &amp;quot;aes-128-gcm&amp;quot;
+}
+]
+}
+]
+},
+&amp;quot;streamSettings&amp;quot;:{
+&amp;quot;network&amp;quot;: &amp;quot;ws&amp;quot;,
+&amp;quot;security&amp;quot;: &amp;quot;tls&amp;quot;,
+&amp;quot;tlsSettings&amp;quot;: {
+&amp;quot;serverName&amp;quot;: &amp;quot;www.example.com&amp;quot; //修改你的tls 域名&amp;quot;
+},
+&amp;quot;wsSettings&amp;quot;: {
+&amp;quot;path&amp;quot;: &amp;quot;/v2ray“ //修改你的路径
+},
+&amp;quot;sockopt&amp;quot;: {
+&amp;quot;mark&amp;quot;: 255 //这里是 SO_MARK，用于 iptables 识别，每个 outbound 都要配置；255可以改成其他数值，但要与下面的 iptables 规则对应；如果有多个 outbound，最好奖所有 outbound 的 SO_MARK 都设置成一样的数值
+}
+},
+&amp;quot;tag&amp;quot;: &amp;quot;forgin&amp;quot;
+},
+&amp;quot;outboundDetour&amp;quot;: [
+{
+&amp;quot;protocol&amp;quot;: &amp;quot;freedom&amp;quot;,
+&amp;quot;settings&amp;quot;: {},
+//这里一定要修改，否则国内流量不能出去
+&amp;quot;streamSettings&amp;quot;: {
+&amp;quot;sockopt&amp;quot;: {
+&amp;quot;mark&amp;quot;: 255
+}
+},
+&amp;quot;tag&amp;quot;: &amp;quot;direct&amp;quot;
+}
+],
+&amp;quot;dns&amp;quot;: {
+&amp;quot;servers&amp;quot;: [
+&amp;quot;localhost&amp;quot; //使用系统的dns
+]
+},
+&amp;quot;routing&amp;quot;: {
+&amp;quot;strategy&amp;quot;: &amp;quot;rules&amp;quot;,
+&amp;quot;settings&amp;quot;: {
+&amp;quot;domainStrategy&amp;quot;: &amp;quot;IPIfNonMatch&amp;quot;,
+&amp;quot;rules&amp;quot;: [
+{
+&amp;quot;type&amp;quot;: &amp;quot;field&amp;quot;,
+&amp;quot;ip&amp;quot;: [
+&amp;quot;0.0.0.0/8&amp;quot;,
+&amp;quot;10.0.0.0/8&amp;quot;,
+&amp;quot;100.64.0.0/10&amp;quot;,
+&amp;quot;127.0.0.0/8&amp;quot;,
+&amp;quot;169.254.0.0/16&amp;quot;,
+&amp;quot;172.16.0.0/12&amp;quot;,
+&amp;quot;192.0.0.0/24&amp;quot;,
+&amp;quot;192.0.2.0/24&amp;quot;,
+&amp;quot;192.168.0.0/16&amp;quot;,
+&amp;quot;198.18.0.0/15&amp;quot;,
+&amp;quot;198.51.100.0/24&amp;quot;,
+&amp;quot;203.0.113.0/24&amp;quot;,
+&amp;quot;::1/128&amp;quot;,
+&amp;quot;fc00::/7&amp;quot;,
+&amp;quot;fe80::/10&amp;quot;
+],
+&amp;quot;outboundTag&amp;quot;: &amp;quot;direct&amp;quot;
+},
+{
+&amp;quot;type&amp;quot;: &amp;quot;chinasites&amp;quot;,
+&amp;quot;outboundTag&amp;quot;: &amp;quot;direct&amp;quot;
+},
+{
+&amp;quot;type&amp;quot;: &amp;quot;chinaip&amp;quot;,
+&amp;quot;outboundTag&amp;quot;: &amp;quot;direct&amp;quot;
+}
+]
+}
+}
+&lt;/code>&lt;/pre>
+&lt;h3 id="3-修改iptables">3 修改iptables&lt;/h3>
+&lt;p>命令：&lt;/p>
+&lt;pre>&lt;code>iptables -t nat -N V2RAY # V2RAY config.json
+iptables -t nat -A V2RAY -d 192.168.0.0/16 -j RETURN # config.json 192.168.0.0/16
+iptables -t nat -A V2RAY -p tcp -j RETURN -m mark --mark 0xff
+#你自己的服务器地址，修改xxx.xxx.xxx.xxx为你得服务器地址
+iptables -t nat -A V2RAY -d xxx.xxx.xxx.xxx -j RETURN
+#由于dns使用了doh tls，因此允许tls 853端口通过
+iptables -t nat -A V2RAY -p tcp -m tcp --dport 853 -j RETURN
+iptables -t nat -A V2RAY -d 0.0.0.0/8 -j RETURN
+iptables -t nat -A V2RAY -d 10.0.0.0/8 -j RETURN
+iptables -t nat -A V2RAY -d 127.0.0.0/8 -j RETURN
+iptables -t nat -A V2RAY -d 169.254.0.0/16 -j RETURN
+iptables -t nat -A V2RAY -d 172.16.0.0/12 -j RETURN
+iptables -t nat -A V2RAY -d 192.168.0.0/16 -j RETURN
+iptables -t nat -A V2RAY -d 224.0.0.0/4 -j RETURN
+iptables -t nat -A V2RAY -d 240.0.0.0/4 -j RETURN
+#把所有tcp流量都发给12345端口
+iptables -t nat -A V2RAY -p tcp -j REDIRECT --to-ports 12345
+#激活命令
+iptables -t nat -A PREROUTING -p tcp -j V2RAY
+iptables -t nat -A OUTPUT -p tcp -j V2RAY
+&lt;/code>&lt;/pre>
+&lt;h3 id="4-保存配置">4 保存配置&lt;/h3>
+&lt;p>把上面的命令写到 /config/scripts/post-config.d/update_iptables，这样重启路由器之后，可以自动更新。&lt;/p>
+&lt;p>需要说明的是，如果以前配置了gfwlist，需要注释掉原来的配置 /config/scripts/post-config.d/update_iptables这几句&lt;/p>
+&lt;pre>&lt;code>注释掉这几句。
+#ipset -N gfwlist iphash
+#iptables -t nat -A PREROUTING -p tcp -m set --match-set gfwlist dst -j REDIRECT --to-port 1080
+#iptables -t nat -A OUTPUT -p tcp -m set --match-set gfwlist dst -j REDIRECT --to-port 1080
+&lt;/code>&lt;/pre>
+&lt;p>如果原来有gfwlist配置，用下面命令删除&lt;/p>
+&lt;pre>&lt;code>iptables -t nat -D PREROUTING -p tcp -m set --match-set gfwlist dst -j REDIRECT --to-port 1080
+iptables -t nat -D OUTPUT -p tcp -m set --match-set gfwlist dst -j REDIRECT --to-port 1080
+&lt;/code>&lt;/pre>
+&lt;p>记得随时用下面的命令查看数据&lt;/p>
+&lt;pre>&lt;code>iptables -t nat -L -nvx
+&lt;/code>&lt;/pre>
+&lt;h3 id="参考文章">参考文章&lt;/h3>
+&lt;p>&lt;a href="https://xdays.me/V2RAY%E9%80%8F%E6%98%8E%E4%BB%A3%E7%90%86/" target="_blank" rel="noopener">V2RAY透明代理 | xdays&lt;/a>
+&lt;/p>
+&lt;p>&lt;a href="https://www.v2ray.com/en/configuration/protocols/dokodemo.html" target="_blank" rel="noopener">Dokodemo · Project V Official&lt;/a>
+&lt;/p>
+&lt;p>&lt;a href="https://toutyrater.github.io/app/transparent_proxy.html" target="_blank" rel="noopener">透明代理(REDIRECT) · V2Ray 配置指南|V2Ray 白话文教程&lt;/a>
+&lt;/p></description></item><item><title>配置v2ray+ws+tls1.3+nginx</title><link>/post/setup-v2ray-ws-tls-nginx/</link><pubDate>Sat, 18 Jan 2020 00:00:00 +0000</pubDate><guid>/post/setup-v2ray-ws-tls-nginx/</guid><description>&lt;h3 id="1-安装nginx">1 安装nginx&lt;/h3>
+&lt;pre>&lt;code>sudo yum install nginx
+sudo systemctl start nginx
+sudo systemctl status nginx
+&lt;/code>&lt;/pre>
+&lt;p>检查nginx 版本,重点是检查 openssl是否支持1.1.1,只有1.1.1之后的版本,才能支持tls1.3&lt;/p>
+&lt;pre>&lt;code> nginx -V
+built by gcc 8.2.1 20180905 (Red Hat 8.2.1-3) (GCC)
+built with OpenSSL 1.1.1 FIPS 11 Sep 2018 (running with OpenSSL 1.1.1c FIPS 28 May 2019)
+TLS SNI support enabled
+&lt;/code>&lt;/pre>
+&lt;h3 id="2-申请证书">2 申请证书&lt;/h3>
+&lt;pre>&lt;code>sudo yum install epel-release
+sudo yum install certbot
+&lt;/code>&lt;/pre>
+&lt;p>打开 80 443 端口&lt;/p>
+&lt;pre>&lt;code>sudo iptables -I INPUT 4 -p tcp -m tcp --dport 80 -j ACCEPT
+sudo iptables -I INPUT 4 -p tcp -m tcp --dport 443 -j ACCEPT
+&lt;/code>&lt;/pre>
+&lt;p>申请证书 ,修改email地址 和 域名 参数&lt;/p>
+&lt;pre>&lt;code>sudo certbot certonly --webroot --email your_email@xxx -w /usr/share/nginx/html -d xxx.your.site
+&lt;/code>&lt;/pre>
+&lt;p>如果看到&lt;/p>
+&lt;pre>&lt;code>Congratulations! Your certificate and chain have been saved at:
+/etc/letsencrypt/live/xxx.site/fullchain.pem
+Your key file has been saved at:
+/etc/letsencrypt/live/xxx.site/privkey.pem
+说明申请成功了
+&lt;/code>&lt;/pre>
+&lt;!-- more -->
+&lt;p>修改/etc/nginx/conf.d/defaul.conf文件 ,注意把所有xxx.site修改为你自己的域名&lt;/p>
+&lt;pre>&lt;code>server {
+# SSL configuration
+listen 443 ssl http2 default_server;
+listen [::]:443 ssl http2 default_server;
+ssl_certificate /etc/letsencrypt/live/xxx.site/fullchain.pem;
+ssl_certificate_key /etc/letsencrypt/live/xxx.site/privkey.pem;
+#ssl_protocols TLSv1.2 TLSv1.3;
+ssl_protocols TLSv1.3;
+root /usr/share/nginx/html;
+#root /var/www;
+# Add index.php to the list if you are using PHP
+index index.html index.htm index.nginx-debian.html;
+server_name xxx.site;
+location /vray { #
+proxy_redirect off;
+proxy_pass http://127.0.0.1:9000;
+proxy_http_version 1.1;
+proxy_set_header Upgrade $http_upgrade;
+proxy_set_header Connection &amp;quot;upgrade&amp;quot;;
+proxy_set_header Host $http_host;
+}
+}
+&lt;/code>&lt;/pre>
+&lt;p>重启nginx&lt;/p>
+&lt;pre>&lt;code>sudo systemctl restart nginx
+&lt;/code>&lt;/pre>
+&lt;p>如果成功,这时候可以访问https://xxx.site/&lt;/p>
+&lt;h3 id="3-配置v2ray">3 配置v2ray&lt;/h3>
+&lt;p>服务器侧关键数据&lt;/p>
+&lt;pre>&lt;code>&amp;quot;inbound&amp;quot;: {
+&amp;quot;port&amp;quot;: 9000, //(此端口与nginx配置相关)
+&amp;quot;listen&amp;quot;: &amp;quot;127.0.0.1&amp;quot;,
+&amp;quot;protocol&amp;quot;: &amp;quot;vmess&amp;quot;,
+&amp;quot;settings&amp;quot;: {
+&amp;quot;clients&amp;quot;: [
+{
+&amp;quot;id&amp;quot;: &amp;quot;xxxxx-xxxx-xxxx&amp;quot;,
+&amp;quot;level&amp;quot;: 1,
+&amp;quot;alterId&amp;quot;: 64 //此ID也需与客户端保持一致
+}
+]
+},
+&amp;quot;streamSettings&amp;quot;:{
+&amp;quot;network&amp;quot;: &amp;quot;ws&amp;quot;,
+&amp;quot;wsSettings&amp;quot;: {
+&amp;quot;path&amp;quot;: &amp;quot;/vray&amp;quot; //与nginx配置相关
+}
+}
+},
+&amp;quot;outbound&amp;quot;: {
+&amp;quot;protocol&amp;quot;: &amp;quot;freedom&amp;quot;,
+&amp;quot;settings&amp;quot;: {}
+},
+&amp;quot;outboundDetour&amp;quot;: [
+{
+&amp;quot;protocol&amp;quot;: &amp;quot;blackhole&amp;quot;,
+&amp;quot;settings&amp;quot;: {},
+&amp;quot;tag&amp;quot;: &amp;quot;blocked&amp;quot;
+}
+],
+&amp;quot;routing&amp;quot;: {
+&amp;quot;strategy&amp;quot;: &amp;quot;rules&amp;quot;,
+&amp;quot;settings&amp;quot;: {
+&amp;quot;rules&amp;quot;: [
+{
+&amp;quot;type&amp;quot;: &amp;quot;field&amp;quot;,
+&amp;quot;ip&amp;quot;: [
+&amp;quot;0.0.0.0/8&amp;quot;,
+&amp;quot;10.0.0.0/8&amp;quot;,
+&amp;quot;100.64.0.0/10&amp;quot;,
+&amp;quot;127.0.0.0/8&amp;quot;,
+&amp;quot;169.254.0.0/16&amp;quot;,
+&amp;quot;172.16.0.0/12&amp;quot;,
+&amp;quot;192.0.0.0/24&amp;quot;,
+&amp;quot;192.0.2.0/24&amp;quot;,
+&amp;quot;192.168.0.0/16&amp;quot;,
+&amp;quot;198.18.0.0/15&amp;quot;,
+&amp;quot;198.51.100.0/24&amp;quot;,
+&amp;quot;203.0.113.0/24&amp;quot;,
+&amp;quot;::1/128&amp;quot;,
+&amp;quot;fc00::/7&amp;quot;,
+&amp;quot;fe80::/10&amp;quot;
+],
+&amp;quot;outboundTag&amp;quot;: &amp;quot;blocked&amp;quot;
+}
+]
+}
+}
+&lt;/code>&lt;/pre>
+&lt;p>客户段配置&lt;/p>
+&lt;pre>&lt;code> &amp;quot;outbounds&amp;quot;: [
+{
+&amp;quot;protocol&amp;quot;: &amp;quot;vmess&amp;quot;,
+&amp;quot;settings&amp;quot;: {
+&amp;quot;vnext&amp;quot;: [
+{
+&amp;quot;address&amp;quot;: &amp;quot;xxx.xxx.xxx.xxx&amp;quot;,
+&amp;quot;port&amp;quot;: 443, // 服务器端口
+&amp;quot;users&amp;quot;: [
+{
+&amp;quot;id&amp;quot;: &amp;quot;xxx-xxxx-xxxx-xxxx&amp;quot;,
+&amp;quot;alterId&amp;quot;: 64,
+&amp;quot;security&amp;quot;: &amp;quot;aes-128-gcm&amp;quot;
+}
+]
+}
+]
+},
+&amp;quot;streamSettings&amp;quot;:{
+&amp;quot;network&amp;quot;: &amp;quot;ws&amp;quot;,
+&amp;quot;security&amp;quot;: &amp;quot;tls&amp;quot;,
+&amp;quot;tlsSettings&amp;quot;: {
+&amp;quot;serverName&amp;quot;: &amp;quot;xxx.site&amp;quot;
+},
+&amp;quot;wsSettings&amp;quot;: {
+&amp;quot;path&amp;quot;: &amp;quot;/vray&amp;quot;
+}
+},
+&amp;quot;tag&amp;quot;: &amp;quot;forgin&amp;quot;
+},
+{
+// Protocol name of the outbound proxy.
+&amp;quot;protocol&amp;quot;: &amp;quot;freedom&amp;quot;,
+// Settings of the protocol. Varies based on protocol.
+&amp;quot;settings&amp;quot;: {},
+// Tag of the outbound. May be used for routing.
+&amp;quot;tag&amp;quot;: &amp;quot;direct&amp;quot;
+},{
+&amp;quot;protocol&amp;quot;: &amp;quot;blackhole&amp;quot;,
+&amp;quot;settings&amp;quot;: {},
+&amp;quot;tag&amp;quot;: &amp;quot;blocked&amp;quot;
+}],
+// Transport is for global transport settings. If you have multiple transports with same settings
+// (say mKCP), you may put it here, instead of in each individual inbound/outbounds.
+//&amp;quot;transport&amp;quot;: {},
+// Routing controls how traffic from inbounds are sent to outbounds.
+&amp;quot;routing&amp;quot;: {
+&amp;quot;domainStrategy&amp;quot;: &amp;quot;IPOnDemand&amp;quot;,
+&amp;quot;rules&amp;quot;:[
+{
+// Blocks access to private IPs. Remove this if you want to access your router.
+&amp;quot;type&amp;quot;: &amp;quot;field&amp;quot;,
+&amp;quot;ip&amp;quot;: [&amp;quot;geoip:private&amp;quot;],
+&amp;quot;outboundTag&amp;quot;: &amp;quot;blocked&amp;quot;
+},
+{
+// Blocks major ads.
+&amp;quot;type&amp;quot;: &amp;quot;field&amp;quot;,
+&amp;quot;domain&amp;quot;: [&amp;quot;geosite:category-ads&amp;quot;],
+&amp;quot;outboundTag&amp;quot;: &amp;quot;blocked&amp;quot;
+}
+]
+},
+&lt;/code>&lt;/pre></description></item><item><title>使用UBNT ER-X路由器的一些总结</title><link>/post/using-ubnt-erx-router/</link><pubDate>Mon, 13 Feb 2017 00:00:00 +0000</pubDate><guid>/post/using-ubnt-erx-router/</guid><description>&lt;p>以前是用wndr4300，加载openwrt，完成科学上网的任务。然而，长期使用下来，存在几个问题：&lt;/p>
+&lt;pre>&lt;code>1 访问国外网站太慢，由于丢包太多，导致看视频的速率只有几百kbps，根本无法看。
+2 流量大的时候，路由器CPU使用率会升的很高，导致无线网络故障。
+&lt;/code>&lt;/pre>
+&lt;p>经过一段时间的搜索，终于发现了路由神器ubnt的ER-X，价格也很便宜，更关键的是，完全运行linux debian，需要什么功能，apt-get出手立即搞定，而且二层交换纯硬件转发，ip转发速率达到130Kbps，对于家用来说完全满足。京东下单后，第二天就到货，实际大小相当于一个巴掌。这么小的硬件，这么强大的功能和性能，真当得起神器二字。&lt;/p>
+&lt;h4 id="1-er-x基本设置">1 ER-X基本设置。&lt;/h4>
+&lt;p>步骤如下：&lt;/p>
+&lt;p>1 有物理网口的计算机一部，网线一根&lt;/p>
+&lt;p>2 计算机物理端口配置静态ip地址，192.168.1.X，X可以2到254任意配置。&lt;/p>
+&lt;p>3 路由器上电，通过eth0端口连接网线到计算机的网络接口&lt;/p>
+&lt;p>4 在计算机上ping 192.168.1.1，收到应到后，表示网络已经OK。&lt;/p>
+&lt;p>5 通过浏览器访问192.168.1.1，系统会提示证书不可用。在mac 上，safari点击高级，选择信任证书，出现登录窗口。用户名和密码都是ubnt，进入web管理界面&lt;/p>
+&lt;p>6 在最右侧的wizards标签上，左边的列表选择WAN+2LAN2,然后在右边的内容处，选择你的上网方式，我是DHCP，最关键是设定lan地址，设定为192.168.8.1（为了避免和上行的电信接入路由器冲突），掩码为255.255.255.0，选择Enable the DHCP server.见下图。
+&lt;img src="https://coding.net/u/mike163/p/mike163/git/raw/coding-pages/images/erx-basic-config.png" alt="">
+然后点击最下面的apply按钮，保存配置。 同时重启路由器（关掉电源再插上）&lt;/p>
+&lt;p>7 修改计算机的物理网口的ip地址方式为dhcp，同时把网线从路由器的eth0端口拔出插入到剩下eth1-4的任何一个端口。&lt;/p>
+&lt;p>8 在计算机上ping 192.168.8.1地址，等ping命令有了正常应答，就可以通过web浏览器再次访问192.168.8.1，重新进入管理界面。也可以通过ssh &lt;a href="mailto:ubnt@192.168.8.1">ubnt@192.168.8.1&lt;/a>
+命令，通过命令行访问路由器。&lt;/p>
+&lt;p>9 把路由器的eth0网口和接入路由器端口通过网线链接。在计算机上ping &lt;a href="https://www.baidu.com" target="_blank" rel="noopener">www.baidu.com&lt;/a>
+，等ping命令有响应后，此时基本配置已经OK。&lt;/p>
+&lt;p>10 把旧的无线路由器的上行网口，通过网线连接erx路由器的eth1-4任意一个端口。 之后可以通过旧路由器的无线网络，访问互联网了。&lt;/p>
+&lt;!-- more -->
+&lt;h4 id="2-固件版本升级">2 固件版本升级&lt;/h4>
+&lt;p>web界面失败，通过cli处理。核心要点在于先把固件文件拷贝到/tmp目录下。&lt;/p>
+&lt;p>参考：&lt;/p>
+&lt;p>&lt;a href="https://help.ubnt.com/hc/en-us/articles/205146110-EdgeRouter-Upgrading-EdgeOS-firmware" target="_blank" rel="noopener">EdgeRouter - Upgrading EdgeOS firmware&lt;/a>
+&lt;/p>
+&lt;p>&lt;a href="https://community.ubnt.com/t5/EdgeMAX/EdgeMax-Firmware-Upgrade-Not-enough-disk-space-for-root-file/td-p/1533512" target="_blank" rel="noopener">Solved: EdgeMax Firmware Upgrade - Not enough disk space for root file system&lt;/a>
+&lt;/p>
+&lt;h4 id="3-常用命令">3 常用命令&lt;/h4>
+&lt;p>show dhcp leases 检查IP地址分配情况&lt;/p>
+&lt;p>设置debian源&lt;/p>
+&lt;pre>&lt;code>configure
+set system package repository wheezy components 'main contrib non-free'
+set system package repository wheezy distribution wheezy
+set system package repository wheezy url http://http.us.debian.org/debian
+commit
+save
+exit
+&lt;/code>&lt;/pre>
+&lt;h4 id="4-ssr-配置参考">4 SSR 配置参考&lt;/h4>
+&lt;p>主要参考链接：&lt;a href="http://bbs.ubnt.com.cn/forum.php?mod=viewthread&amp;amp;tid=16879&amp;amp;page=1" target="_blank" rel="noopener">ER-X $$集成包&lt;/a>
+。但集成包的一个问题就是把所有未识别的ip流量都走了ss，建议修改为只把墙掉的流量改成走ss即可。&lt;/p>
+&lt;p>1 /config/scripts/post-config.d/update_iptables 脚本修改如下：&lt;/p>
+&lt;pre>&lt;code>#！/bin/bash
+cp -f /home/ubnt/dnsmasq/dnsmasq.conf /etc/dnsmasq.conf
+/etc/init.d/dnsmasq restart
+ipset -N gfwlist iphash
+iptables -t nat -A PREROUTING -p tcp -m set --match-set gfwlist dst -j REDIRECT --to-port 1080
+iptables -t nat -A OUTPUT -p tcp -m set --match-set gfwlist dst -j REDIRECT --to-port 1080
+alias l='ls -l'
+&lt;/code>&lt;/pre>
+&lt;p>2 /home/ubnt/dnsmasq/dnsmasq.conf 增加下面的内容：&lt;/p>
+&lt;pre>&lt;code>server=127.0.0.1#5353 # 使用chinadns作为dns服务
+server=/trailers.apple.com/180.153.225.136 # 苹果atv3使用
+conf-dir=/etc/dnsmasq.d #增加包含目录
+&lt;/code>&lt;/pre>
+&lt;p>3 修改 /etc/dnsmasq.conf ，在最后加入 conf-dir=/etc/dnsmasq.d ，新建并进入目录 /etc/dnsmasq.d ，下载&lt;a href="http://pan.baidu.com/s/1qWDVbfY" target="_blank" rel="noopener">dnsmasq_list.conf&lt;/a>
+后放入该目录&lt;/p>
+&lt;p>附：&lt;a href="https://github.com/cokebar/gfwlist2dnsmasq" target="_blank" rel="noopener">自动生成dnsmasq_list.conf 的脚本&lt;/a>
+&lt;/p></description></item><item><title>WNDR4300安装Openwrt，使用shadowsocks配置透明代理,使用chinadns+dnscrypt-proxy处理DNS污染</title><link>/post/openwrt-shadowsocks-chinadns-setup/</link><pubDate>Wed, 12 Aug 2015 00:00:00 +0000</pubDate><guid>/post/openwrt-shadowsocks-chinadns-setup/</guid><description>&lt;h4 id="1-wndr4300刷openwrt固件">1 wndr4300刷openwrt固件&lt;/h4>
+&lt;p>wndr4300在openwrt的官方支持列表中，但官方固件可使用空间只有12M，所以需要打一些补丁。本文所用固件来自&lt;a href="https://www.v2ex.com/t/147051#reply37" target="_blank" rel="noopener">我也分享 WNDR4300 14.07 固件，官方 ImageBuilder 编译，完全使用 128M flash,集成中文 Luci&lt;/a>
+，具体链接：&lt;a href="http://pan.baidu.com/s/14eo7G" target="_blank" rel="noopener">openwrt-ar71xx-nand-wndr4300&lt;/a>
+&lt;/p>
+&lt;p>刷机说明：
+netgear原厂刷openwrt，必须刷结尾是factory.img的那个文件。由于无线网络缺省是关闭状态，必须使用网线，ip分配为dhcp自动分配，执行ping命令。返回成功后，可以使用telnet登录，没有密码。登录成功后，使用passwd命令改变root密码。然后使用ssh &lt;a href="mailto:root@192.168.1.1">root@192.168.1.1&lt;/a>
+重新登录。也可以用 http://192.168.1.1，进入 luci web配置页面，此时的密码就是刚才设置的root密码。&lt;/p>
+&lt;pre>&lt;code>ping 192.168.1.1
+telnet 192.168.1.1
+&lt;/code>&lt;/pre>
+&lt;p>进入web页面后，在网络-无线菜单下，设置wifi ssid，密码，启动WIFI，然后就可以无线登录了。在网络-接口-LAN 下，选择修改，可以设置路由器的静态IP。如果多个串联，需要把地址设置为192.168.2/3/4.1等非192.168.1.1的情况。&lt;strong>【！！！必须设置为静态IP，千万不要选dhcp等其他选项，否则后面无法登录系统】&lt;/strong>&lt;/p>
+&lt;hr>
+&lt;p>wndr4300变砖后，通过tftp重新刷固件的恢复方法。&lt;/p>
+&lt;p>1、通过网线连接计算机和路由器的lan接口&lt;/p>
+&lt;p>2、在计算机上，ip地址设置为手工设定为 192.168.1.2 掩码255.255.255.0&lt;/p>
+&lt;p>3、关闭路由器电源开关。使用大头针或者类似工具，戳路由器背面的红色小孔（恢复出厂设置的孔），不要松开。&lt;/p>
+&lt;p>4、打开路由器电源开关，观察电源指示灯从黄色-变成绿色闪烁状态，然后可以放开大头针&lt;/p>
+&lt;p>5、在计算机上，进入存放待刷固件的目录（openwrt-ar71xx-nand-wndr4300-ubi-factory.img），使用tftp客户端 连接路由器。 mac os x命令如下：(-e 参数表示二进制模式)&lt;/p>
+&lt;pre>&lt;code>tftp -e 192.168.1.1
+put openwrt-ar71xx-nand-wndr4300-ubi-factory.img
+&lt;/code>&lt;/pre>
+&lt;p>6 另开一个终端窗口，持续ping 192.168.1.1，等待连续ping连续成功后10秒以上，断开路由器电源开关。等待5秒钟，再打开路由器电源。继续观察ping结果。等待ping持续成功后，可以telnet 192.168.1.1，进入正常设置程序。&lt;/p>
+&lt;!-- more -->
+&lt;h4 id="2-安装shadowsockschinadns">2 安装shadowsocks+chinadns&lt;/h4>
+&lt;p>参考：&lt;a href="https://cokebar.info/archives/664" target="_blank" rel="noopener">Shadowsocks + ChnRoute 实现 OpenWRT 路由器自动翻墙&lt;/a>
+&lt;/p>
+&lt;p>获取 shadowsocks忽略表&lt;/p>
+&lt;pre>&lt;code>wget -O- 'http://ftp.apnic.net/apnic/stats/apnic/delegated-apnic-latest' | awk -F\| '/CN\|ipv4/ { printf(&amp;quot;%s/%d\n&amp;quot;, $4, 32-log($5)/log(2)) }' &amp;gt; ignore.list
+&lt;/code>&lt;/pre>
+&lt;p>注意：在luci配置的时候，要指定ignore.list文件的存放位置&lt;/p>
+&lt;p>获取chinadns 国内IP列表&lt;/p>
+&lt;pre>&lt;code>curl 'http://ftp.apnic.net/apnic/stats/apnic/delegated-apnic-latest' | grep ipv4 | grep CN | awk -F\| '{ printf(&amp;quot;%s/%d\n&amp;quot;, $4, 32-log($5)/log(2)) }' &amp;gt; chnroute.txt
+&lt;/code>&lt;/pre>
+&lt;p>在Luci中切换至“网络”-“DHCP/DNS”设置，如下图，在”DNS转发”中填入127.0.0.1#5353&lt;/p>
+&lt;p>然后切到HOSTS和解析文件选项卡，勾中“忽略解析文件”,忽略上级dns&lt;/p>
+&lt;p>安装dig工具&lt;/p>
+&lt;pre>&lt;code>opkg install bind-dig
+dig www.twitter.com
+&lt;/code>&lt;/pre>
+&lt;h4 id="3-shadowsocks支持udp转发">3 shadowsocks支持udp转发&lt;/h4>
+&lt;p>1 服务器侧必须使用shadowsocks-libev版本，且启动参数中有-u&lt;/p>
+&lt;pre>&lt;code>netstat -an | grep udp
+已经有udp端口8888的监听
+udp 0 0 0.0.0.0:8888 0.0.0.0:*
+&lt;/code>&lt;/pre>
+&lt;p>2在iptables中添加一条允许udp 8888端口通过的规则&lt;/p>
+&lt;pre>&lt;code>sudo iptables -I INPUT -p udp --dport 8888 -j ACCEPT
+&lt;/code>&lt;/pre>
+&lt;p>3 在openwrt luci shadowsocks服务中，启用udp转发，端口5300，转发地址8.8.8.8:53 (google public dns)&lt;/p>
+&lt;pre>&lt;code>/usr/bin/ss-tunnel -c /var/etc/shadowsocks.json -l 5300 -L 8.8.8.8:53 -f /var/run/ss-tunnel.pid -u
+&lt;/code>&lt;/pre>
+&lt;p>使用dig测试一下：&lt;/p>
+&lt;pre>&lt;code>root@OpenWrt:~# dig @localhost -p 5300 www.twitter.com
+;; ANSWER SECTION:
+www.twitter.com. 354 IN CNAME twitter.com.
+twitter.com. 1 IN A 199.59.149.198
+twitter.com. 1 IN A 199.59.150.39
+;; Query time: 274 msec
+;; SERVER: 127.0.0.1#5300(127.0.0.1)
+&lt;/code>&lt;/pre>
+&lt;p>4 检查服务器侧数据，UDP包已经转发过来了&lt;/p>
+&lt;pre>&lt;code> sudo iptables -L -v -n
+464 39550 ACCEPT udp -- * * 0.0.0.0/0 0.0.0.0/0 udp dpt:8888
+&lt;/code>&lt;/pre>
+&lt;p>5 配置chinadns，加上shadowssocks的UDP转发源&lt;/p>
+&lt;p>共配置4个dns服务器，分别是是阿里dns，114 dns，dnscrypt-proxy，shadowsocks udp转发端口&lt;/p>
+&lt;pre>&lt;code> 223.5.5.5,114.114.114.114,127.0.0.1:2053,127.0.0.1:5300
+&lt;/code>&lt;/pre>
+&lt;h4 id="4-安装dnscrypt-proxy">4 安装dnscrypt-proxy&lt;/h4>
+&lt;p>参考：&lt;a href="http://wiki.openwrt.org/inbox/dnscrypt" target="_blank" rel="noopener">using dnscrypt on openwrt&lt;/a>
+&lt;/p>
+&lt;p>添加软件源&lt;/p>
+&lt;pre>&lt;code>src/gz exopenwrt http://exopenwrt.and.in.net/barrier_breaker/ar71xx/packages/exOpenWrt
+opkg update
+opkg install dnscrypt-proxy
+启动
+/etc/init.d/dnscrypt-proxy enable
+/etc/init.d/dnscrypt-proxy start
+配置文件是：
+/etc/config/dnscrypt-proxy
+缺省端口为2053
+修改chinadns的国外源，缺省是8.8.4.4，建议修改为dnscrypt-proxy提供的源
+127.0.0.1:2053
+比较常用的几个服务器
+208.67.220.220 https://www.opendns.com Cisco OpenDNS
+180.131.144.144 http://www.nawala.id nawala Indonesia
+106.185.41.36 http://meo.ws/dnsrec.php opennic-fvz-rec-jp-tk-01
+&lt;/code>&lt;/pre>
+&lt;h4 id="5-使用shadowsockgfwlist的方式翻墙">5 使用shadowsock+gfwlist的方式翻墙&lt;/h4>
+&lt;p>参考：&lt;a href="https://cokebar.info/archives/962" target="_blank" rel="noopener">Shadowsocks + GfwList 实现 OpenWRT 路由器自动翻墙
+&lt;/a>
+&lt;/p>
+&lt;p>和利用ignore.list的方法的差别在于：前面的方法，只要IP不在国内，那么就需要启动代理，这种情况下，很多没有屏蔽的海外网站访问也通过代理，速度会下降很多。&lt;/p>
+&lt;p>而通过gfwlist的方式，只有针对在gfwlist限制范围内IP地址，才启动代理。&lt;/p>
+&lt;p>1.首先卸载前面已经安装但后面不再需要的包，注意shadowsocks-libev-spec 这个包是不需要的&lt;/p>
+&lt;pre>&lt;code> opkg remove ip resolveip iptables-mod-tproxy shadowsocks-libev-spec
+&lt;/code>&lt;/pre>
+&lt;p>安装新的包(shadowsock-libev 没有spec后缀)：&lt;/p>
+&lt;pre>&lt;code>opkg install iptables-mod-nat-extra
+opkg install shadowsocks-libev
+&lt;/code>&lt;/pre>
+&lt;p>卸载dnsmasq,安装dnsmasq-full，full版本才支持需要用到的ipset特性&lt;/p>
+&lt;pre>&lt;code>opkg remove dnsmasq &amp;amp;&amp;amp; opkg install dnsmasq-full
+&lt;/code>&lt;/pre>
+&lt;p>2 配置/etc/shadowsock.json，和服务器配置一致。
+修改/etc/init.d/shadowsocks, 启用ss-redir/ss-tunnel两个命令，关闭ss-local命令，注意ss-tunnel的监听端口5300不要和现有的端口冲突&lt;/p>
+&lt;pre>&lt;code>SERVICE_USE_PID=1
+SERVICE_WRITE_PID=1
+SERVICE_DAEMONIZE=1
+SERVICE_PID_FILE=/var/run/shadowsocks.pid
+CONFIG=/etc/shadowsocks.json
+start() {
+#service_start /usr/bin/ss-local -c $CONFIG -b 0.0.0.0 -f $SERVICE_PID_FILE
+service_start /usr/bin/ss-redir -c $CONFIG -b 0.0.0.0 -f $SERVICE_PID_FILE
+service_start /usr/bin/ss-tunnel -c $CONFIG -b 0.0.0.0 -u -l 5300 -L 8.8.8.8:53
+}
+stop() {
+#service_stop /usr/bin/ss-local
+service_stop /usr/bin/ss-redir
+service_stop /usr/bin/ss-tunnel
+}
+&lt;/code>&lt;/pre>
+&lt;p>3 启动shadowsocks&lt;/p>
+&lt;pre>&lt;code>/etc/init.d/shadowsocks enable
+/etc/init.d/shadowsocks start
+&lt;/code>&lt;/pre>
+&lt;p>4 增加防火墙规则，并加入到/etc/rc.local，保证开机执行&lt;/p>
+&lt;pre>&lt;code>ipset -N gfwlist iphash
+iptables -t nat -A PREROUTING -p tcp -m set --match-set gfwlist dst -j REDIRECT --to-port 1080
+iptables -t nat -A OUTPUT -p tcp -m set --match-set gfwlist dst -j REDIRECT --to-port 1080
+&lt;/code>&lt;/pre>
+&lt;p>5 修改 /etc/dnsmasq.conf ，在最后加入 conf-dir=/etc/dnsmasq.d ，新建并进入目录 /etc/dnsmasq.d ，下载&lt;a href="http://pan.baidu.com/s/1qWDVbfY" target="_blank" rel="noopener">dnsmasq_list.conf&lt;/a>
+后放入该目录&lt;/p>
+&lt;p>附：&lt;a href="https://github.com/cokebar/gfwlist2dnsmasq" target="_blank" rel="noopener">自动生成dnsmasq_list.conf 的脚本&lt;/a>
+&lt;/p>
+&lt;h4 id="6-挂载u盘格式是fat32">6 挂载u盘，格式是fat32&lt;/h4>
+&lt;p>参考 &lt;a href="http://bbs.ybty.net/thread-452-1-1.html" target="_blank" rel="noopener">Openwrt安装USB驱动挂载U盘&lt;/a>
+&lt;/p>
+&lt;p>需要执行的命令如下：&lt;/p>
+&lt;pre>&lt;code> opkg update
+opkg install kmod-usb-storage
+opkg install kmod-fs-vfat
+opkg install kmod-nls-cp437
+opkg install kmod-nls-utf8
+opkg install kmod-nls-iso8859-1
+#然后就可以
+mount -t /dev/sda1 /mnt
+&lt;/code>&lt;/pre>
+&lt;h4 id="7-定时任务">7 定时任务&lt;/h4>
+&lt;p>参考：&lt;a href="http://www.slyar.com/blog/openwrt-crontab.html" target="_blank" rel="noopener">OpenWrt使用crontab执行计划任务 - Slyar Home&lt;/a>
+&lt;/p>
+&lt;p>每天自动重启：&lt;/p>
+&lt;pre>&lt;code> 59 02 * * 1-7 /sbin/reboot
+&lt;/code>&lt;/pre>
+&lt;p>每10分钟重启chinadns&lt;/p>
+&lt;pre>&lt;code>*/10 * * * * /etc/init.d/chinadns restart &amp;gt;&amp;gt; /dev/null 2&amp;gt;&amp;amp;1
+&lt;/code>&lt;/pre></description></item><item><title>Centos 7 ocserv AnyConnect服务器配置说明</title><link>/post/centos_setup_anyconnect/</link><pubDate>Tue, 04 Aug 2015 00:00:00 +0000</pubDate><guid>/post/centos_setup_anyconnect/</guid><description>&lt;p>参考文件&lt;/p>
+&lt;p>&lt;a href="http://www.xuanlove.net/jishujiaoliu/1210.html" target="_blank" rel="noopener">在 CentOS 7 上搭建 Cisco AnyConnect VPN&lt;/a>
+&lt;/p>
+&lt;p>&lt;a href="http://blog.ihipop.info/2014/07/4782.html" target="_blank" rel="noopener">Gentoo编译安装Ocserv上Cisco AnyConnect VPN&lt;/a>
+&lt;/p>
+&lt;p>&lt;a href="http://bitinn.net/11084/" target="_blank" rel="noopener">折腾笔记：架设OpenConnect Server给iPhone提供更顺畅的网络生活&lt;/a>
+&lt;/p>
+&lt;p>安装没有任何问题，直接安装即可&lt;/p>
+&lt;pre>&lt;code>sudo yum install epel-release
+sudo yum install ocserv
+&lt;/code>&lt;/pre>
+&lt;p>遇到的主要问题：&lt;/p>
+&lt;h5 id="1-本地lan禁止vpn需要修改etcocservocservconf">1 本地lan禁止vpn。需要修改/etc/ocserv/ocserv.conf&lt;/h5>
+&lt;pre>&lt;code>#注意 这里推送路由条数限制据说只有64条 而且不能指定是走还是不 走路由 这点没有openVPN灵活 我这里全部把它注释了 走全局了
+#设定全部ip都走 VPN，由于本地路由有优先表，所以本地路由不走vpn
+route = 0.0.0.0/128.0.0.0
+route = 128.0.0.0/128.0.0.0
+&lt;/code>&lt;/pre>
+&lt;p>另外一个办法是配置常用的路由，客户端最大支持200条，服务器缺省64条，如果要修改，需要重新编译。&lt;a href="http://blog.ltns.info/wp-content/uploads/2014/09/ocserv.zip" target="_blank" rel="noopener">这里&lt;/a>
+可以下载一个route配置样本&lt;/p>
+&lt;h5 id="2-启动用户证书登录">2 启动用户证书登录。&lt;/h5>
+&lt;p>用户证书制作脚本，需要一个参数 用户名&lt;/p>
+&lt;pre>&lt;code>sh make_user_cert.sh username
+&lt;/code>&lt;/pre>
+&lt;p>脚本如下：&lt;/p>
+&lt;pre>&lt;code>if [ -z &amp;quot;$1&amp;quot; ];then
+echo &amp;quot;please input user_name for cert &amp;quot;
+exit
+else
+mkdir $1
+cd $1
+cp ../ca-cert.pem .
+cp ../ca-key.pem .
+certtool --generate-privkey --outfile user-key.pem
+cat &amp;gt;user.tmpl&amp;lt;&amp;lt;EOF
+cn = &amp;quot;$1&amp;quot;
+unit = &amp;quot;my company&amp;quot;
+expiration_days = 3650
+signing_key
+tls_www_client
+EOF #注意，文件中这个EOF必须放在行首，否则shell会报错误
+certtool --generate-certificate --load-privkey user-key.pem --load-ca-certificate ca-cert.pem --load-ca-privkey ca-key.pem --template user.tmpl --outfile user-cert.pem
+certtool --to-p12 --load-privkey user-key.pem --pkcs-cipher 3des-pkcs12 --load-certificate user-cert.pem --outfile user.p12 --outder
+mv user.p12 $1.p12
+fi
+&lt;/code>&lt;/pre>
+&lt;!-- more -->
+&lt;h5 id="3--修改etcocservocservconf">3 修改/etc/ocserv/ocserv.conf&lt;/h5>
+&lt;pre>&lt;code># 确保服务器正确读取用户证书（后面会用到用户证书）
+cert-user-oid = 2.5.4.3
+# 注释掉所有的route，让服务器成为gateway，如果是手机用，则全部流量都走vpn
+#route = 192.168.1.0/255.255.255.0
+# 改为证书登陆，注释掉原来的登陆模式
+auth = &amp;quot;certificate&amp;quot;
+#auth = &amp;quot;plain[/etc/ocserv/ocpasswd]&amp;quot;
+# 证书认证不支持这个选项，注释掉这行
+#listen-clear-file = /var/run/ocserv-conn.socket
+# 启用证书验证证书，实际路径和你的CA的证书路径一致即可。
+ca-cert = /etc/ssl/private/my-ca-cert.pem
+#！！！把这句注释掉，否则客户端总是说下载不了配置文件，导致连接失败
+#user-profile = profile.xml
+&lt;/code>&lt;/pre>
+&lt;p>4 启动服务&lt;/p>
+&lt;pre>&lt;code>sudo service ocserv start
+sudo systemctl enable ocserv #自动启动
+&lt;/code>&lt;/pre>
+&lt;p>5 分发到用户。
+通过邮件或者其他方式，把用户证书发给手机。然后在客户端菜单-诊断-证书管理-导入，导入生成的证书。&lt;/p></description></item><item><title>MAC OS X下的一些小技巧</title><link>/post/how_to_change_partion_size_for_mac_with_mbr_format/</link><pubDate>Tue, 04 Aug 2015 00:00:00 +0000</pubDate><guid>/post/how_to_change_partion_size_for_mac_with_mbr_format/</guid><description>&lt;h3 id="1-mac-os-x下修改ntfs分区大小">1 MAC OS X下修改NTFS分区大小&lt;/h3>
+&lt;p>一个移动硬盘，买来后格式为NTFS格式，就一个分区。使用mac磁盘工具，提示分区格式为MBR主引导记录格式，无法改变大小。&lt;/p>
+&lt;p>解决方法如下：&lt;/p>
+&lt;p>1、首先在windows系统下，通过diskpart压缩分区大小&lt;/p>
+&lt;p>2、把空出来的空间，创建一个格式为exFAT的分区&lt;/p>
+&lt;p>3、在MAC 磁盘工具中，抹去这个exFAT格式的分区，重新格式化为HFS+&lt;/p>
+&lt;h3 id="2-mac-支持ntfs写操作">2 MAC 支持NTFS写操作&lt;/h3>
+&lt;p>mac os x是原生支持ntfs读操作的，但由于某些原因，写操作被屏蔽了。有的时候我们需要打开ntfs的写操作。可以通过修改 /etc/fstab实现。&lt;/p>
+&lt;pre>&lt;code>#假设移动硬盘的卷标是My Passport,那么修改如下
+LABEL=My\040Passport none ntfs rw,auto,nobrowse
+&lt;/code>&lt;/pre>
+&lt;h3 id="3-itunes-photo支持多个资料库">3 iTunes Photo支持多个资料库&lt;/h3>
+&lt;p>检查了一下磁盘空间，photo资料库居然达到80个G了，考虑把photo资料库转移到移动硬盘上去，留出空间给其他磁盘用。&lt;/p>
+&lt;p>1、考虑资料库到移动硬盘。移动硬盘的分区最好为HFS+格式&lt;/p>
+&lt;pre>&lt;code>cd /Volume/backup/&amp;quot;照片 Library.photoslibrary&amp;quot;
+ruby /Users/mike/work/tools/sync.rb -c /Users/mike/Pictures/&amp;quot;照片 Library.photoslibrary&amp;quot; .
+&lt;/code>&lt;/pre>
+&lt;p>2 按住option键，打开照片应用，此时会出现一个对话框让你选择资料库。此时可以检查备份的照片是否都OK了。&lt;/p>
+&lt;p>3 iTunes的资料库也可以同样处理。&lt;/p>
+&lt;pre>&lt;code>cd /Volume/backup/iTunes
+ruby /Users/mike/work/tools/sync.rb -c /Users/mike/Music/iTunes .
+&lt;/code>&lt;/pre>
+&lt;p>4 目录同步的小工具
+这个工具会递归的坚持目标路径、文件是否存在，如果不存在，则创建目录、复制文件；如果存在，再检查判断文件大小是否和源文件一致，如果不一致，就覆盖目标文件。&lt;/p>
+&lt;!-- more -->
+&lt;p>{% include_code ruby/sync.rb %}&lt;/p>
+&lt;p>参考文档
+&lt;a href="http://www.uc.hk/post/87.shtml" target="_blank" rel="noopener">在Mac中Option键 的 使用技巧&lt;/a>
+&lt;/p>
+&lt;h3 id="4-locate命令使用spotlight数据库">4 locate命令使用spotlight数据库&lt;/h3>
+&lt;p>在 .bashrc 或者 .zshrc 文件中加入：&lt;/p>
+&lt;pre>&lt;code>function locate { mdfind &amp;quot;kMDItemDisplayName == '$@'wc&amp;quot;; }
+&lt;/code>&lt;/pre>
+&lt;p>就可以让locate命令使用spotlight的数据库了&lt;/p></description></item><item><title>Centos 7 VPS服务器配置说明</title><link>/post/vps-setup/</link><pubDate>Sat, 01 Aug 2015 00:00:00 +0000</pubDate><guid>/post/vps-setup/</guid><description>&lt;p>vps 配置主要包括 安全、科学上网、应用相关。相关命令以centos 7为基准&lt;/p>
+&lt;h3 id="1-安全配置">1 安全配置&lt;/h3>
+&lt;p>参考文档&lt;/p>
+&lt;p>&lt;a href="https://www.digitalocean.com/community/tutorials/additional-recommended-steps-for-new-centos-7-servers" target="_blank" rel="noopener">Additional Recommended Steps for New CentOS 7 Servers&lt;/a>
+&lt;/p>
+&lt;p>&lt;a href="https://www.linode.com/docs/security/securing-your-server#centosfedora" target="_blank" rel="noopener">Securing Your Server&lt;/a>
+&lt;/p>
+&lt;p>&lt;a href="https://www.linode.com/docs/security/linux-security-basics" target="_blank" rel="noopener">Linux Security Basics&lt;/a>
+&lt;/p>
+&lt;h4 id="11-添加常用用户">1.1 添加常用用户&lt;/h4>
+&lt;p>新增一个testuser,添加到wheel组，平时就使用这个用户操作。&lt;/p>
+&lt;pre>&lt;code>useradd -g wheel -d /home/testuser testuser
+passwd testuser
+&lt;/code>&lt;/pre>
+&lt;p>在.bashrc文件后，添加ls的别名&lt;/p>
+&lt;pre>&lt;code>alias l='ls -l'
+&lt;/code>&lt;/pre>
+&lt;h4 id="12-配置ssh">1.2 配置ssh&lt;/h4>
+&lt;p>配置ssh的访问方式为 key访问，关闭密码方式。&lt;/p>
+&lt;h5 id="1-生成public-key并添加到到远程主机sshauthorized_keys文件">1 生成public key，并添加到到远程主机~/.ssh/authorized_keys文件&lt;/h5>
+&lt;pre>&lt;code>ssh-keygen -t rsa
+&lt;/code>&lt;/pre>
+&lt;p>拷贝到远程主机&lt;/p>
+&lt;pre>&lt;code>ssh-copy-id -i .ssh/id_rsa.pub mike@ubox
+&lt;/code>&lt;/pre>
+&lt;p>退出ssh,重新登录ssh，检查是否已经不需要密码了。验证成功后，关闭ssh密码访问方式&lt;/p>
+&lt;h5 id="3-修改服务器etcsshssh_config文件">3 修改服务器/etc/ssh/ssh_config文件&lt;/h5>
+&lt;pre>&lt;code>PubkeyAuthentication yes #启用public key访问
+PasswordAuthentication no #关闭密码
+ChallengeResponseAuthentication no#关闭密码
+PermitRootLogin no#禁止root用户登录
+&lt;/code>&lt;/pre>
+&lt;p>修改完毕后，重新启动ssh服务&lt;/p>
+&lt;pre>&lt;code>sudo systemctl sshd restart
+&lt;/code>&lt;/pre>
+&lt;!-- more -->
+&lt;h4 id="12-更新系统安装常用软件">1.2 更新系统，安装常用软件&lt;/h4>
+&lt;h5 id="1-更新系统">1 更新系统&lt;/h5>
+&lt;pre>&lt;code>sudo yum update
+sudo yum install git gcc ruby
+&lt;/code>&lt;/pre>
+&lt;h5 id="2-配置时区-ntp">2 配置时区 ntp&lt;/h5>
+&lt;pre>&lt;code>sudo timedatectl set-timezone Asia/Shanghai
+sudo timedatectl
+sudo yum install -y ntp
+sudo systemctl start ntpd
+sudo systemctl enable ntpd
+&lt;/code>&lt;/pre>
+&lt;h5 id="3-配置swap文件">3 配置swap文件&lt;/h5>
+&lt;pre>&lt;code>sudo fallocate -l 2G /swapfile
+sudo chmod 600 /swapfile
+sudo mkswap /swapfile
+sudo swapon /swapfile
+sudo sh -c 'echo &amp;quot;/swapfile none swap sw 0 0&amp;quot; &amp;gt;&amp;gt; /etc/fstab'
+&lt;/code>&lt;/pre>
+&lt;h5 id="4-检查监听端口关闭不需要的服务">4 检查监听端口，关闭不需要的服务&lt;/h5>
+&lt;pre>&lt;code>netstat -an | grep LIS
+sudo service postfix stop
+sudo systemctl disable postfix
+&lt;/code>&lt;/pre>
+&lt;h5 id="5-安装rvm使用rvm安装最新版本的ruby">5 安装rvm，使用rvm安装最新版本的ruby&lt;/h5>
+&lt;pre>&lt;code>gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3
+\curl -sSL https://get.rvm.io | bash -s stable
+rvm list known
+rvm install 2.2-head
+rvm docs generate-ri #生成ri文档，可选
+&lt;/code>&lt;/pre>
+&lt;h5 id="6-安装vnstat统计网络用量">6 安装vnstat，统计网络用量&lt;/h5>
+&lt;pre>&lt;code>sudo yum install vnstat
+sudo vi /etc/cron.d/vnstat
+内容如下：每5分钟，更新一次数据库，注意修改用户为 root
+*/5 * * * * root /usr/sbin/vnstat.cron
+vnstat --dumpdb #检查数据库
+vnstat --help #打印帮助
+vnstat -q #显示查询结果
+&lt;/code>&lt;/pre>
+&lt;p>参考 &lt;a href="http://www.vpser.net/manage/vnstat.html" target="_blank" rel="noopener">Linux VPS流量查看/监测工具 &amp;ndash; vnStat&lt;/a>
+&lt;/p>
+&lt;h4 id="13-防火墙设置">1.3 防火墙设置&lt;/h4>
+&lt;p>centos 7默认是用firewall防火墙，关闭，修改为iptables&lt;/p>
+&lt;pre>&lt;code>systemctl stop firewalld#停止firewall
+systemctl disable firewalld.service#禁止firewall开机启动
+sudo yum install iptables-services
+sudo systemctl enable iptables
+sudo systemctl start iptables #启用iptables
+sudo systemctl | grep firewall #检查防火墙
+&lt;/code>&lt;/pre>
+&lt;p>启用fail2ban，修改/etc/fail2ban/jail.conf进行定制&lt;/p>
+&lt;pre>&lt;code>sudo yum install epel-release
+sudo yum install fail2ban
+sudo service fail2ban restart
+&lt;/code>&lt;/pre>
+&lt;h4 id="14-关闭selinux">1.4 关闭selinux&lt;/h4>
+&lt;p>centos 8默认启用selinux,使用下面命令检查&lt;/p>
+&lt;pre>&lt;code>#sestatus
+SELinux status: enabled
+SELinuxfs mount: /sys/fs/selinux
+SELinux root directory: /etc/selinux
+Loaded policy name: targeted
+Current mode: enforcing
+Mode from config file: enforcing
+...
+&lt;/code>&lt;/pre>
+&lt;p>用下面的命令关闭&lt;/p>
+&lt;pre>&lt;code>sudo setenforce 0
+&lt;/code>&lt;/pre>
+&lt;p>编辑&lt;/p>
+&lt;pre>&lt;code>sudo vi /etc/selinux/config
+# This file controls the state of SELinux on the system.
+# SELINUX= can take one of these three values:
+# enforcing - SELinux security policy is enforced.
+# permissive - SELinux prints warnings instead of enforcing.
+# disabled - No SELinux policy is loaded.
+SELINUX=disabled
+&lt;/code>&lt;/pre>
+&lt;h3 id="2-科学上网">2 科学上网&lt;/h3>
+&lt;p>使用vps，翻墙技能是必须的，简单配置如下：&lt;/p>
+&lt;h4 id="21-配置pptp隧道">2.1 配置pptp隧道&lt;/h4>
+&lt;p>参考文档&lt;/p>
+&lt;p>&lt;a href="http://www.lkycn.com/2015/03/23/425.html" target="_blank" rel="noopener">CENTOS7下搭建 PPTP VPN&lt;/a>
+&lt;/p>
+&lt;p>&lt;a href="https://www.digitalocean.com/community/tutorials/how-to-setup-your-own-vpn-with-pptp" target="_blank" rel="noopener">How To Setup Your Own VPN With PPTP&lt;/a>
+&lt;/p>
+&lt;p>具体步骤：&lt;/p>
+&lt;h5 id="1-安装-ppp-pptpd">1 安装 ppp pptpd&lt;/h5>
+&lt;pre>&lt;code>sudo yum -y install ppp pptpd
+&lt;/code>&lt;/pre>
+&lt;h5 id="2-配置etcpptpdconf">2 配置/etc/pptpd.conf&lt;/h5>
+&lt;pre>&lt;code>debug #打开调试信息
+localip 10.0.0.1
+remoteip 10.0.0.100-200
+&lt;/code>&lt;/pre>
+&lt;h5 id="3-配置etcpppoptionspptpd">3 配置/etc/ppp/options.pptpd&lt;/h5>
+&lt;pre>&lt;code>ms-dns 8.8.8.8 #配置dns
+ms-dns 8.8.4.4
+debug #打开调试信息
+logfile /var/log/pptpd.log #设置log文件
+&lt;/code>&lt;/pre>
+&lt;h5 id="4-配置-etcpppchap-secrets----格式很通俗易懂">4 配置 /etc/ppp/chap-secrets #格式很通俗易懂。&lt;/h5>
+&lt;pre>&lt;code>#client为帐号，server是pptpd服务，secret是密码，*表示是分配任意的ip
+user pptpd pwd *
+&lt;/code>&lt;/pre>
+&lt;h5 id="5-配置-etcsysctlconf">5 配置 /etc/sysctl.conf&lt;/h5>
+&lt;pre>&lt;code>net.ipv4.ip_forward = 1
+sysctl -p #使内核参数生效
+&lt;/code>&lt;/pre>
+&lt;h5 id="6-配置iptables启用nat地址转换并且开放lcp-gre-协议">6 配置iptables，启用nat地址转换，并且开放lcp gre 协议&lt;/h5>
+&lt;pre>&lt;code>sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+sudo iptables -I INPUT -p gre -j ACCEPT
+sudo iptables -I INPUT -p tcp --dport 1723 -j ACCEPT
+sudo service iptables save
+&lt;/code>&lt;/pre>
+&lt;h5 id="8-配置开机启动">8 配置开机启动&lt;/h5>
+&lt;pre>&lt;code>sudo systemctl restart pptpd
+sudo systemctl enable pptpd
+&lt;/code>&lt;/pre>
+&lt;h5 id="9-如果有问题检查日志文件的记录">9 如果有问题，检查日志文件的记录&lt;/h5>
+&lt;pre>&lt;code>tail -f /var/log/pptpd.log
+&lt;/code>&lt;/pre>
+&lt;h4 id="22-shadowsocks配置">2.2 shadowsocks配置&lt;/h4>
+&lt;p>参考这篇：
+&lt;a href="http://piaoyun.cc/centos-shadowsocks-libev.html" target="_blank" rel="noopener">Centos系统下shadowsocks-libev服务端的一键安装脚本的搭建及常见问题的解决方法&lt;/a>
+&lt;/p>
+&lt;p>&lt;a href="http://teddysun.com/357.html" target="_blank" rel="noopener">CentOS下shadowsocks-libev一键安装脚本&lt;/a>
+&lt;/p>
+&lt;p>使用root用户登录，运行以下命令：&lt;/p>
+&lt;pre>&lt;code>wget --no-check-certificate https://raw.githubusercontent.com/teddysun/shadowsocks_install/master/shadowsocks-libev.sh
+chmod +x shadowsocks-libev.sh
+./shadowsocks-libev.sh 2&amp;gt;&amp;amp;1 | tee shadowsocks-libev.log
+sudo vi /etc/shadowsocks-libev/config.json #修改配置
+sudo service shadowsocks start #启动服务
+sudo iptables -I INPUT -p tcp -m state --state NEW -m tcp --dport 8989 -j ACCEPT #增加规则
+sudo service iptables save
+&lt;/code>&lt;/pre>
+&lt;h4 id="23-安装anyconnect服务">2.3 安装anyconnect服务&lt;/h4>
+&lt;p>记录 &lt;a href="http://blog.mike163.net/2015/08/04/centos_setup_anyconnect/" target="_blank" rel="noopener">Centos 7 ccserv anyConnect服务器配置说明&lt;/a>
+&lt;/p>
+&lt;h4 id="24-自定义proxy">2.4 自定义proxy&lt;/h4>
+&lt;p>推荐 &lt;a href="https://github.com/jiangmiao/proxy.git" target="_blank" rel="noopener">https://github.com/jiangmiao/proxy.git&lt;/a>
+建议使用go语言版本. 编译命令&lt;/p>
+&lt;pre>&lt;code>go build proxy.go
+&lt;/code>&lt;/pre>
+&lt;p>服务器端启动脚本：&lt;/p>
+&lt;pre>&lt;code>./proxy -verbose back :8781 &amp;amp;
+&lt;/code>&lt;/pre>
+&lt;p>客户端启动脚本&lt;/p>
+&lt;pre>&lt;code>./proxy -poolsize=10 front linode:8781
+&lt;/code>&lt;/pre>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-fallback" data-lang="fallback">&lt;span style="display:flex;">&lt;span>.  /;&amp;#39;&amp;#39;&amp;#39;&amp;#39;\¬ ≤≥ ƒ∫bfgv c
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>rtzsdetgf[pv];&amp;#39;\\ m.bvbvv √ 
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>ssh攻击辅助分析程序</title><link>/post/2015-06-22-xun-zhao-sshgong-ji-xiu-gai-iptablesjin-xing-ping-bi/</link><pubDate>Mon, 22 Jun 2015 00:00:00 +0000</pubDate><guid>/post/2015-06-22-xun-zhao-sshgong-ji-xiu-gai-iptablesjin-xing-ping-bi/</guid><description>&lt;p>每次登录到系统，使用&lt;/p>
+&lt;pre>&lt;code>netstat -an | grep LIS
+cd /var/log
+tail -n 1000 secure | grep Failed
+&lt;/code>&lt;/pre>
+&lt;p>命令，都可以发现很多尝试登录系统的请求。 对于普通的扫描就算了，然而对于某个攻击的ip，会疯狂的尝试登录。这种情况下，必须禁止这类IP。&lt;/p>
+&lt;p>通过程序，找出这类IP，并生成iptables 命令，典型用法如下：&lt;/p>
+&lt;pre>&lt;code>#cd /var/log
+#tail -n 1000 secure | grep Failed &amp;gt; ssh_log.txt
+#ruby analysis_ssh_log.rb -f ssh_log.txt #显示ssh攻击的ip地址
+{:ip=&amp;gt;&amp;quot;43.255.188.165&amp;quot;, :counter=&amp;gt;220, :time_stamp=&amp;gt;&amp;quot;Jun 18 05:09:01&amp;quot;}
+{:ip=&amp;gt;&amp;quot;182.100.67.112&amp;quot;, :counter=&amp;gt;168, :time_stamp=&amp;gt;&amp;quot;Jun 18 04:10:39&amp;quot;}
+{:ip=&amp;gt;&amp;quot;43.255.188.148&amp;quot;, :counter=&amp;gt;16292, :time_stamp=&amp;gt;&amp;quot;Jun 18 04:01:23&amp;quot;}
+{:ip=&amp;gt;&amp;quot;43.229.52.78&amp;quot;, :counter=&amp;gt;945, :time_stamp=&amp;gt;&amp;quot;Jun 18 04:27:06&amp;quot;}
+#ruby analysis_ssh_log.rb -m ssh_log.txt #生成相应的iptables命令
+iptables -I INPUT -s 43.255.188.0/24 -j DROP
+iptables -I INPUT -s 43.229.52.78 -j DROP
+iptables -I INPUT -s 182.100.67.0/24 -j DROP
+如果不需要了，可以使用-v选项生成删除命令
+#ruby analysis_ssh_log.rb -v -m ssh_log.txt #生成相应的iptables命令
+iptables -D INPUT -s 43.255.188.0/24 -j DROP
+iptables -D INPUT -s 43.229.52.78 -j DROP
+iptables -D INPUT -s 182.100.67.0/24 -j DROP
+&lt;/code>&lt;/pre>
+&lt;p>附录；程序如下&lt;/p>
+&lt;p>{% include_code ruby/analysis_ssh_log.rb %}&lt;/p></description></item><item><title>使用octopress搭建个人博客</title><link>/post/2015-06-22-setup-weblog/</link><pubDate>Mon, 22 Jun 2015 00:00:00 +0000</pubDate><guid>/post/2015-06-22-setup-weblog/</guid><description>&lt;h4 id="1-在本地系统安装octopress系统具体步骤参考">1 在本地系统安装octopress系统。具体步骤参考&lt;/h4>
+&lt;p>&lt;a href="http://sawyerzhu.herokuapp.com/blog/2014/05/06/octopress-deloyment-on-mac/" target="_blank" rel="noopener">Mac环境下部署Octopress个人博客到Heroku&lt;/a>
+&lt;/p>
+&lt;h4 id="2-创建新文章">2 创建新文章&lt;/h4>
+&lt;pre>&lt;code>rake new_post['文章标题']
+&lt;/code>&lt;/pre>
+&lt;h4 id="3-部署到heroku">3 部署到heroku&lt;/h4>
+&lt;pre>&lt;code>rake generate
+git add .
+git commit -m &amp;quot;add new post&amp;quot;
+git push heroku master
+&lt;/code>&lt;/pre>
+&lt;h4 id="4-部署到vps">4 部署到vps&lt;/h4>
+&lt;p>3.1 服务器端：安装httpd server&lt;/p>
+&lt;pre>&lt;code>sudo yum -y install httpd
+&lt;/code>&lt;/pre>
+&lt;p>3.2 服务器端：增加虚拟服务器配置&lt;/p>
+&lt;p>在 /etc/httpd/conf.d目录下，添加一个vhost-name.conf文件，内容如下：&lt;/p>
+&lt;pre>&lt;code> &amp;lt;VirtualHost *:80&amp;gt;
+ServerName 你的域名
+DocumentRoot /home/user/octopress #注意这里user换成你的用户名
+&amp;lt;/VirtualHost&amp;gt;
+&amp;lt;Directory /home/user/octopress&amp;gt;
+Require all granted
+&amp;lt;/Directory&amp;gt;
+&lt;/code>&lt;/pre>
+&lt;p>3.3 本地端：修改octopess目录下的Rakefile,填写ssh server的的相关信息&lt;/p>
+&lt;pre>&lt;code> ssh_user = &amp;quot;username@MyVPS.com&amp;quot;
+ssh_port = &amp;quot;22&amp;quot;
+document_root = &amp;quot;~/octopress&amp;quot;
+rsync_delete = false
+rsync_args = &amp;quot;&amp;quot;
+deploy_default = &amp;quot;rsync&amp;quot;
+&lt;/code>&lt;/pre>
+&lt;p>3.3 重新生成静态html页面,并部署到服务器&lt;/p>
+&lt;pre>&lt;code> rake generate
+rake deploy
+&lt;/code>&lt;/pre>
+&lt;h4 id="5-注意事项">5 注意事项&lt;/h4>
+&lt;p>5.1 git使用http proxy，执行下面的命令：&lt;/p>
+&lt;pre>&lt;code>export all_proxy=socks5://127.0.0.1:1080
+&lt;/code>&lt;/pre>
+&lt;p>5.2 ssh 登录免密码
+centos 7，ssh使用public key登录加了很多限制。
+生成ssh key,把 key拷贝到 ~/.ssh 下的authorized_keys里面后，还是不行，研究了半天，需要继续修改：&lt;/p>
+&lt;p>在/etc/ssh/sshd_config文件中，&lt;/p>
+&lt;pre>&lt;code>PubkeyAuthentication yes #缺省是no
+&lt;/code>&lt;/pre>
+&lt;p>在本地端和服务器端，都要修改id_rsa的权限为600，修改 .ssh的权限为700&lt;/p>
+&lt;pre>&lt;code>chmod 700 .ssh
+cd .ssh
+chmod 600 id_rsa*
+&lt;/code>&lt;/pre>
+&lt;h4 id="6-参考文档">6 参考文档&lt;/h4>
+&lt;p>&lt;a href="http://sawyerzhu.herokuapp.com/blog/2014/05/06/octopress-deloyment-on-mac/" target="_blank" rel="noopener">Mac环境下部署Octopress个人博客到Heroku&lt;/a>
+&lt;/p>
+&lt;p>&lt;a href="http://www.yangzhiping.com/tech/octopress.html" target="_blank" rel="noopener">像黑客一样写博客&lt;/a>
+&lt;/p>
+&lt;p>&lt;a href="http://www.xiaozhou.net/deploy-octopress-to-your-vps-2013-08-13.html" target="_blank" rel="noopener">部署Octopress到你的VPS&lt;/a>
+&lt;/p>
+&lt;p>&lt;a href="https://github.com/imathis/octopress/wiki/3rd-Party-Octopress-Themes" target="_blank" rel="noopener">Octopress第三方主题&lt;/a>
+&lt;/p>
+&lt;p>&lt;a href="https://mike163.herokuapp.com/" target="_blank" rel="noopener">heroku link&lt;/a>
+&lt;/p></description></item><item><title>使用octopress搭建博客记录</title><link>/post/2012-03-21-set-up-octopress/</link><pubDate>Tue, 20 Mar 2012 00:00:00 +0000</pubDate><guid>/post/2012-03-21-set-up-octopress/</guid><description>&lt;p>打算建一个博客站很久了，由于种种原因，一直没有启动。作为技术人员，把博客搭建在新浪、百度上，总感觉不专业，现在有了octopress，又是用我喜欢的ruby语言，看了介绍后，感觉这是我想要的东西。下面说一下整个过程&lt;/p>
+&lt;p>##1.安装ruby环境##
+我使用的是fedora 16 linux，装在virtual box 虚拟机里面。使用1.9.3版本的ruby代码，需要先安装yaml库，执行下面的代码&lt;/p>
+&lt;p>wget &lt;a href="http://pyyaml.org/download/libyaml/yaml-0.1.4.tar.gz" target="_blank" rel="noopener">http://pyyaml.org/download/libyaml/yaml-0.1.4.tar.gz&lt;/a>
+&lt;br>
+tar xzvf yaml-0.1.4.tar.gz &lt;br>
+cd yaml-0.1.4&lt;br>
+./configure &amp;ndash;prefix=/usr/local&lt;br>
+make&lt;br>
+make install&lt;/p>
+&lt;p>然后再从ruby官网，下载ruby源代码&lt;br>
+wget &lt;a href="http://ftp.ruby-lang.org/pub/ruby/1.9/ruby-1.9.3-p125.tar.gz" target="_blank" rel="noopener">http://ftp.ruby-lang.org/pub/ruby/1.9/ruby-1.9.3-p125.tar.gz&lt;/a>
+&lt;br>
+tar xzvf ruby-1.9.3-p125.tar.gz&lt;br>
+cd ruby-1.9.3-p125&lt;br>
+./configure &amp;ndash;prefix=/usr/local &amp;ndash;enable-shared &amp;ndash;disable-install-doc &amp;ndash;with-opt-dir=/usr/local/lib&lt;br>
+make&lt;br>
+make install&lt;/p>
+&lt;p>安装完后，执行ruby -v&lt;br>
+ruby 1.9.3p125 (2012-02-16) [i686-linux]&lt;/p>
+&lt;p>国内的用户，修改rubygems.org 为 ruby.taobao.org 进行加速。&lt;br>
+gem sources &amp;ndash;remove &lt;a href="http://rubygems.org/" target="_blank" rel="noopener">http://rubygems.org/&lt;/a>
+&lt;br>
+gem sources &amp;ndash;add &lt;a href="http://ruby.taobao.org/" target="_blank" rel="noopener">http://ruby.taobao.org/&lt;/a>
+&lt;br>
+gem sources list&lt;/p>
+&lt;p>##2.安装git ##
+动作很简单 yum install git -y&lt;br>
+配置git&lt;br>
+git config &amp;ndash;global user.name &amp;ldquo;your name&amp;rdquo;&lt;br>
+git config &amp;ndash;global user.email yourname@email_server&lt;br>
+git config &amp;ndash;global github.user username&lt;br>
+git config &amp;ndash;global github.token tokenXXXXXXX&lt;/p>
+&lt;p>##3.创建个人主页##&lt;/p>
+&lt;p>主要参考了这篇文章，&lt;a href="http://www.yangzhiping.com/tech/octopress.html" target="_blank" rel="noopener">像黑客一样写博客&lt;/a>
+，基本上写的还是很明白。&lt;/p>
+&lt;p>需要注意的几点：&lt;/p>
+&lt;ul>
+&lt;li>rake deploy到 github后，要等一段时间，网站才能显示出来&lt;/li>
+&lt;li>如果使用了中文的页面，需要把页面保存为utf-8格式，才成正常显示中文&lt;/li>
+&lt;li>如果需要使用评论系统，需要&lt;a href="http://disqus.com" target="_blank" rel="noopener">http://disqus.com&lt;/a>
+中创建一个账号，注意使用网站的短名，在_config.yml中，配置&lt;br>
+&lt;code>disqus_short_name: yourwebsite_shortname disqus_show_comment_count: true &lt;/code>&lt;/li>
+&lt;/ul>
+&lt;hr>
+&lt;p>##参考文档##&lt;/p>
+&lt;p>1.像黑客一样写博客 &lt;a href="http://www.yangzhiping.com/tech/octopress.html" target="_blank" rel="noopener">http://www.yangzhiping.com/tech/octopress.html&lt;/a>
+&lt;br>
+2.配置git &lt;a href="http://help.github.com/set-your-user-name-email-and-github-token/" target="_blank" rel="noopener">http://help.github.com/set-your-user-name-email-and-github-token/&lt;/a>
+&lt;/p></description></item></channel></rss>

@@ -1,1 +1,190 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>certbot on 麦克的茶馆</title><link>/tags/certbot/</link><description>Recent content in certbot on 麦克的茶馆</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Mon, 12 Sep 2022 00:00:00 +0000</lastBuildDate><atom:link href="/tags/certbot/index.xml" rel="self" type="application/rss+xml"/><item><title>在centos 7配置trojan go</title><link>/post/trojan-go-setup/</link><pubDate>Mon, 12 Sep 2022 00:00:00 +0000</pubDate><guid>/post/trojan-go-setup/</guid><description>1 前置条件 需要一个域名 需要一个 vps，安装好centos 7 或者 8 1 安装nginx sudo yum install -y epel-release sudo yum update -y sudo yum install nginx sudo systemctl start nginx sudo systemctl status nginx 检查nginx 版本</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>certbot on 麦克的茶馆</title><link>/tags/certbot/</link><description>Recent content in certbot on 麦克的茶馆</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Mon, 12 Sep 2022 00:00:00 +0000</lastBuildDate><atom:link href="/tags/certbot/index.xml" rel="self" type="application/rss+xml"/><item><title>在centos 7配置trojan go</title><link>/post/trojan-go-setup/</link><pubDate>Mon, 12 Sep 2022 00:00:00 +0000</pubDate><guid>/post/trojan-go-setup/</guid><description>&lt;h3 id="1-前置条件">1 前置条件&lt;/h3>
+&lt;p>需要一个域名
+需要一个 vps，安装好centos 7 或者 8&lt;/p>
+&lt;h3 id="1-安装nginx">1 安装nginx&lt;/h3>
+&lt;pre>&lt;code>sudo yum install -y epel-release
+sudo yum update -y
+sudo yum install nginx
+sudo systemctl start nginx
+sudo systemctl status nginx
+&lt;/code>&lt;/pre>
+&lt;p>检查nginx 版本,重点是检查 openssl是否支持1.1.1,只有1.1.1之后的版本,才能支持tls1.3&lt;/p>
+&lt;pre>&lt;code> nginx -V
+built by gcc 8.2.1 20180905 (Red Hat 8.2.1-3) (GCC)
+built with OpenSSL 1.1.1 FIPS 11 Sep 2018 (running with OpenSSL 1.1.1c FIPS 28 May 2019)
+TLS SNI support enabled
+&lt;/code>&lt;/pre>
+&lt;h3 id="2-申请证书">2 申请证书&lt;/h3>
+&lt;pre>&lt;code>sudo yum install epel-release
+sudo yum install certbot
+&lt;/code>&lt;/pre>
+&lt;p>打开 80 443 端口&lt;/p>
+&lt;pre>&lt;code>sudo iptables -I INPUT -p tcp -m tcp --dport 443 -j ACCEPT
+sudo iptables -I INPUT -p tcp -m tcp --dport 80 -j ACCEPT
+#保存防火墙配置文件
+sudo service iptables save
+&lt;/code>&lt;/pre>
+&lt;p>申请证书 ,修改email地址 和 域名 参数&lt;/p>
+&lt;pre>&lt;code>#申请证书前，确保nginx工作正常
+sudo systemctl start nginx
+sudo systemctl status nginx
+# 修改下面命令中的， email地址 和 域名
+sudo certbot certonly --webroot --email your_email@xxx -w /usr/share/nginx/html -d xxx.your.site
+&lt;/code>&lt;/pre>
+&lt;p>如果看到&lt;/p>
+&lt;pre>&lt;code>Congratulations! Your certificate and chain have been saved at:
+/etc/letsencrypt/live/xxx.site/fullchain.pem
+Your key file has been saved at:
+/etc/letsencrypt/live/xxx.site/privkey.pem
+说明申请成功了
+&lt;/code>&lt;/pre>
+&lt;!-- more -->
+&lt;p>设定certbot自动更新证书&lt;/p>
+&lt;pre>&lt;code>#执行下面的命令
+SLEEPTIME=$(awk 'BEGIN{srand(); print int(rand()*(3600+1))}'); echo &amp;quot;0 0,12 * * * root sleep $SLEEPTIME &amp;amp;&amp;amp; certbot renew -q&amp;quot; | sudo tee -a /etc/crontab &amp;gt; /dev/null
+#检查/etc/crontab
+sudo cat /etc/crontab
+#如果有下面这句，说明自动更新证明任务已经注册
+0 0,12 * * * root sleep 2380 &amp;amp;&amp;amp; certbot renew -q
+#证书更新完成后，重启nginx和trojan-go
+cd /etc/letsencrypt/renewal-hooks/post
+sudo touch renew_post.sh
+sudo chmod +x renew_post.sh
+#在renew_post.sh文件中，增加
+#!/bin/bash
+nginx -s reload
+#!/bin/bash
+systemctl restart trojan-go
+#测试一下证书更新流程。 如果后面trojian-go失败，不要担心，因为还没有安装，等trojan更新成功后，再执行一遍就行了。
+sudo certbot renew --dry-run
+&lt;/code>&lt;/pre>
+&lt;p>修改/etc/nginx/conf.d/defaul.conf文件 ,注意把所有xxx.site修改为你自己的域名&lt;/p>
+&lt;p>注意端口是4443，因为443留给了trojan-go，这里的4443是trojan-go回落后的端口&lt;/p>
+&lt;pre>&lt;code>server {
+# SSL configuration
+listen 4443 ssl http2 default_server;
+listen [::]:4443 ssl http2 default_server;
+ssl_certificate /etc/letsencrypt/live/Yoursite.com/fullchain.pem;
+ssl_certificate_key /etc/letsencrypt/live/Yoursite.com/privkey.pem;
+ssl_protocols TLSv1.2 TLSv1.3;
+root /usr/share/nginx/html;
+# Add index.php to the list if you are using PHP
+index index.html index.htm index.nginx-debian.html;
+server_name Yoursite.com;
+&lt;/code>&lt;/pre>
+&lt;p>}&lt;/p>
+&lt;p>重启nginx&lt;/p>
+&lt;pre>&lt;code>sudo systemctl restart nginx
+&lt;/code>&lt;/pre>
+&lt;p>如果成功,这时候可以访问https://xxx.site/&lt;/p>
+&lt;h3 id="3-在centos-7上配置trojan-go">3 在centos 7上配置trojan-go&lt;/h3>
+&lt;p>下载trojan-go，并解压&lt;/p>
+&lt;pre>&lt;code>cd
+mkdir trojan-go
+cd trojan-go
+wget https://github.com/p4gefau1t/trojan-go/releases/download/v0.10.6/trojan-go-linux-amd64.zip
+unzip trojan-go-linux-amd64.zip
+sudo mkdir /etc/trojan-go
+sudo cp trojan-go /etc/trojan-go
+sudo cp *.dat /etc/trojan-go
+&lt;/code>&lt;/pre>
+&lt;p>服务器配置文件 /etc/trojan-go/server.json，注意修改yousite.com为你自己的站点域名&lt;/p>
+&lt;pre>&lt;code>{
+&amp;quot;run_type&amp;quot;: &amp;quot;server&amp;quot;,
+&amp;quot;local_addr&amp;quot;: &amp;quot;0.0.0.0&amp;quot;,
+&amp;quot;local_port&amp;quot;: 443,
+&amp;quot;remote_addr&amp;quot;: &amp;quot;127.0.0.1&amp;quot;,
+&amp;quot;remote_port&amp;quot;: 80,
+&amp;quot;password&amp;quot;: [
+&amp;quot;修改为你的密码&amp;quot;
+],
+&amp;quot;ssl&amp;quot;: {
+&amp;quot;cert&amp;quot;: &amp;quot;/etc/letsencrypt/live/Yousite.com/fullchain.pem&amp;quot;,
+&amp;quot;key&amp;quot;: &amp;quot;/etc/letsencrypt/live/Yousite.com/privkey.pem&amp;quot;,
+&amp;quot;sni&amp;quot;: &amp;quot;Yousite.com&amp;quot;,
+&amp;quot;fallback&amp;quot;:&amp;quot;4443&amp;quot; #注意，这里的4443和前面nginx的端口对应。
+},
+&amp;quot;websocket&amp;quot;: {
+&amp;quot;enabled&amp;quot;: true,
+&amp;quot;path&amp;quot;: &amp;quot;/ws_path&amp;quot;,
+&amp;quot;hostname&amp;quot;: &amp;quot;Yousite.com&amp;quot;
+},
+&amp;quot;router&amp;quot;:{
+&amp;quot;enabled&amp;quot;: true,
+&amp;quot;block&amp;quot;: [
+&amp;quot;geoip:private&amp;quot;
+]
+}
+}
+&lt;/code>&lt;/pre>
+&lt;p>建立trojan-go服务&lt;/p>
+&lt;pre>&lt;code> sudo vi /etc/systemd/system/trojan-go.service
+#文件内容如下
+[Unit]
+Description=Trojan-Go - An unidentifiable mechanism that helps you bypass GFW
+Documentation=https://p4gefau1t.github.io/trojan-go/
+After=network.target nss-lookup.target
+[Service]
+Type=simple
+StandardError=journal
+PIDFile=/usr/src/trojan/trojan/trojan.pid
+ExecStart=/etc/trojan-go/trojan-go -config /etc/trojan-go/server.json
+ExecReload=
+ExecStop=/etc/trojan-go/trojan-go
+Restart=on-failure
+RestartSec=10s
+LimitNOFILE=infinity
+[Install]
+WantedBy=multi-user.target
+sudo systemctl daemon-reload
+sudo systemctl start trojan-go
+#检查trojan-go正常运行
+sudo systemctl status trojan-go
+#设置为启动后自动执行
+sudo systemctl enable trojan-go
+sudo systemctl enable nginx
+#此时，再执行一下证书更新测试，应该一切正常了
+sudo certbot renew --dry-run
+&lt;/code>&lt;/pre>
+&lt;h3 id="4-客户端配置trojan-go">4 客户端配置trojan-go&lt;/h3>
+&lt;pre>&lt;code>{
+&amp;quot;run_type&amp;quot;: &amp;quot;client&amp;quot;,
+&amp;quot;local_addr&amp;quot;: &amp;quot;127.0.0.1&amp;quot;,
+&amp;quot;local_port&amp;quot;: 1082,
+&amp;quot;remote_addr&amp;quot;: &amp;quot;yousite.com&amp;quot;,
+&amp;quot;remote_port&amp;quot;: 443,
+&amp;quot;password&amp;quot;: [
+&amp;quot;你的密码&amp;quot;
+],
+&amp;quot;ssl&amp;quot;: {
+&amp;quot;sni&amp;quot;: &amp;quot;yousite.com&amp;quot;
+},
+&amp;quot;mux&amp;quot; :{
+&amp;quot;enabled&amp;quot;: true,
+&amp;quot;concurrency&amp;quot;: 8,
+&amp;quot;idle_timeout&amp;quot;: 60
+},
+&amp;quot;websocket&amp;quot;: {
+#如果想用cdn加速，把下面这行改成true
+&amp;quot;enabled&amp;quot;: false,
+&amp;quot;path&amp;quot;: &amp;quot;/ws_path&amp;quot;,
+&amp;quot;hostname&amp;quot;: &amp;quot;yousite.com&amp;quot;
+},
+&amp;quot;router&amp;quot;:{
+&amp;quot;enabled&amp;quot;: true,
+&amp;quot;bypass&amp;quot;: [
+&amp;quot;geoip:cn&amp;quot;,
+&amp;quot;geoip:private&amp;quot;,
+&amp;quot;geosite:cn&amp;quot;,
+&amp;quot;geosite:geolocation-cn&amp;quot;
+],
+&amp;quot;block&amp;quot;: [
+&amp;quot;geosite:category-ads&amp;quot;
+],
+&amp;quot;proxy&amp;quot;: [
+&amp;quot;geosite:geolocation-!cn&amp;quot;
+],
+&amp;quot;default_policy&amp;quot;: &amp;quot;proxy&amp;quot;
+}
+}
+&lt;/code>&lt;/pre></description></item></channel></rss>

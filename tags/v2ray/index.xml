@@ -1,1 +1,253 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>v2ray on 麦克的茶馆</title><link>/tags/v2ray/</link><description>Recent content in v2ray on 麦克的茶馆</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Wed, 01 Jul 2020 00:00:00 +0000</lastBuildDate><atom:link href="/tags/v2ray/index.xml" rel="self" type="application/rss+xml"/><item><title>Centos 7 增加第二个IP</title><link>/post/add-2nd-ip/</link><pubDate>Wed, 01 Jul 2020 00:00:00 +0000</pubDate><guid>/post/add-2nd-ip/</guid><description>最近的一些技术总结 1 Centos 7 增加第二个ip 服务器需要新增一个ip，记录一下： 检查服务器是否启用了NetworkManager服务 #ls /etc/sysconfig/network-scripts/ifcfg* #grep 'NM_CONTROLLED' /etc/sysconfig/network-scripts/ifcfg-eth0 没找到</description></item><item><title>配置v2ray+ws+tls1.3+nginx</title><link>/post/setup-v2ray-ws-tls-nginx/</link><pubDate>Sat, 18 Jan 2020 00:00:00 +0000</pubDate><guid>/post/setup-v2ray-ws-tls-nginx/</guid><description>1 安装nginx sudo yum install nginx sudo systemctl start nginx sudo systemctl status nginx 检查nginx 版本,重点是检查 openssl是否支持1.1.1,只有1.1.1之后的版本,才能支持t</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>v2ray on 麦克的茶馆</title><link>/tags/v2ray/</link><description>Recent content in v2ray on 麦克的茶馆</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Wed, 01 Jul 2020 00:00:00 +0000</lastBuildDate><atom:link href="/tags/v2ray/index.xml" rel="self" type="application/rss+xml"/><item><title>Centos 7 增加第二个IP</title><link>/post/add-2nd-ip/</link><pubDate>Wed, 01 Jul 2020 00:00:00 +0000</pubDate><guid>/post/add-2nd-ip/</guid><description>&lt;p>最近的一些技术总结&lt;/p>
+&lt;h3 id="1-centos-7-增加第二个ip">1 Centos 7 增加第二个ip&lt;/h3>
+&lt;p>服务器需要新增一个ip，记录一下：&lt;/p>
+&lt;p>检查服务器是否启用了NetworkManager服务&lt;/p>
+&lt;pre>&lt;code>#ls /etc/sysconfig/network-scripts/ifcfg*
+#grep 'NM_CONTROLLED' /etc/sysconfig/network-scripts/ifcfg-eth0
+没找到
+#sudo systemctl -a | grep NetworkManager
+没启用
+not-found inactive dead NetworkManager.service
+#sudo systemctl -a | grep network
+还是旧的方式
+network.service loaded active exited LSB: Bring up/down networking
+&lt;/code>&lt;/pre>
+&lt;p>直接增加一个配置文件：&lt;/p>
+&lt;pre>&lt;code> #sudo vi /etc/sysconfig/network-scripts/ifcfg-eth0:0
+BOOTPROTO=none
+DEVICE=&amp;quot;eth0:0&amp;quot;
+IPADDR=xx.xx.xx.xx #第二个ip地址
+NETMASK=255.255.255.0
+ONBOOT=yes
+&lt;/code>&lt;/pre>
+&lt;p>启用命令：&lt;/p>
+&lt;pre>&lt;code> #sudo ifdown eth0; ifup eth0
+#ifconfig 命令检查新的ip
+eth0:0: flags=4163&amp;lt;UP,BROADCAST,RUNNING,MULTICAST&amp;gt; mtu 1500
+inet xx.xx.xx.xx netmask 255.255.255.0 broadcast xx.xx.xx.255
+&lt;/code>&lt;/pre>
+&lt;p>另外一套体系是ip&lt;/p>
+&lt;pre>&lt;code> #ip addr show 检查ip地址
+#sudo ip addr add xx.xx.xx.xx/24 broadcast xx.xx.xx.255 dev eth0 添加一个新的ip地址，关机就没有了。
+#ip route show 检查路由
+# sudo ip route add 8.8.4.4/32 via xx.xx.xx.xx 添加一个新的路由，
+#ip route get 8.8.8.8 检查到8.8.8.8 的路由
+&lt;/code>&lt;/pre>
+&lt;h3 id="2-在路由器上转发udp端口">2 在路由器上，转发udp端口&lt;/h3>
+&lt;pre>&lt;code>#转发 8.8.8.8的 dns 查询请求到192.168.1.1
+iptables -t nat -A PREROUTING -p udp -d 8.8.8.8 --dport 53 -j DNAT --to 192.168.1.1:53
+&lt;/code>&lt;/pre>
+&lt;h3 id="3-v2ray增加直达的域名">3 v2ray增加直达的域名&lt;/h3>
+&lt;p>客户段配置&lt;/p>
+&lt;pre>&lt;code>&amp;quot;routing&amp;quot;: {
+&amp;quot;domainStrategy&amp;quot;: &amp;quot;IPOnDemand&amp;quot;,
+&amp;quot;rules&amp;quot;:[
+{
+// Blocks access to private IPs. Remove this if you want to access your router.
+&amp;quot;type&amp;quot;: &amp;quot;field&amp;quot;,
+&amp;quot;ip&amp;quot;: [&amp;quot;geoip:private&amp;quot;],
+&amp;quot;outboundTag&amp;quot;: &amp;quot;direct&amp;quot;
+},
+{
+&amp;quot;type&amp;quot;: &amp;quot;field&amp;quot;,
+&amp;quot;ip&amp;quot;: [&amp;quot;geoip:cn&amp;quot;],
+&amp;quot;outboundTag&amp;quot;: &amp;quot;direct&amp;quot;
+},
+{
+&amp;quot;type&amp;quot;: &amp;quot;field&amp;quot;,
+&amp;quot;domain&amp;quot;: [&amp;quot;geosite:cn&amp;quot;,
+&amp;quot;github.com&amp;quot;,
+&amp;quot;apple.com&amp;quot;
+],
+&amp;quot;outboundTag&amp;quot;: &amp;quot;direct&amp;quot;
+},
+&lt;/code>&lt;/pre>
+&lt;h3 id="4-启用cloudflare">4 启用cloudflare&lt;/h3>
+&lt;p>注册用户，属于你的域名，cloudflare会自动识别现有的地址绑定。&lt;/p>
+&lt;p>然后在域名登记的网站，修改域名的解析服务器为 cloudflare的域名服务器。&lt;/p>
+&lt;p>设定 ssl的加密方式为 full(strict)&lt;/p>
+&lt;p>增加一个防火墙规则，识别你的流量，allow。 没有这个，cloudflare可能会限制流量。&lt;/p></description></item><item><title>配置v2ray+ws+tls1.3+nginx</title><link>/post/setup-v2ray-ws-tls-nginx/</link><pubDate>Sat, 18 Jan 2020 00:00:00 +0000</pubDate><guid>/post/setup-v2ray-ws-tls-nginx/</guid><description>&lt;h3 id="1-安装nginx">1 安装nginx&lt;/h3>
+&lt;pre>&lt;code>sudo yum install nginx
+sudo systemctl start nginx
+sudo systemctl status nginx
+&lt;/code>&lt;/pre>
+&lt;p>检查nginx 版本,重点是检查 openssl是否支持1.1.1,只有1.1.1之后的版本,才能支持tls1.3&lt;/p>
+&lt;pre>&lt;code> nginx -V
+built by gcc 8.2.1 20180905 (Red Hat 8.2.1-3) (GCC)
+built with OpenSSL 1.1.1 FIPS 11 Sep 2018 (running with OpenSSL 1.1.1c FIPS 28 May 2019)
+TLS SNI support enabled
+&lt;/code>&lt;/pre>
+&lt;h3 id="2-申请证书">2 申请证书&lt;/h3>
+&lt;pre>&lt;code>sudo yum install epel-release
+sudo yum install certbot
+&lt;/code>&lt;/pre>
+&lt;p>打开 80 443 端口&lt;/p>
+&lt;pre>&lt;code>sudo iptables -I INPUT 4 -p tcp -m tcp --dport 80 -j ACCEPT
+sudo iptables -I INPUT 4 -p tcp -m tcp --dport 443 -j ACCEPT
+&lt;/code>&lt;/pre>
+&lt;p>申请证书 ,修改email地址 和 域名 参数&lt;/p>
+&lt;pre>&lt;code>sudo certbot certonly --webroot --email your_email@xxx -w /usr/share/nginx/html -d xxx.your.site
+&lt;/code>&lt;/pre>
+&lt;p>如果看到&lt;/p>
+&lt;pre>&lt;code>Congratulations! Your certificate and chain have been saved at:
+/etc/letsencrypt/live/xxx.site/fullchain.pem
+Your key file has been saved at:
+/etc/letsencrypt/live/xxx.site/privkey.pem
+说明申请成功了
+&lt;/code>&lt;/pre>
+&lt;!-- more -->
+&lt;p>修改/etc/nginx/conf.d/defaul.conf文件 ,注意把所有xxx.site修改为你自己的域名&lt;/p>
+&lt;pre>&lt;code>server {
+# SSL configuration
+listen 443 ssl http2 default_server;
+listen [::]:443 ssl http2 default_server;
+ssl_certificate /etc/letsencrypt/live/xxx.site/fullchain.pem;
+ssl_certificate_key /etc/letsencrypt/live/xxx.site/privkey.pem;
+#ssl_protocols TLSv1.2 TLSv1.3;
+ssl_protocols TLSv1.3;
+root /usr/share/nginx/html;
+#root /var/www;
+# Add index.php to the list if you are using PHP
+index index.html index.htm index.nginx-debian.html;
+server_name xxx.site;
+location /vray { #
+proxy_redirect off;
+proxy_pass http://127.0.0.1:9000;
+proxy_http_version 1.1;
+proxy_set_header Upgrade $http_upgrade;
+proxy_set_header Connection &amp;quot;upgrade&amp;quot;;
+proxy_set_header Host $http_host;
+}
+}
+&lt;/code>&lt;/pre>
+&lt;p>重启nginx&lt;/p>
+&lt;pre>&lt;code>sudo systemctl restart nginx
+&lt;/code>&lt;/pre>
+&lt;p>如果成功,这时候可以访问https://xxx.site/&lt;/p>
+&lt;h3 id="3-配置v2ray">3 配置v2ray&lt;/h3>
+&lt;p>服务器侧关键数据&lt;/p>
+&lt;pre>&lt;code>&amp;quot;inbound&amp;quot;: {
+&amp;quot;port&amp;quot;: 9000, //(此端口与nginx配置相关)
+&amp;quot;listen&amp;quot;: &amp;quot;127.0.0.1&amp;quot;,
+&amp;quot;protocol&amp;quot;: &amp;quot;vmess&amp;quot;,
+&amp;quot;settings&amp;quot;: {
+&amp;quot;clients&amp;quot;: [
+{
+&amp;quot;id&amp;quot;: &amp;quot;xxxxx-xxxx-xxxx&amp;quot;,
+&amp;quot;level&amp;quot;: 1,
+&amp;quot;alterId&amp;quot;: 64 //此ID也需与客户端保持一致
+}
+]
+},
+&amp;quot;streamSettings&amp;quot;:{
+&amp;quot;network&amp;quot;: &amp;quot;ws&amp;quot;,
+&amp;quot;wsSettings&amp;quot;: {
+&amp;quot;path&amp;quot;: &amp;quot;/vray&amp;quot; //与nginx配置相关
+}
+}
+},
+&amp;quot;outbound&amp;quot;: {
+&amp;quot;protocol&amp;quot;: &amp;quot;freedom&amp;quot;,
+&amp;quot;settings&amp;quot;: {}
+},
+&amp;quot;outboundDetour&amp;quot;: [
+{
+&amp;quot;protocol&amp;quot;: &amp;quot;blackhole&amp;quot;,
+&amp;quot;settings&amp;quot;: {},
+&amp;quot;tag&amp;quot;: &amp;quot;blocked&amp;quot;
+}
+],
+&amp;quot;routing&amp;quot;: {
+&amp;quot;strategy&amp;quot;: &amp;quot;rules&amp;quot;,
+&amp;quot;settings&amp;quot;: {
+&amp;quot;rules&amp;quot;: [
+{
+&amp;quot;type&amp;quot;: &amp;quot;field&amp;quot;,
+&amp;quot;ip&amp;quot;: [
+&amp;quot;0.0.0.0/8&amp;quot;,
+&amp;quot;10.0.0.0/8&amp;quot;,
+&amp;quot;100.64.0.0/10&amp;quot;,
+&amp;quot;127.0.0.0/8&amp;quot;,
+&amp;quot;169.254.0.0/16&amp;quot;,
+&amp;quot;172.16.0.0/12&amp;quot;,
+&amp;quot;192.0.0.0/24&amp;quot;,
+&amp;quot;192.0.2.0/24&amp;quot;,
+&amp;quot;192.168.0.0/16&amp;quot;,
+&amp;quot;198.18.0.0/15&amp;quot;,
+&amp;quot;198.51.100.0/24&amp;quot;,
+&amp;quot;203.0.113.0/24&amp;quot;,
+&amp;quot;::1/128&amp;quot;,
+&amp;quot;fc00::/7&amp;quot;,
+&amp;quot;fe80::/10&amp;quot;
+],
+&amp;quot;outboundTag&amp;quot;: &amp;quot;blocked&amp;quot;
+}
+]
+}
+}
+&lt;/code>&lt;/pre>
+&lt;p>客户段配置&lt;/p>
+&lt;pre>&lt;code> &amp;quot;outbounds&amp;quot;: [
+{
+&amp;quot;protocol&amp;quot;: &amp;quot;vmess&amp;quot;,
+&amp;quot;settings&amp;quot;: {
+&amp;quot;vnext&amp;quot;: [
+{
+&amp;quot;address&amp;quot;: &amp;quot;xxx.xxx.xxx.xxx&amp;quot;,
+&amp;quot;port&amp;quot;: 443, // 服务器端口
+&amp;quot;users&amp;quot;: [
+{
+&amp;quot;id&amp;quot;: &amp;quot;xxx-xxxx-xxxx-xxxx&amp;quot;,
+&amp;quot;alterId&amp;quot;: 64,
+&amp;quot;security&amp;quot;: &amp;quot;aes-128-gcm&amp;quot;
+}
+]
+}
+]
+},
+&amp;quot;streamSettings&amp;quot;:{
+&amp;quot;network&amp;quot;: &amp;quot;ws&amp;quot;,
+&amp;quot;security&amp;quot;: &amp;quot;tls&amp;quot;,
+&amp;quot;tlsSettings&amp;quot;: {
+&amp;quot;serverName&amp;quot;: &amp;quot;xxx.site&amp;quot;
+},
+&amp;quot;wsSettings&amp;quot;: {
+&amp;quot;path&amp;quot;: &amp;quot;/vray&amp;quot;
+}
+},
+&amp;quot;tag&amp;quot;: &amp;quot;forgin&amp;quot;
+},
+{
+// Protocol name of the outbound proxy.
+&amp;quot;protocol&amp;quot;: &amp;quot;freedom&amp;quot;,
+// Settings of the protocol. Varies based on protocol.
+&amp;quot;settings&amp;quot;: {},
+// Tag of the outbound. May be used for routing.
+&amp;quot;tag&amp;quot;: &amp;quot;direct&amp;quot;
+},{
+&amp;quot;protocol&amp;quot;: &amp;quot;blackhole&amp;quot;,
+&amp;quot;settings&amp;quot;: {},
+&amp;quot;tag&amp;quot;: &amp;quot;blocked&amp;quot;
+}],
+// Transport is for global transport settings. If you have multiple transports with same settings
+// (say mKCP), you may put it here, instead of in each individual inbound/outbounds.
+//&amp;quot;transport&amp;quot;: {},
+// Routing controls how traffic from inbounds are sent to outbounds.
+&amp;quot;routing&amp;quot;: {
+&amp;quot;domainStrategy&amp;quot;: &amp;quot;IPOnDemand&amp;quot;,
+&amp;quot;rules&amp;quot;:[
+{
+// Blocks access to private IPs. Remove this if you want to access your router.
+&amp;quot;type&amp;quot;: &amp;quot;field&amp;quot;,
+&amp;quot;ip&amp;quot;: [&amp;quot;geoip:private&amp;quot;],
+&amp;quot;outboundTag&amp;quot;: &amp;quot;blocked&amp;quot;
+},
+{
+// Blocks major ads.
+&amp;quot;type&amp;quot;: &amp;quot;field&amp;quot;,
+&amp;quot;domain&amp;quot;: [&amp;quot;geosite:category-ads&amp;quot;],
+&amp;quot;outboundTag&amp;quot;: &amp;quot;blocked&amp;quot;
+}
+]
+},
+&lt;/code>&lt;/pre></description></item></channel></rss>

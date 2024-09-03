@@ -1,1 +1,39 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>erx on 麦克的茶馆</title><link>/tags/erx/</link><description>Recent content in erx on 麦克的茶馆</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Sat, 18 Jan 2020 00:00:00 +0000</lastBuildDate><atom:link href="/tags/erx/index.xml" rel="self" type="application/rss+xml"/><item><title>UBNT ERX dns配置</title><link>/post/setup-coredns-unbt-erx/</link><pubDate>Sat, 18 Jan 2020 00:00:00 +0000</pubDate><guid>/post/setup-coredns-unbt-erx/</guid><description>主要使用了这个项目 https://github.com/mikechen163/dohproxy 1 下载和编译 备注:go版本大于1.13 git clone --depth 1 https://github.com/mikechen163/dohproxy.git cd mikechen163/dohproxy GOOS=linux GOARCH=mipsle go build 2 copy到erx路由器上 scp cn.txt root@erx:/usr/local/bin/ scp block.txt root@erx:/usr/local/bin/ scp dohproxy root@erx:/usr/local/bin/mydns 3 启用mydns</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>erx on 麦克的茶馆</title><link>/tags/erx/</link><description>Recent content in erx on 麦克的茶馆</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Sat, 18 Jan 2020 00:00:00 +0000</lastBuildDate><atom:link href="/tags/erx/index.xml" rel="self" type="application/rss+xml"/><item><title>UBNT ERX dns配置</title><link>/post/setup-coredns-unbt-erx/</link><pubDate>Sat, 18 Jan 2020 00:00:00 +0000</pubDate><guid>/post/setup-coredns-unbt-erx/</guid><description>&lt;p>主要使用了这个项目
+&lt;a href="https://github.com/mikechen163/dohproxy" target="_blank" rel="noopener">https://github.com/mikechen163/dohproxy&lt;/a>
+&lt;/p>
+&lt;h3 id="1-下载和编译">1 下载和编译&lt;/h3>
+&lt;p>备注:go版本大于1.13&lt;/p>
+&lt;pre>&lt;code>git clone --depth 1 https://github.com/mikechen163/dohproxy.git
+cd mikechen163/dohproxy
+GOOS=linux GOARCH=mipsle go build
+&lt;/code>&lt;/pre>
+&lt;h3 id="2-copy到erx路由器上">2 copy到erx路由器上&lt;/h3>
+&lt;pre>&lt;code>scp cn.txt root@erx:/usr/local/bin/
+scp block.txt root@erx:/usr/local/bin/
+scp dohproxy root@erx:/usr/local/bin/mydns
+&lt;/code>&lt;/pre>
+&lt;h3 id="3-启用mydns">3 启用mydns&lt;/h3>
+&lt;p>创建一个/etc/init.d/mydns 文件,前面的内容修改为:&lt;/p>
+&lt;pre>&lt;code> ....
+DESC=mydns
+NAME=mydns
+DAEMON=/usr/local/bin/mydns
+DAEMON_OPTS=&amp;quot;-port 5353 -block /usr/local/bin/block.txt -chn /usr/local/bin/cn.txt
+...
+&lt;/code>&lt;/pre>
+&lt;p>然后/etc/init.d/mydns restart启用服务.&lt;/p>
+&lt;pre>&lt;code> dig @localhost -p 5353 www.google.com
+&lt;/code>&lt;/pre>
+&lt;p>测试是否成功.&lt;/p>
+&lt;p>修改 /etc/dnsmasq.conf ,也可以通过配置实现&lt;/p>
+&lt;pre>&lt;code> server=127.0.0.1#5353 # statically configured
+&lt;/code>&lt;/pre>
+&lt;p>测试是否成功&lt;/p>
+&lt;pre>&lt;code>/etc/init.d/dnsmasq restart
+dig @localhost www.google.com
+&lt;/code>&lt;/pre>
+&lt;h3 id="4-设置开机脚本">4 设置开机脚本&lt;/h3>
+&lt;p>/config/scripts/post-config.d/update_iptables
+增加一行,保证mydns重启之后服务启动&lt;/p>
+&lt;pre>&lt;code>/etc/init.d/mydns restart
+&lt;/code>&lt;/pre></description></item></channel></rss>

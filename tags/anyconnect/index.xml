@@ -1,1 +1,68 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>anyconnect on 麦克的茶馆</title><link>/tags/anyconnect/</link><description>Recent content in anyconnect on 麦克的茶馆</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Tue, 04 Aug 2015 00:00:00 +0000</lastBuildDate><atom:link href="/tags/anyconnect/index.xml" rel="self" type="application/rss+xml"/><item><title>Centos 7 ocserv AnyConnect服务器配置说明</title><link>/post/centos_setup_anyconnect/</link><pubDate>Tue, 04 Aug 2015 00:00:00 +0000</pubDate><guid>/post/centos_setup_anyconnect/</guid><description>参考文件 在 CentOS 7 上搭建 Cisco AnyConnect VPN Gentoo编译安装Ocserv上Cisco AnyConnect VPN 折腾笔记：架设OpenConnect Server给iPhone提供</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>anyconnect on 麦克的茶馆</title><link>/tags/anyconnect/</link><description>Recent content in anyconnect on 麦克的茶馆</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Tue, 04 Aug 2015 00:00:00 +0000</lastBuildDate><atom:link href="/tags/anyconnect/index.xml" rel="self" type="application/rss+xml"/><item><title>Centos 7 ocserv AnyConnect服务器配置说明</title><link>/post/centos_setup_anyconnect/</link><pubDate>Tue, 04 Aug 2015 00:00:00 +0000</pubDate><guid>/post/centos_setup_anyconnect/</guid><description>&lt;p>参考文件&lt;/p>
+&lt;p>&lt;a href="http://www.xuanlove.net/jishujiaoliu/1210.html" target="_blank" rel="noopener">在 CentOS 7 上搭建 Cisco AnyConnect VPN&lt;/a>
+&lt;/p>
+&lt;p>&lt;a href="http://blog.ihipop.info/2014/07/4782.html" target="_blank" rel="noopener">Gentoo编译安装Ocserv上Cisco AnyConnect VPN&lt;/a>
+&lt;/p>
+&lt;p>&lt;a href="http://bitinn.net/11084/" target="_blank" rel="noopener">折腾笔记：架设OpenConnect Server给iPhone提供更顺畅的网络生活&lt;/a>
+&lt;/p>
+&lt;p>安装没有任何问题，直接安装即可&lt;/p>
+&lt;pre>&lt;code>sudo yum install epel-release
+sudo yum install ocserv
+&lt;/code>&lt;/pre>
+&lt;p>遇到的主要问题：&lt;/p>
+&lt;h5 id="1-本地lan禁止vpn需要修改etcocservocservconf">1 本地lan禁止vpn。需要修改/etc/ocserv/ocserv.conf&lt;/h5>
+&lt;pre>&lt;code>#注意 这里推送路由条数限制据说只有64条 而且不能指定是走还是不 走路由 这点没有openVPN灵活 我这里全部把它注释了 走全局了
+#设定全部ip都走 VPN，由于本地路由有优先表，所以本地路由不走vpn
+route = 0.0.0.0/128.0.0.0
+route = 128.0.0.0/128.0.0.0
+&lt;/code>&lt;/pre>
+&lt;p>另外一个办法是配置常用的路由，客户端最大支持200条，服务器缺省64条，如果要修改，需要重新编译。&lt;a href="http://blog.ltns.info/wp-content/uploads/2014/09/ocserv.zip" target="_blank" rel="noopener">这里&lt;/a>
+可以下载一个route配置样本&lt;/p>
+&lt;h5 id="2-启动用户证书登录">2 启动用户证书登录。&lt;/h5>
+&lt;p>用户证书制作脚本，需要一个参数 用户名&lt;/p>
+&lt;pre>&lt;code>sh make_user_cert.sh username
+&lt;/code>&lt;/pre>
+&lt;p>脚本如下：&lt;/p>
+&lt;pre>&lt;code>if [ -z &amp;quot;$1&amp;quot; ];then
+echo &amp;quot;please input user_name for cert &amp;quot;
+exit
+else
+mkdir $1
+cd $1
+cp ../ca-cert.pem .
+cp ../ca-key.pem .
+certtool --generate-privkey --outfile user-key.pem
+cat &amp;gt;user.tmpl&amp;lt;&amp;lt;EOF
+cn = &amp;quot;$1&amp;quot;
+unit = &amp;quot;my company&amp;quot;
+expiration_days = 3650
+signing_key
+tls_www_client
+EOF #注意，文件中这个EOF必须放在行首，否则shell会报错误
+certtool --generate-certificate --load-privkey user-key.pem --load-ca-certificate ca-cert.pem --load-ca-privkey ca-key.pem --template user.tmpl --outfile user-cert.pem
+certtool --to-p12 --load-privkey user-key.pem --pkcs-cipher 3des-pkcs12 --load-certificate user-cert.pem --outfile user.p12 --outder
+mv user.p12 $1.p12
+fi
+&lt;/code>&lt;/pre>
+&lt;!-- more -->
+&lt;h5 id="3--修改etcocservocservconf">3 修改/etc/ocserv/ocserv.conf&lt;/h5>
+&lt;pre>&lt;code># 确保服务器正确读取用户证书（后面会用到用户证书）
+cert-user-oid = 2.5.4.3
+# 注释掉所有的route，让服务器成为gateway，如果是手机用，则全部流量都走vpn
+#route = 192.168.1.0/255.255.255.0
+# 改为证书登陆，注释掉原来的登陆模式
+auth = &amp;quot;certificate&amp;quot;
+#auth = &amp;quot;plain[/etc/ocserv/ocpasswd]&amp;quot;
+# 证书认证不支持这个选项，注释掉这行
+#listen-clear-file = /var/run/ocserv-conn.socket
+# 启用证书验证证书，实际路径和你的CA的证书路径一致即可。
+ca-cert = /etc/ssl/private/my-ca-cert.pem
+#！！！把这句注释掉，否则客户端总是说下载不了配置文件，导致连接失败
+#user-profile = profile.xml
+&lt;/code>&lt;/pre>
+&lt;p>4 启动服务&lt;/p>
+&lt;pre>&lt;code>sudo service ocserv start
+sudo systemctl enable ocserv #自动启动
+&lt;/code>&lt;/pre>
+&lt;p>5 分发到用户。
+通过邮件或者其他方式，把用户证书发给手机。然后在客户端菜单-诊断-证书管理-导入，导入生成的证书。&lt;/p></description></item></channel></rss>

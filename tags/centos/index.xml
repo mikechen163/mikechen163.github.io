@@ -3,7 +3,110 @@
 &lt;p>最简单的办法就是使用 ELRepo的仓库安装. 其他方法比较复杂不推荐.&lt;/p>
 &lt;pre>&lt;code>sudo yum install elrepo-release epel-release
 sudo yum install kmod-wireguard wireguard-tools
-&lt;/code>&lt;/pre></description></item><item><title>centos 8安装postgresql 数据库</title><link>/post/install-postgresql/</link><pubDate>Tue, 14 Nov 2023 00:00:00 +0000</pubDate><guid>/post/install-postgresql/</guid><description>&lt;h2 id="1-安装记录">1 安装记录&lt;/h2>
+&lt;/code>&lt;/pre>
+&lt;p>安装完成后,检查wireguard 模块是否正常工作.&lt;/p>
+&lt;pre>&lt;code>#modprobe wireguard
+#lsmod | grep wireguard
+wireguard 212992 0
+ip6_udp_tunnel 16384 1 wireguard
+udp_tunnel 20480 1 wireguard
+&lt;/code>&lt;/pre>
+&lt;p>启用ip转发功能&lt;/p>
+&lt;pre>&lt;code>#sudo vi /etc/sysctl.conf
+增加一句:
+net.ipv4.ip_forward=1
+#sudo sysctl -p
+&lt;/code>&lt;/pre>
+&lt;h3 id="12-配置服务器端">1.2 配置服务器端&lt;/h3>
+&lt;p>生成密匙. 下面的命令,在 /et/wireguard/目录下,生成 privatekey 和 publickey两个密匙&lt;/p>
+&lt;pre>&lt;code>wg genkey | sudo tee /etc/wireguard/privatekey | wg pubkey | sudo tee /etc/wireguard/publickey
+&lt;/code>&lt;/pre>
+&lt;p>创建 /etc/wireguard/wg0.conf 文件,可以配置多个客户端&lt;/p>
+&lt;pre>&lt;code>[Interface]
+Address = 192.168.10.1/24
+ListenPort = 服务器端口
+PrivateKey = 服务器生侧使用的 privatekey
+PostUp = iptables -I FORWARD -i wg0 -j ACCEPT
+PostDown = iptables -D FORWARD -i wg0 -j ACCEPT
+[Peer]
+PublicKey = 第一个客户端到的publickey
+AllowedIPs = 192.168.10.2/32
+[Peer]
+PublicKey = 第二个客户端到的publickey
+AllowedIPs = 192.168.10.3/32
+....
+&lt;/code>&lt;/pre>
+&lt;p>如果使用iptables.service打开服务器监听端口&lt;/p>
+&lt;pre>&lt;code>sudo iptables -I INPUT -p udp -m udp --dport server_listen_port -j ACCEPT
+&lt;/code>&lt;/pre>
+&lt;p>如果使用firewalld,对应命令为:&lt;/p>
+&lt;pre>&lt;code>sudo firewall-cmd --zone=public --add-port=port/udp
+&lt;/code>&lt;/pre>
+&lt;p>为了保证私钥的安全，请将wg0.conf和privatekey文件对普通用户不可读。&lt;/p>
+&lt;pre>&lt;code>sudo chmod 600 /etc/wireguard/privatekey
+sudo chmod 600 /etc/wireguard/wg0.conf
+&lt;/code>&lt;/pre>
+&lt;h3 id="13-配置客户端">1.3 配置客户端&lt;/h3>
+&lt;p>生成密匙. 下面的命令,在 /et/wireguard/目录下,生成 privatekey 和 publickey两个密匙&lt;/p>
+&lt;pre>&lt;code>wg genkey | sudo tee /etc/wireguard/privatekey | wg pubkey | sudo tee /etc/wireguard/publickey
+&lt;/code>&lt;/pre>
+&lt;p>创建 /etc/wireguard/wg0.conf 文件&lt;/p>
+&lt;pre>&lt;code>[Interface]
+Address = 192.168.10.2/24
+PrivateKey = 客户端 privatekey
+[Peer]
+PublicKey = 服务器的publickey
+Endpoint = 服务器的ip:port #这个端口和服务器的监听端口一致.
+AllowedIPs = 192.168.10.0/24
+&lt;/code>&lt;/pre>
+&lt;h3 id="14-调试和启动">1.4 调试和启动&lt;/h3>
+&lt;p>在服务区和客户端上,都执行&lt;/p>
+&lt;pre>&lt;code> sudo wg-quick up wg0
+用 sudo wg show wg0 命令,查看状态
+&lt;/code>&lt;/pre>
+&lt;p>服务器的命令结果:&lt;/p>
+&lt;pre>&lt;code>interface: wg0
+public key: I5kyw3VgcYe0E9U9qdfsfsdL+/FT6I1gV70Q1ng=
+private key: (hidden)
+listening port: xxxx
+peer: Rp7Gus0jhjpaTAHUNiphksdfsdfc/OCLOd3XpNxSYSAY=
+endpoint: client1_ip:51448
+allowed ips: 192.168.10.2/32
+latest handshake: 2 hours, 47 minutes, 44 seconds ago
+transfer: 103.87 KiB received, 759.56 KiB sent
+peer: e6Omxk8D66xZAfasdfgi9HJpTrt64tXwm9zgYE8/1goV0=
+endpoint: client2_ip:46428
+allowed ips: 192.168.10.3/32
+latest handshake: 3 hours, 10 minutes, 24 seconds ago
+transfer: 1.55 KiB received, 1.46 KiB sent
+&lt;/code>&lt;/pre>
+&lt;p>客户端查询结果&lt;/p>
+&lt;pre>&lt;code>interface: wg0
+public key: e6Omxk8D66xZAfasdfgi9HJpTrt64tXwm9zgYE8/1goV0 =
+private key: (hidden)
+listening port: xxxx
+peer: I5kyw3VgcYe0E9U9qdfsfsdL+/FT6I1gV70Q1ng=
+endpoint: server_ip:xxxx
+allowed ips: 192.168.10.0/24
+latest handshake: 3 hours, 14 minutes, 7 seconds ago
+transfer: 27.35 KiB received, 39.61 KiB sent
+&lt;/code>&lt;/pre>
+&lt;p>如果没有数据,可以 在客户端 ping 192.168.10.1 这个服务器地址,测试通不通.&lt;/p>
+&lt;p>一切顺利后,使用下面的命令,开机启动 wireguard&lt;/p>
+&lt;pre>&lt;code>sudo systemctl enable wg-quick@wg0
+&lt;/code>&lt;/pre>
+&lt;p>另外一种启动和停止wireguard服务的命令为 (代替 sudo wg-quick up wg0是一次性命令)&lt;/p>
+&lt;pre>&lt;code>sudo systemctl start wg-quick@wg0
+sudo systemctl stop wg-quick@wg0
+sudo systemctl restart wg-quick@wg0
+&lt;/code>&lt;/pre>
+&lt;h3 id="15-参考文档">1.5 参考文档&lt;/h3>
+&lt;p>1 &lt;a href="https://www.myfreax.com/how-to-set-up-wireguard-vpn-on-centos-8/" target="_blank" rel="noopener">如何在CentOS 8安装WireGuard VPN&lt;/a>
+&lt;/p>
+&lt;p>2 &lt;a href="https://www.cnblogs.com/milton/p/14178344.html" target="_blank" rel="noopener">Wireguard笔记(一) 节点安装配置和参数说明&lt;/a>
+&lt;/p>
+&lt;p>3 &lt;a href="https://www.llmgo.cn/post/wireguard-docs-practice/" target="_blank" rel="noopener">WireGuard 的搭建使用与配置详解&lt;/a>
+&lt;/p></description></item><item><title>centos 8安装postgresql 数据库</title><link>/post/install-postgresql/</link><pubDate>Tue, 14 Nov 2023 00:00:00 +0000</pubDate><guid>/post/install-postgresql/</guid><description>&lt;h2 id="1-安装记录">1 安装记录&lt;/h2>
 &lt;h3 id="11-安装">1.1 安装&lt;/h3>
 &lt;p>依次执行下面的命令&lt;/p>
 &lt;pre>&lt;code>dnf module list postgresql
@@ -12,4 +115,169 @@ sudo dnf install postgresql-server
 sudo postgresql-setup --initdb
 sudo systemctl start postgresql
 sudo systemctl enable postgresql
-&lt;/code>&lt;/pre></description></item><item><title>centos 8启用nginx stream ssl preread module</title><link>/post/nginx-stream-preread-enable/</link><pubDate>Mon, 13 Nov 2023 00:00:00 +0000</pubDate><guid>/post/nginx-stream-preread-enable/</guid><description>&lt;p>目标: 为了让nginx服务器,根据不同的域名,转发到不同的app服务器. tls并不终结在nginx,而是转发到最终的app服务器.&lt;/p></description></item></channel></rss>
+&lt;/code>&lt;/pre>
+&lt;h3 id="12-创建用户">1.2 创建用户&lt;/h3>
+&lt;pre>&lt;code> sudo -u postgres psql -c &amp;quot;SELECT version();&amp;quot;
+输出:
+PostgreSQL 13.5 on x86_64-redhat-linux-gnu, compiled by gcc (GCC) 8.5.0 20210514 (Red Hat 8.5.0-4), 64-bit
+创建用户
+sudo -u postgres createuser --interactive
+&lt;/code>&lt;/pre>
+&lt;p>登陆后修改用户密码
+sudo -i -u postgres
+psql&lt;/p>
+&lt;pre>&lt;code>postgres=# 输入 \password 用户名 ,改用户密码
+&lt;/code>&lt;/pre>
+&lt;h3 id="13-创建数据库">1.3 创建数据库&lt;/h3>
+&lt;p>在 项目 config/database.yml 配置好数据库的基本参数后:&lt;/p>
+&lt;pre>&lt;code>default: &amp;amp;default
+adapter: postgresql
+encoding: unicode
+pool: &amp;lt;%= ENV.fetch(&amp;quot;RAILS_MAX_THREADS&amp;quot;) { 5 } %&amp;gt;
+timeout: 5000
+username: username
+password: PASSWORD
+development:
+&amp;lt;&amp;lt;: *default
+database: stock_dev_db
+&lt;/code>&lt;/pre>
+&lt;p>执行rails db:create 创建数据库&lt;/p>
+&lt;h3 id="14-进入数据库">1.4 进入数据库&lt;/h3>
+&lt;pre>&lt;code>执行
+psql -d stock_dev_db 进入数据库
+执行,创建数据库的表格
+psql -d stock_dev_db -f db/create_postdb.sql
+&lt;/code>&lt;/pre>
+&lt;h3 id="15-把sqlite数据导入到postgresql数据中">1.5 把sqlite数据导入到postgresql数据中.&lt;/h3>
+&lt;p>首先要修改一下sqlite的数据库&lt;/p>
+&lt;pre>&lt;code>UPDATE stock_basic_info set code = 'hk' || code where market = 'HK';
+CREATE INDEX idx_code ON daily_records(code);
+sqlite3 db_daily.db &amp;lt; update-sa-sqlite-database-format.sql
+&lt;/code>&lt;/pre>
+&lt;h3 id="16-备份postgresql数据库">1.6 备份postgresql数据库&lt;/h3>
+&lt;pre>&lt;code>备份数据库
+pg_dump stock_dev_db &amp;gt; db115.sql
+恢复数据库
+psql -d stock_dev_db -f db115.sql
+&lt;/code>&lt;/pre></description></item><item><title>centos 8启用nginx stream ssl preread module</title><link>/post/nginx-stream-preread-enable/</link><pubDate>Mon, 13 Nov 2023 00:00:00 +0000</pubDate><guid>/post/nginx-stream-preread-enable/</guid><description>&lt;p>目标: 为了让nginx服务器,根据不同的域名,转发到不同的app服务器. tls并不终结在nginx,而是转发到最终的app服务器.&lt;/p>
+&lt;p>在centos 8上,运行&lt;/p>
+&lt;pre>&lt;code>#nginx -V
+结果:
+nginx version: nginx/1.14.1
+built by gcc 8.5.0 20210514 (Red Hat 8.5.0-3) (GCC)
+built with OpenSSL 1.1.1k FIPS 25 Mar 2021
+TLS SNI support enabled
+configure arguments: --prefix=/usr/share/nginx --sbin-path=/usr/sbin/nginx --modules-path=/usr/lib64/nginx/modules --conf-path=/etc/nginx/nginx.conf \
+--error-log-path=/var/log/nginx/error.log --http-log-path=/var/log/nginx/access.log --http-client-body-temp-path=/var/lib/nginx/tmp/client_body \
+--http-proxy-temp-path=/var/lib/nginx/tmp/proxy --http-fastcgi-temp-path=/var/lib/nginx/tmp/fastcgi \
+--http-uwsgi-temp-path=/var/lib/nginx/tmp/uwsgi --http-scgi-temp-path=/var/lib/nginx/tmp/scgi --pid-path=/run/nginx.pid --lock-path=/run/lock/subsys/nginx \
+--user=nginx --group=nginx --with-file-aio --with-ipv6 --with-http_ssl_module \
+--with-http_v2_module --with-http_realip_module --with-http_addition_module --with-http_xslt_module=dynamic --with-http_image_filter_module=dynamic \
+--with-http_sub_module --with-http_dav_module --with-http_flv_module --with-http_mp4_module --with-http_gunzip_module --with-http_gzip_static_module \
+--with-http_random_index_module --with-http_secure_link_module --with-http_degradation_module --with-http_slice_module --with-http_stub_status_module \
+--with-http_perl_module=dynamic --with-http_auth_request_module --with-mail=dynamic --with-mail_ssl_module --with-pcre --with-pcre-jit --with-stream=dynamic \
+--with-stream_ssl_module --with-debug --with-cc-opt='-O2 -g -pipe -Wall -Werror=format-security -Wp,\
+-D_FORTIFY_SOURCE=2 -Wp,-D_GLIBCXX_ASSERTIONS -fexceptions -fstack-protector-strong -grecord-gcc-switches \
+-specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1 -m64 -mtune=generic \
+-fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection' --with-ld-opt='-Wl,-z,relro -Wl,-z,now -specs=/usr/lib/rpm/redhat/redhat-hardened-ld -Wl,-E
+&lt;/code>&lt;/pre>
+&lt;p>这里面,主要是看有没有 &amp;ldquo;&amp;ndash;with-stream_ssl_preread_module&amp;rdquo; 这个参数,没有这个参数,nginx没法提前从流里面得到域名,也就无法转发,需要重新编译nginx&lt;/p>
+&lt;h2 id="1-重新编译nginx">1 重新编译nginx&lt;/h2>
+&lt;h3 id="11-下载nginx的源码">1.1 下载nginx的源码.&lt;/h3>
+&lt;p>为了最小改动,选择1.14.2版本&lt;/p>
+&lt;pre>&lt;code>wget https://nginx.org/download/nginx-1.14.2.tar.gz
+tar zxvf nginx-1.14.2.tar.gz
+cd nginx-1.14.2
+&lt;/code>&lt;/pre>
+&lt;h3 id="12-安装编译环境以及需要的包">1.2 安装编译环境,以及需要的包.&lt;/h3>
+&lt;pre>&lt;code>sudo yum -y groupinstall &amp;quot;Development Tools&amp;quot;
+sudo yum -y install libxslt-devel
+sudo yum -y install gd gd-devel
+sudo yum -y install pcre-devel
+sudo yum -y install perl-ExtUtils-Embed
+&lt;/code>&lt;/pre>
+&lt;h3 id="13-编译nginx">1.3 编译nginx&lt;/h3>
+&lt;pre>&lt;code>/configure --prefix=/usr/share/nginx --sbin-path=/usr/sbin/nginx --modules-path=/usr/lib64/nginx/modules --conf-path=/etc/nginx/nginx.conf \
+--error-log-path=/var/log/nginx/error.log --http-log-path=/var/log/nginx/access.log --http-client-body-temp-path=/var/lib/nginx/tmp/client_body --http-proxy-temp-path=/var/lib/nginx/tmp/proxy \
+--http-fastcgi-temp-path=/var/lib/nginx/tmp/fastcgi --http-uwsgi-temp-path=/var/lib/nginx/tmp/uwsgi --http-scgi-temp-path=/var/lib/nginx/tmp/scgi --pid-path=/run/nginx.pid \
+--lock-path=/run/lock/subsys/nginx --user=nginx --group=nginx --with-file-aio --with-ipv6 --with-http_ssl_module --with-http_v2_module --with-http_realip_module --with-http_addition_module \
+--with-http_xslt_module=dynamic --with-http_image_filter_module=dynamic --with-http_sub_module --with-http_dav_module --with-http_flv_module --with-http_mp4_module --with-http_gunzip_module\
+--with-http_gzip_static_module --with-http_random_index_module --with-http_secure_link_module --with-http_degradation_module --with-http_slice_module --with-http_stub_status_module \
+--with-stream_ssl_preread_module --with-http_perl_module=dynamic --with-http_auth_request_module --with-mail=dynamic \
+--with-mail_ssl_module --with-pcre --with-pcre-jit --with-stream=dynamic --with-stream_ssl_module --with-debug \
+--with-cc-opt='-O2 -g -pipe -Wall -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -Wp,-D_GLIBCXX_ASSERTIONS -fexceptions -fstack-protector-strong -grecord-gcc-switches\
+-specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1 -m64 \
+-mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection' \
+--with-ld-opt='-Wl,-z,relro -Wl,-z,now -specs=/usr/lib/rpm/redhat/redhat-hardened-ld -Wl,-E'
+成功之后
+make
+成功之后,先删掉原来的nginx
+sudo yum remove nginx
+安装新编译好的nginx
+sudo make install
+&lt;/code>&lt;/pre>
+&lt;h3 id="14-修改配置文件">1.4 修改配置文件&lt;/h3>
+&lt;pre>&lt;code>sudo vi /etc/systemd/system/nginx.service
+内容如下:
+[Unit]
+Description=The nginx HTTP and reverse proxy server
+After=network-online.target remote-fs.target nss-lookup.target
+Wants=network-online.target
+[Service]
+Type=forking
+PIDFile=/run/nginx.pid
+# Nginx will fail to start if /run/nginx.pid already exists but has the wrong
+# SELinux context. This might happen when running `nginx -t` from the cmdline.
+# https://bugzilla.redhat.com/show_bug.cgi?id=1268621
+ExecStartPre=/usr/bin/rm -f /run/nginx.pid
+ExecStartPre=/usr/sbin/nginx -t
+ExecStart=/usr/sbin/nginx
+ExecReload=/usr/sbin/nginx -s reload
+KillSignal=SIGQUIT
+TimeoutStopSec=5
+KillMode=mixed
+PrivateTmp=true
+[Install]
+WantedBy=multi-user.target
+&lt;/code>&lt;/pre>
+&lt;p>然后执行&lt;/p>
+&lt;pre>&lt;code> sudo systemctl daemon-reload
+&lt;/code>&lt;/pre>
+&lt;p>编辑 /etc/nginx/nginx.conf
+在文件第一行,增加&lt;/p>
+&lt;pre>&lt;code>load_module /usr/lib64/nginx/modules/ngx_stream_module.so;
+stream {
+# 这里就是 SNI 识别，将域名映射成一个配置名
+map $ssl_preread_server_name $backend_name {
+www.domain1.com web1;
+www.domain2.com web2;
+# 域名都不匹配情况下的默认值
+default web1;
+}
+# web1，配置转发详情,端口与下面server字段中www.mydomain.com监听端口一致
+upstream web1 {
+server ip:port;
+}
+#
+# web2，配置转发详情,端口与下面server字段中www.mydomain.com监听端口一致
+upstream web2 {
+server ip:port;
+}
+#
+# 监听 443 并开启 ssl_preread
+server {
+listen 443 reuseport;
+# listen [::]:443 reuseport;
+proxy_pass $backend_name;
+ssl_preread on;
+}
+}
+&lt;/code>&lt;/pre>
+&lt;h3 id="15-加载配置文件">1.5 加载配置文件&lt;/h3>
+&lt;pre>&lt;code>sudo systemctl daemon-reload
+sudo sytemctl start nginx
+然后检查启动是否正常
+sudo sytemctl status nginx
+sudo sytemctl enable nginx
+&lt;/code>&lt;/pre>
+&lt;p>访问https://www.domain1.com 看看是否正常.&lt;/p></description></item></channel></rss>

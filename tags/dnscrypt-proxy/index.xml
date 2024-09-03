@@ -1,1 +1,157 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>dnscrypt-proxy on 麦克的茶馆</title><link>/tags/dnscrypt-proxy/</link><description>Recent content in dnscrypt-proxy on 麦克的茶馆</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Wed, 12 Aug 2015 00:00:00 +0000</lastBuildDate><atom:link href="/tags/dnscrypt-proxy/index.xml" rel="self" type="application/rss+xml"/><item><title>WNDR4300安装Openwrt，使用shadowsocks配置透明代理,使用chinadns+dnscrypt-proxy处理DNS污染</title><link>/post/openwrt-shadowsocks-chinadns-setup/</link><pubDate>Wed, 12 Aug 2015 00:00:00 +0000</pubDate><guid>/post/openwrt-shadowsocks-chinadns-setup/</guid><description>1 wndr4300刷openwrt固件 wndr4300在openwrt的官方支持列表中，但官方固件可使用空间只有12M，所以需要打一些补丁。</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>dnscrypt-proxy on 麦克的茶馆</title><link>/tags/dnscrypt-proxy/</link><description>Recent content in dnscrypt-proxy on 麦克的茶馆</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Wed, 12 Aug 2015 00:00:00 +0000</lastBuildDate><atom:link href="/tags/dnscrypt-proxy/index.xml" rel="self" type="application/rss+xml"/><item><title>WNDR4300安装Openwrt，使用shadowsocks配置透明代理,使用chinadns+dnscrypt-proxy处理DNS污染</title><link>/post/openwrt-shadowsocks-chinadns-setup/</link><pubDate>Wed, 12 Aug 2015 00:00:00 +0000</pubDate><guid>/post/openwrt-shadowsocks-chinadns-setup/</guid><description>&lt;h4 id="1-wndr4300刷openwrt固件">1 wndr4300刷openwrt固件&lt;/h4>
+&lt;p>wndr4300在openwrt的官方支持列表中，但官方固件可使用空间只有12M，所以需要打一些补丁。本文所用固件来自&lt;a href="https://www.v2ex.com/t/147051#reply37" target="_blank" rel="noopener">我也分享 WNDR4300 14.07 固件，官方 ImageBuilder 编译，完全使用 128M flash,集成中文 Luci&lt;/a>
+，具体链接：&lt;a href="http://pan.baidu.com/s/14eo7G" target="_blank" rel="noopener">openwrt-ar71xx-nand-wndr4300&lt;/a>
+&lt;/p>
+&lt;p>刷机说明：
+netgear原厂刷openwrt，必须刷结尾是factory.img的那个文件。由于无线网络缺省是关闭状态，必须使用网线，ip分配为dhcp自动分配，执行ping命令。返回成功后，可以使用telnet登录，没有密码。登录成功后，使用passwd命令改变root密码。然后使用ssh &lt;a href="mailto:root@192.168.1.1">root@192.168.1.1&lt;/a>
+重新登录。也可以用 http://192.168.1.1，进入 luci web配置页面，此时的密码就是刚才设置的root密码。&lt;/p>
+&lt;pre>&lt;code>ping 192.168.1.1
+telnet 192.168.1.1
+&lt;/code>&lt;/pre>
+&lt;p>进入web页面后，在网络-无线菜单下，设置wifi ssid，密码，启动WIFI，然后就可以无线登录了。在网络-接口-LAN 下，选择修改，可以设置路由器的静态IP。如果多个串联，需要把地址设置为192.168.2/3/4.1等非192.168.1.1的情况。&lt;strong>【！！！必须设置为静态IP，千万不要选dhcp等其他选项，否则后面无法登录系统】&lt;/strong>&lt;/p>
+&lt;hr>
+&lt;p>wndr4300变砖后，通过tftp重新刷固件的恢复方法。&lt;/p>
+&lt;p>1、通过网线连接计算机和路由器的lan接口&lt;/p>
+&lt;p>2、在计算机上，ip地址设置为手工设定为 192.168.1.2 掩码255.255.255.0&lt;/p>
+&lt;p>3、关闭路由器电源开关。使用大头针或者类似工具，戳路由器背面的红色小孔（恢复出厂设置的孔），不要松开。&lt;/p>
+&lt;p>4、打开路由器电源开关，观察电源指示灯从黄色-变成绿色闪烁状态，然后可以放开大头针&lt;/p>
+&lt;p>5、在计算机上，进入存放待刷固件的目录（openwrt-ar71xx-nand-wndr4300-ubi-factory.img），使用tftp客户端 连接路由器。 mac os x命令如下：(-e 参数表示二进制模式)&lt;/p>
+&lt;pre>&lt;code>tftp -e 192.168.1.1
+put openwrt-ar71xx-nand-wndr4300-ubi-factory.img
+&lt;/code>&lt;/pre>
+&lt;p>6 另开一个终端窗口，持续ping 192.168.1.1，等待连续ping连续成功后10秒以上，断开路由器电源开关。等待5秒钟，再打开路由器电源。继续观察ping结果。等待ping持续成功后，可以telnet 192.168.1.1，进入正常设置程序。&lt;/p>
+&lt;!-- more -->
+&lt;h4 id="2-安装shadowsockschinadns">2 安装shadowsocks+chinadns&lt;/h4>
+&lt;p>参考：&lt;a href="https://cokebar.info/archives/664" target="_blank" rel="noopener">Shadowsocks + ChnRoute 实现 OpenWRT 路由器自动翻墙&lt;/a>
+&lt;/p>
+&lt;p>获取 shadowsocks忽略表&lt;/p>
+&lt;pre>&lt;code>wget -O- 'http://ftp.apnic.net/apnic/stats/apnic/delegated-apnic-latest' | awk -F\| '/CN\|ipv4/ { printf(&amp;quot;%s/%d\n&amp;quot;, $4, 32-log($5)/log(2)) }' &amp;gt; ignore.list
+&lt;/code>&lt;/pre>
+&lt;p>注意：在luci配置的时候，要指定ignore.list文件的存放位置&lt;/p>
+&lt;p>获取chinadns 国内IP列表&lt;/p>
+&lt;pre>&lt;code>curl 'http://ftp.apnic.net/apnic/stats/apnic/delegated-apnic-latest' | grep ipv4 | grep CN | awk -F\| '{ printf(&amp;quot;%s/%d\n&amp;quot;, $4, 32-log($5)/log(2)) }' &amp;gt; chnroute.txt
+&lt;/code>&lt;/pre>
+&lt;p>在Luci中切换至“网络”-“DHCP/DNS”设置，如下图，在”DNS转发”中填入127.0.0.1#5353&lt;/p>
+&lt;p>然后切到HOSTS和解析文件选项卡，勾中“忽略解析文件”,忽略上级dns&lt;/p>
+&lt;p>安装dig工具&lt;/p>
+&lt;pre>&lt;code>opkg install bind-dig
+dig www.twitter.com
+&lt;/code>&lt;/pre>
+&lt;h4 id="3-shadowsocks支持udp转发">3 shadowsocks支持udp转发&lt;/h4>
+&lt;p>1 服务器侧必须使用shadowsocks-libev版本，且启动参数中有-u&lt;/p>
+&lt;pre>&lt;code>netstat -an | grep udp
+已经有udp端口8888的监听
+udp 0 0 0.0.0.0:8888 0.0.0.0:*
+&lt;/code>&lt;/pre>
+&lt;p>2在iptables中添加一条允许udp 8888端口通过的规则&lt;/p>
+&lt;pre>&lt;code>sudo iptables -I INPUT -p udp --dport 8888 -j ACCEPT
+&lt;/code>&lt;/pre>
+&lt;p>3 在openwrt luci shadowsocks服务中，启用udp转发，端口5300，转发地址8.8.8.8:53 (google public dns)&lt;/p>
+&lt;pre>&lt;code>/usr/bin/ss-tunnel -c /var/etc/shadowsocks.json -l 5300 -L 8.8.8.8:53 -f /var/run/ss-tunnel.pid -u
+&lt;/code>&lt;/pre>
+&lt;p>使用dig测试一下：&lt;/p>
+&lt;pre>&lt;code>root@OpenWrt:~# dig @localhost -p 5300 www.twitter.com
+;; ANSWER SECTION:
+www.twitter.com. 354 IN CNAME twitter.com.
+twitter.com. 1 IN A 199.59.149.198
+twitter.com. 1 IN A 199.59.150.39
+;; Query time: 274 msec
+;; SERVER: 127.0.0.1#5300(127.0.0.1)
+&lt;/code>&lt;/pre>
+&lt;p>4 检查服务器侧数据，UDP包已经转发过来了&lt;/p>
+&lt;pre>&lt;code> sudo iptables -L -v -n
+464 39550 ACCEPT udp -- * * 0.0.0.0/0 0.0.0.0/0 udp dpt:8888
+&lt;/code>&lt;/pre>
+&lt;p>5 配置chinadns，加上shadowssocks的UDP转发源&lt;/p>
+&lt;p>共配置4个dns服务器，分别是是阿里dns，114 dns，dnscrypt-proxy，shadowsocks udp转发端口&lt;/p>
+&lt;pre>&lt;code> 223.5.5.5,114.114.114.114,127.0.0.1:2053,127.0.0.1:5300
+&lt;/code>&lt;/pre>
+&lt;h4 id="4-安装dnscrypt-proxy">4 安装dnscrypt-proxy&lt;/h4>
+&lt;p>参考：&lt;a href="http://wiki.openwrt.org/inbox/dnscrypt" target="_blank" rel="noopener">using dnscrypt on openwrt&lt;/a>
+&lt;/p>
+&lt;p>添加软件源&lt;/p>
+&lt;pre>&lt;code>src/gz exopenwrt http://exopenwrt.and.in.net/barrier_breaker/ar71xx/packages/exOpenWrt
+opkg update
+opkg install dnscrypt-proxy
+启动
+/etc/init.d/dnscrypt-proxy enable
+/etc/init.d/dnscrypt-proxy start
+配置文件是：
+/etc/config/dnscrypt-proxy
+缺省端口为2053
+修改chinadns的国外源，缺省是8.8.4.4，建议修改为dnscrypt-proxy提供的源
+127.0.0.1:2053
+比较常用的几个服务器
+208.67.220.220 https://www.opendns.com Cisco OpenDNS
+180.131.144.144 http://www.nawala.id nawala Indonesia
+106.185.41.36 http://meo.ws/dnsrec.php opennic-fvz-rec-jp-tk-01
+&lt;/code>&lt;/pre>
+&lt;h4 id="5-使用shadowsockgfwlist的方式翻墙">5 使用shadowsock+gfwlist的方式翻墙&lt;/h4>
+&lt;p>参考：&lt;a href="https://cokebar.info/archives/962" target="_blank" rel="noopener">Shadowsocks + GfwList 实现 OpenWRT 路由器自动翻墙
+&lt;/a>
+&lt;/p>
+&lt;p>和利用ignore.list的方法的差别在于：前面的方法，只要IP不在国内，那么就需要启动代理，这种情况下，很多没有屏蔽的海外网站访问也通过代理，速度会下降很多。&lt;/p>
+&lt;p>而通过gfwlist的方式，只有针对在gfwlist限制范围内IP地址，才启动代理。&lt;/p>
+&lt;p>1.首先卸载前面已经安装但后面不再需要的包，注意shadowsocks-libev-spec 这个包是不需要的&lt;/p>
+&lt;pre>&lt;code> opkg remove ip resolveip iptables-mod-tproxy shadowsocks-libev-spec
+&lt;/code>&lt;/pre>
+&lt;p>安装新的包(shadowsock-libev 没有spec后缀)：&lt;/p>
+&lt;pre>&lt;code>opkg install iptables-mod-nat-extra
+opkg install shadowsocks-libev
+&lt;/code>&lt;/pre>
+&lt;p>卸载dnsmasq,安装dnsmasq-full，full版本才支持需要用到的ipset特性&lt;/p>
+&lt;pre>&lt;code>opkg remove dnsmasq &amp;amp;&amp;amp; opkg install dnsmasq-full
+&lt;/code>&lt;/pre>
+&lt;p>2 配置/etc/shadowsock.json，和服务器配置一致。
+修改/etc/init.d/shadowsocks, 启用ss-redir/ss-tunnel两个命令，关闭ss-local命令，注意ss-tunnel的监听端口5300不要和现有的端口冲突&lt;/p>
+&lt;pre>&lt;code>SERVICE_USE_PID=1
+SERVICE_WRITE_PID=1
+SERVICE_DAEMONIZE=1
+SERVICE_PID_FILE=/var/run/shadowsocks.pid
+CONFIG=/etc/shadowsocks.json
+start() {
+#service_start /usr/bin/ss-local -c $CONFIG -b 0.0.0.0 -f $SERVICE_PID_FILE
+service_start /usr/bin/ss-redir -c $CONFIG -b 0.0.0.0 -f $SERVICE_PID_FILE
+service_start /usr/bin/ss-tunnel -c $CONFIG -b 0.0.0.0 -u -l 5300 -L 8.8.8.8:53
+}
+stop() {
+#service_stop /usr/bin/ss-local
+service_stop /usr/bin/ss-redir
+service_stop /usr/bin/ss-tunnel
+}
+&lt;/code>&lt;/pre>
+&lt;p>3 启动shadowsocks&lt;/p>
+&lt;pre>&lt;code>/etc/init.d/shadowsocks enable
+/etc/init.d/shadowsocks start
+&lt;/code>&lt;/pre>
+&lt;p>4 增加防火墙规则，并加入到/etc/rc.local，保证开机执行&lt;/p>
+&lt;pre>&lt;code>ipset -N gfwlist iphash
+iptables -t nat -A PREROUTING -p tcp -m set --match-set gfwlist dst -j REDIRECT --to-port 1080
+iptables -t nat -A OUTPUT -p tcp -m set --match-set gfwlist dst -j REDIRECT --to-port 1080
+&lt;/code>&lt;/pre>
+&lt;p>5 修改 /etc/dnsmasq.conf ，在最后加入 conf-dir=/etc/dnsmasq.d ，新建并进入目录 /etc/dnsmasq.d ，下载&lt;a href="http://pan.baidu.com/s/1qWDVbfY" target="_blank" rel="noopener">dnsmasq_list.conf&lt;/a>
+后放入该目录&lt;/p>
+&lt;p>附：&lt;a href="https://github.com/cokebar/gfwlist2dnsmasq" target="_blank" rel="noopener">自动生成dnsmasq_list.conf 的脚本&lt;/a>
+&lt;/p>
+&lt;h4 id="6-挂载u盘格式是fat32">6 挂载u盘，格式是fat32&lt;/h4>
+&lt;p>参考 &lt;a href="http://bbs.ybty.net/thread-452-1-1.html" target="_blank" rel="noopener">Openwrt安装USB驱动挂载U盘&lt;/a>
+&lt;/p>
+&lt;p>需要执行的命令如下：&lt;/p>
+&lt;pre>&lt;code> opkg update
+opkg install kmod-usb-storage
+opkg install kmod-fs-vfat
+opkg install kmod-nls-cp437
+opkg install kmod-nls-utf8
+opkg install kmod-nls-iso8859-1
+#然后就可以
+mount -t /dev/sda1 /mnt
+&lt;/code>&lt;/pre>
+&lt;h4 id="7-定时任务">7 定时任务&lt;/h4>
+&lt;p>参考：&lt;a href="http://www.slyar.com/blog/openwrt-crontab.html" target="_blank" rel="noopener">OpenWrt使用crontab执行计划任务 - Slyar Home&lt;/a>
+&lt;/p>
+&lt;p>每天自动重启：&lt;/p>
+&lt;pre>&lt;code> 59 02 * * 1-7 /sbin/reboot
+&lt;/code>&lt;/pre>
+&lt;p>每10分钟重启chinadns&lt;/p>
+&lt;pre>&lt;code>*/10 * * * * /etc/init.d/chinadns restart &amp;gt;&amp;gt; /dev/null 2&amp;gt;&amp;amp;1
+&lt;/code>&lt;/pre></description></item></channel></rss>

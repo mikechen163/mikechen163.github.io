@@ -1,2 +1,67 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>realip on 麦克的茶馆</title><link>/tags/realip/</link><description>Recent content in realip on 麦克的茶馆</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Fri, 30 Aug 2024 00:00:00 +0000</lastBuildDate><atom:link href="/tags/realip/index.xml" rel="self" type="application/rss+xml"/><item><title>配置nginx,使用stream 模式,并且传递realip 给server</title><link>/post/config-nginx-stream-realip/</link><pubDate>Fri, 30 Aug 2024 00:00:00 +0000</pubDate><guid>/post/config-nginx-stream-realip/</guid><description>&lt;h1 id="如何配置-nginx-stream-realip-传递并隐藏真实域名">如何配置 Nginx Stream RealIP 传递并隐藏真实域名&lt;/h1>
-&lt;p>在现代的网络架构中，使用 Nginx 作为反向代理服务器是非常常见的。为了增强安全性并隐藏真实的域名，我们可以配置 Nginx 的 real_ip 模块来传递客户端的真实 IP 地址，并通过 SSL/TLS 加密来保护数据传输。本文将详细介绍如何配置 Nginx 来实现这一目标。&lt;/p></description></item></channel></rss>
+&lt;p>在现代的网络架构中，使用 Nginx 作为反向代理服务器是非常常见的。为了增强安全性并隐藏真实的域名，我们可以配置 Nginx 的 real_ip 模块来传递客户端的真实 IP 地址，并通过 SSL/TLS 加密来保护数据传输。本文将详细介绍如何配置 Nginx 来实现这一目标。&lt;/p>
+&lt;h2 id="stream部分配置概述">stream部分配置概述&lt;/h2>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-nginx" data-lang="nginx">&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a2f;font-weight:bold">stream&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#080;font-style:italic"># 这里就是 SNI 识别，将域名映射成一个配置名
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#080;font-style:italic">&lt;/span> &lt;span style="color:#a2f;font-weight:bold">map&lt;/span> &lt;span style="color:#b8860b">$ssl_preread_server_name&lt;/span> &lt;span style="color:#b8860b">$backend_name&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a2f;font-weight:bold">domain1.example.com&lt;/span> 127.0.0.1:&lt;span style="color:#666">8888&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#080;font-style:italic">#这个服务本机提供
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#080;font-style:italic">&lt;/span> &lt;span style="color:#a2f;font-weight:bold">domain2.example.com&lt;/span> 127.0.0.1:&lt;span style="color:#666">8890&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a2f;font-weight:bold">default&lt;/span> &lt;span style="color:#b44">naive&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#080;font-style:italic"># 监听 443 并开启 ssl_preread
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#080;font-style:italic">&lt;/span> &lt;span style="color:#a2f;font-weight:bold">server&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a2f;font-weight:bold">listen&lt;/span> &lt;span style="color:#666">443&lt;/span> &lt;span style="color:#b44">reuseport&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#080;font-style:italic"># listen [::]:443 reuseport;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#080;font-style:italic">&lt;/span> &lt;span style="color:#a2f;font-weight:bold">proxy_pass&lt;/span> &lt;span style="color:#b8860b">$backend_name&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a2f;font-weight:bold">proxy_protocol&lt;/span> &lt;span style="color:#800">on&lt;/span>;&lt;span style="color:#080;font-style:italic"># send ip info to http server
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#080;font-style:italic">&lt;/span> &lt;span style="color:#a2f;font-weight:bold">ssl_preread&lt;/span> &lt;span style="color:#800">on&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#080;font-style:italic"># 这里的SNI不需要自己处理,之间转发给8889端口上的服务处理,,相当于把 443端口的服务,转发到8889服务
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#080;font-style:italic">&lt;/span> &lt;span style="color:#a2f;font-weight:bold">server&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a2f;font-weight:bold">listen&lt;/span> &lt;span style="color:#666">8888&lt;/span> &lt;span style="color:#b44">proxy_protocol&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a2f;font-weight:bold">proxy_pass&lt;/span> 127.0.0.1:&lt;span style="color:#666">8889&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>##配置本机服务,终结ssl,并且使用用户的真实ip&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-nginx" data-lang="nginx">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a2f;font-weight:bold">http&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a2f;font-weight:bold">set_real_ip_from&lt;/span> &lt;span style="color:#666">127&lt;/span>&lt;span style="color:#b44">.0.0.1/32&lt;/span>; &lt;span style="color:#080;font-style:italic"># 前端 Nginx 的 IP 范围
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#080;font-style:italic">&lt;/span> &lt;span style="color:#a2f;font-weight:bold">real_ip_header&lt;/span> &lt;span style="color:#b44">proxy_protocol&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a2f;font-weight:bold">server&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a2f;font-weight:bold">listen&lt;/span> &lt;span style="color:#666">8890&lt;/span> &lt;span style="color:#b44">ssl&lt;/span> &lt;span style="color:#b44">http2&lt;/span> &lt;span style="color:#b44">proxy_protocol&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a2f;font-weight:bold">listen&lt;/span> &lt;span style="color:#b44">[::]:8890&lt;/span> &lt;span style="color:#b44">ssl&lt;/span> &lt;span style="color:#b44">http2&lt;/span> &lt;span style="color:#b44">proxy_protocol&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a2f;font-weight:bold">server_name&lt;/span> &lt;span style="color:#b44">domain2.example.com&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#080;font-style:italic">#改成你的ssl证书路径
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#080;font-style:italic">&lt;/span> &lt;span style="color:#a2f;font-weight:bold">ssl_certificate&lt;/span> &lt;span style="color:#b44">/path/to/fullchain.pem&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a2f;font-weight:bold">ssl_certificate_key&lt;/span> &lt;span style="color:#b44">/path/to/privkey.pem&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a2f;font-weight:bold">ssl_protocols&lt;/span> &lt;span style="color:#b44">TLSv1.2&lt;/span> &lt;span style="color:#b44">TLSv1.3&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a2f;font-weight:bold">location&lt;/span> &lt;span style="color:#b44">/&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#080;font-style:italic"># 假设真实服务在8200端口
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#080;font-style:italic">&lt;/span> &lt;span style="color:#a2f;font-weight:bold">proxy_pass&lt;/span> &lt;span style="color:#b44">http://localhost:8200&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a2f;font-weight:bold">proxy_set_header&lt;/span> &lt;span style="color:#b44">Host&lt;/span> &lt;span style="color:#b8860b">$host&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a2f;font-weight:bold">proxy_set_header&lt;/span> &lt;span style="color:#b44">X-Real-IP&lt;/span> &lt;span style="color:#b8860b">$remote_addr&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a2f;font-weight:bold">proxy_set_header&lt;/span> &lt;span style="color:#b44">X-Forwarded-For&lt;/span> &lt;span style="color:#b8860b">$proxy_add_x_forwarded_for&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a2f;font-weight:bold">proxy_set_header&lt;/span> &lt;span style="color:#b44">X-Forwarded-Proto&lt;/span> &lt;span style="color:#b8860b">$scheme&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>##总结
+通过以上配置，我们可以实现以下目标：&lt;/p>
+&lt;ul>
+&lt;li>使用 ssl_preread 和 proxy_protocol 在 HTTPS 连接中传递客户端的真实 IP 地址。&lt;/li>
+&lt;li>配置 real_ip 模块以正确识别客户端的真实 IP 地址。&lt;/li>
+&lt;li>使用 SSL/TLS 加密来保护数据传输，并隐藏真实的域名。&lt;/li>
+&lt;li>通过这些步骤，您可以确保 Nginx 能够安全地传递客户端的真实 IP 地址，并隐藏真实的域名，从而提高系统的安全性和隐私保护。&lt;/li>
+&lt;/ul></description></item></channel></rss>

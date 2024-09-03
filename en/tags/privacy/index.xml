@@ -1,3 +1,20 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>privacy on Loving life and dreams.</title><link>/en/tags/privacy/</link><description>Recent content in privacy on Loving life and dreams.</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sun, 10 Mar 2019 00:00:00 +0000</lastBuildDate><atom:link href="/en/tags/privacy/index.xml" rel="self" type="application/rss+xml"/><item><title>Rich Content</title><link>/en/post/rich-content/</link><pubDate>Sun, 10 Mar 2019 00:00:00 +0000</pubDate><guid>/en/post/rich-content/</guid><description>&lt;p>Hugo ships with several &lt;a href="https://gohugo.io/content-management/shortcodes/#use-hugos-built-in-shortcodes" target="_blank" rel="noopener">Built-in Shortcodes&lt;/a>
 for rich content, along with a &lt;a href="https://gohugo.io/about/hugo-and-gdpr/" target="_blank" rel="noopener">Privacy Config&lt;/a>
-and a set of Simple Shortcodes that enable static and no-JS versions of various social media embeds.&lt;/p></description></item></channel></rss>
+and a set of Simple Shortcodes that enable static and no-JS versions of various social media embeds.&lt;/p>
+&lt;hr>
+&lt;h2 id="youtube-privacy-enhanced-shortcode">YouTube Privacy Enhanced Shortcode&lt;/h2>
+&lt;p>{{/&lt;em>&amp;lt; youtube ZJthWmvUzzc &amp;gt;&lt;/em>/}}&lt;/p>
+&lt;br>
+&lt;hr>
+&lt;h2 id="twitter-simple-shortcode">Twitter Simple Shortcode&lt;/h2>
+&lt;p>{{/&lt;em>&amp;lt; twitter_simple 1085870671291310081 &amp;gt;&lt;/em>/}}&lt;/p>
+&lt;br>
+&lt;hr>
+&lt;h2 id="vimeo-simple-shortcode">Vimeo Simple Shortcode&lt;/h2>
+&lt;p>{{/&lt;em>&amp;lt; vimeo_simple 48912912 &amp;gt;&lt;/em>/}}&lt;/p>
+&lt;hr>
+&lt;h2 id="bilibili-shortcode">Bilibili Shortcode&lt;/h2>
+&lt;div class="bilibilibv" style="display: block;width: 100%;height: 100%;">
+&lt;iframe src="//player.bilibili.com/player.html?bvid=BV1m4411c7ia&amp;page=1" scrolling="no"
+border="0" frameborder="no" framespacing="0" allowfullscreen="true">&lt;/iframe>
+&lt;/div></description></item></channel></rss>

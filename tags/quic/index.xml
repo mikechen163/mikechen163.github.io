@@ -1,4 +1,79 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>quic on 麦克的茶馆</title><link>/tags/quic/</link><description>Recent content in quic on 麦克的茶馆</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Sun, 19 Nov 2023 00:00:00 +0000</lastBuildDate><atom:link href="/tags/quic/index.xml" rel="self" type="application/rss+xml"/><item><title>在openwrt上启动ipv6</title><link>/post/ipv6-on-openwrt/</link><pubDate>Sun, 19 Nov 2023 00:00:00 +0000</pubDate><guid>/post/ipv6-on-openwrt/</guid><description>&lt;h2 id="1-在openwrt启动ipv6">1 在openwrt启动ipv6&lt;/h2>
 &lt;h3 id="11-启动openwrt-ipv6">1.1 启动openwrt ipv6&lt;/h3>
 &lt;p>为什么要使用ipv6,主要是国内的一些服务,例如iptv电视,现在提供了ipv6的映射,为了方便使用.
-关键点在于,不要启动openwrt本身的dhcp ipv6,而是使用中继的方式,直接把运营商分配的ipv6地址,再下发给内网的每个设备. openwrt只作为ipv6的中介设备. 本身不分配ipv6地址.&lt;/p></description></item></channel></rss>
+关键点在于,不要启动openwrt本身的dhcp ipv6,而是使用中继的方式,直接把运营商分配的ipv6地址,再下发给内网的每个设备. openwrt只作为ipv6的中介设备. 本身不分配ipv6地址.&lt;/p>
+&lt;p>###具体操作.&lt;/p>
+&lt;p>直接修改 /etc/config/dhcp (修改前做好备份,万一有问题可以恢复)&lt;/p>
+&lt;pre>&lt;code>cd /etc/config/
+cp dhcp dhcp.ipv6
+vi dhcp
+#在 lan这段下面,增加三个 option
+config dhcp 'lan'
+...
+option ra 'relay'
+option dhcpv6 'relay'
+option ndp 'relay'
+#在 wan6这段下面,增加三个option
+config dhcp 'wan6'
+option interface 'wan6'
+option ra 'relay'
+option dhcpv6 'relay'
+option ndp 'relay'
+option master '1'
+&lt;/code>&lt;/pre>
+&lt;p>执行odhcpd,重新启动 dhcp&lt;/p>
+&lt;pre>&lt;code> /etc/init.d/odhcpd restart
+&lt;/code>&lt;/pre>
+&lt;p>然后让内网设备重新加入网络,如果是wifi设备,关闭wifi再打开,就能看到 每个设备分配到ipv6地址了.这时候一些基于ipv6的业务就能正常运行了.&lt;/p>
+&lt;p>访问 &lt;a href="https://testipv6.cn/" target="_blank" rel="noopener">https://testipv6.cn/&lt;/a>
+看看是不是可以访问.&lt;/p>
+&lt;h3 id="12-解决访问-外网的问题">1.2 解决访问 外网的问题&lt;/h3>
+&lt;p>主要是ipv6地址,如果不禁用,就无法访问外网. 因此,最好在clash dns设置中, “允许IPV6类型DNS解析” 这项关闭.不要选中.&lt;/p>
+&lt;p>另外一个比较重要的是 模式设置中, “禁用 quic协议”. 因为 youtube chrome缺省都会启动 quic,入股启动就会导致网络连接失败.&lt;/p>
+&lt;pre>&lt;code>在clash配置文件中,增加下面的段落.
+script:
+shortcuts:
+quic: network == 'udp' and dst_port == 443
+rules:
+#user rules
+- SCRIPT,quic,REJECT
+&lt;/code>&lt;/pre>
+&lt;h3 id="13-chatgpt访问问题">1.3 chatgpt访问问题.&lt;/h3>
+&lt;p>修改配置文件,增加下面的域名:&lt;/p>
+&lt;pre>&lt;code>- name: Chatgpt
+type: &amp;quot;select&amp;quot;
+interval: 600
+url: &amp;quot;http://www.gstatic.cn/generate_204&amp;quot;
+proxies:
+- proxy name which could valid access chatgpt
+rules:
+# openai
+- DOMAIN-SUFFIX,openai.com,Chatgpt
+- DOMAIN-SUFFIX,platform.openai.com,Chatgpt
+- DOMAIN-SUFFIX,pay.openai.com,Chatgpt
+- DOMAIN-SUFFIX,chat.openai.com,Chatgpt
+- DOMAIN-SUFFIX,sentry.io,Chatgpt
+- DOMAIN-SUFFIX,stripe.com,Chatgpt
+- DOMAIN-SUFFIX,auth0.com,Chatgpt
+- DOMAIN-SUFFIX,auth0.openai.com,Chatgpt
+- DOMAIN-SUFFIX,invoice.stripe.com,Chatgpt
+- DOMAIN-SUFFIX,ai.com,Chatgpt
+- DOMAIN-SUFFIX,cdn.oaistatic.com,Chatgpt
+- DOMAIN-SUFFIX,cdn.openai.com,Chatgpt
+- DOMAIN-SUFFIX,cdn.auth0.com,Chatgpt
+- DOMAIN-SUFFIX,events.statsigapi.net,Chatgpt
+- DOMAIN-SUFFIX,featuregates.org,Chatgpt
+- DOMAIN-SUFFIX,passwordsleakcheck-pa.googleapis.com,Chatgpt
+- DOMAIN-SUFFIX,content-autofill.googleapis.com,Chatgpt
+- DOMAIN-SUFFIX,js.intercomcdn.com,Chatgpt
+- DOMAIN-SUFFIX,clientservices.googleapis.com,Chatgpt
+- DOMAIN-SUFFIX,api.getkoala.com,Chatgpt
+- DOMAIN-SUFFIX,api.knock.app,Chatgpt
+- DOMAIN-SUFFIX,googleapis.com,Chatgpt
+- DOMAIN-SUFFIX,clients4.google.com,Chatgpt
+- DOMAIN-SUFFIX,intercom.io,Chatgpt
+- DOMAIN-SUFFIX,config.immersivetranslate.com,Chatgpt
+- DOMAIN-SUFFIX,google.com,Chatgpt
+- DOMAIN-SUFFIX,googleusercontent.com,Chatgpt
+- DOMAIN-SUFFIX,i0.wp.com,Chatgpt
+&lt;/code>&lt;/pre></description></item></channel></rss>

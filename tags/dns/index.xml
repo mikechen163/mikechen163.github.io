@@ -1,1 +1,107 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>dns on 麦克的茶馆</title><link>/tags/dns/</link><description>Recent content in dns on 麦克的茶馆</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Wed, 01 Jul 2020 00:00:00 +0000</lastBuildDate><atom:link href="/tags/dns/index.xml" rel="self" type="application/rss+xml"/><item><title>Centos 7 增加第二个IP</title><link>/post/add-2nd-ip/</link><pubDate>Wed, 01 Jul 2020 00:00:00 +0000</pubDate><guid>/post/add-2nd-ip/</guid><description>最近的一些技术总结 1 Centos 7 增加第二个ip 服务器需要新增一个ip，记录一下： 检查服务器是否启用了NetworkManager服务 #ls /etc/sysconfig/network-scripts/ifcfg* #grep 'NM_CONTROLLED' /etc/sysconfig/network-scripts/ifcfg-eth0 没找到</description></item><item><title>UBNT ERX dns配置</title><link>/post/setup-coredns-unbt-erx/</link><pubDate>Sat, 18 Jan 2020 00:00:00 +0000</pubDate><guid>/post/setup-coredns-unbt-erx/</guid><description>主要使用了这个项目 https://github.com/mikechen163/dohproxy 1 下载和编译 备注:go版本大于1.13 git clone --depth 1 https://github.com/mikechen163/dohproxy.git cd mikechen163/dohproxy GOOS=linux GOARCH=mipsle go build 2 copy到erx路由器上 scp cn.txt root@erx:/usr/local/bin/ scp block.txt root@erx:/usr/local/bin/ scp dohproxy root@erx:/usr/local/bin/mydns 3 启用mydns</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>dns on 麦克的茶馆</title><link>/tags/dns/</link><description>Recent content in dns on 麦克的茶馆</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Wed, 01 Jul 2020 00:00:00 +0000</lastBuildDate><atom:link href="/tags/dns/index.xml" rel="self" type="application/rss+xml"/><item><title>Centos 7 增加第二个IP</title><link>/post/add-2nd-ip/</link><pubDate>Wed, 01 Jul 2020 00:00:00 +0000</pubDate><guid>/post/add-2nd-ip/</guid><description>&lt;p>最近的一些技术总结&lt;/p>
+&lt;h3 id="1-centos-7-增加第二个ip">1 Centos 7 增加第二个ip&lt;/h3>
+&lt;p>服务器需要新增一个ip，记录一下：&lt;/p>
+&lt;p>检查服务器是否启用了NetworkManager服务&lt;/p>
+&lt;pre>&lt;code>#ls /etc/sysconfig/network-scripts/ifcfg*
+#grep 'NM_CONTROLLED' /etc/sysconfig/network-scripts/ifcfg-eth0
+没找到
+#sudo systemctl -a | grep NetworkManager
+没启用
+not-found inactive dead NetworkManager.service
+#sudo systemctl -a | grep network
+还是旧的方式
+network.service loaded active exited LSB: Bring up/down networking
+&lt;/code>&lt;/pre>
+&lt;p>直接增加一个配置文件：&lt;/p>
+&lt;pre>&lt;code> #sudo vi /etc/sysconfig/network-scripts/ifcfg-eth0:0
+BOOTPROTO=none
+DEVICE=&amp;quot;eth0:0&amp;quot;
+IPADDR=xx.xx.xx.xx #第二个ip地址
+NETMASK=255.255.255.0
+ONBOOT=yes
+&lt;/code>&lt;/pre>
+&lt;p>启用命令：&lt;/p>
+&lt;pre>&lt;code> #sudo ifdown eth0; ifup eth0
+#ifconfig 命令检查新的ip
+eth0:0: flags=4163&amp;lt;UP,BROADCAST,RUNNING,MULTICAST&amp;gt; mtu 1500
+inet xx.xx.xx.xx netmask 255.255.255.0 broadcast xx.xx.xx.255
+&lt;/code>&lt;/pre>
+&lt;p>另外一套体系是ip&lt;/p>
+&lt;pre>&lt;code> #ip addr show 检查ip地址
+#sudo ip addr add xx.xx.xx.xx/24 broadcast xx.xx.xx.255 dev eth0 添加一个新的ip地址，关机就没有了。
+#ip route show 检查路由
+# sudo ip route add 8.8.4.4/32 via xx.xx.xx.xx 添加一个新的路由，
+#ip route get 8.8.8.8 检查到8.8.8.8 的路由
+&lt;/code>&lt;/pre>
+&lt;h3 id="2-在路由器上转发udp端口">2 在路由器上，转发udp端口&lt;/h3>
+&lt;pre>&lt;code>#转发 8.8.8.8的 dns 查询请求到192.168.1.1
+iptables -t nat -A PREROUTING -p udp -d 8.8.8.8 --dport 53 -j DNAT --to 192.168.1.1:53
+&lt;/code>&lt;/pre>
+&lt;h3 id="3-v2ray增加直达的域名">3 v2ray增加直达的域名&lt;/h3>
+&lt;p>客户段配置&lt;/p>
+&lt;pre>&lt;code>&amp;quot;routing&amp;quot;: {
+&amp;quot;domainStrategy&amp;quot;: &amp;quot;IPOnDemand&amp;quot;,
+&amp;quot;rules&amp;quot;:[
+{
+// Blocks access to private IPs. Remove this if you want to access your router.
+&amp;quot;type&amp;quot;: &amp;quot;field&amp;quot;,
+&amp;quot;ip&amp;quot;: [&amp;quot;geoip:private&amp;quot;],
+&amp;quot;outboundTag&amp;quot;: &amp;quot;direct&amp;quot;
+},
+{
+&amp;quot;type&amp;quot;: &amp;quot;field&amp;quot;,
+&amp;quot;ip&amp;quot;: [&amp;quot;geoip:cn&amp;quot;],
+&amp;quot;outboundTag&amp;quot;: &amp;quot;direct&amp;quot;
+},
+{
+&amp;quot;type&amp;quot;: &amp;quot;field&amp;quot;,
+&amp;quot;domain&amp;quot;: [&amp;quot;geosite:cn&amp;quot;,
+&amp;quot;github.com&amp;quot;,
+&amp;quot;apple.com&amp;quot;
+],
+&amp;quot;outboundTag&amp;quot;: &amp;quot;direct&amp;quot;
+},
+&lt;/code>&lt;/pre>
+&lt;h3 id="4-启用cloudflare">4 启用cloudflare&lt;/h3>
+&lt;p>注册用户，属于你的域名，cloudflare会自动识别现有的地址绑定。&lt;/p>
+&lt;p>然后在域名登记的网站，修改域名的解析服务器为 cloudflare的域名服务器。&lt;/p>
+&lt;p>设定 ssl的加密方式为 full(strict)&lt;/p>
+&lt;p>增加一个防火墙规则，识别你的流量，allow。 没有这个，cloudflare可能会限制流量。&lt;/p></description></item><item><title>UBNT ERX dns配置</title><link>/post/setup-coredns-unbt-erx/</link><pubDate>Sat, 18 Jan 2020 00:00:00 +0000</pubDate><guid>/post/setup-coredns-unbt-erx/</guid><description>&lt;p>主要使用了这个项目
+&lt;a href="https://github.com/mikechen163/dohproxy" target="_blank" rel="noopener">https://github.com/mikechen163/dohproxy&lt;/a>
+&lt;/p>
+&lt;h3 id="1-下载和编译">1 下载和编译&lt;/h3>
+&lt;p>备注:go版本大于1.13&lt;/p>
+&lt;pre>&lt;code>git clone --depth 1 https://github.com/mikechen163/dohproxy.git
+cd mikechen163/dohproxy
+GOOS=linux GOARCH=mipsle go build
+&lt;/code>&lt;/pre>
+&lt;h3 id="2-copy到erx路由器上">2 copy到erx路由器上&lt;/h3>
+&lt;pre>&lt;code>scp cn.txt root@erx:/usr/local/bin/
+scp block.txt root@erx:/usr/local/bin/
+scp dohproxy root@erx:/usr/local/bin/mydns
+&lt;/code>&lt;/pre>
+&lt;h3 id="3-启用mydns">3 启用mydns&lt;/h3>
+&lt;p>创建一个/etc/init.d/mydns 文件,前面的内容修改为:&lt;/p>
+&lt;pre>&lt;code> ....
+DESC=mydns
+NAME=mydns
+DAEMON=/usr/local/bin/mydns
+DAEMON_OPTS=&amp;quot;-port 5353 -block /usr/local/bin/block.txt -chn /usr/local/bin/cn.txt
+...
+&lt;/code>&lt;/pre>
+&lt;p>然后/etc/init.d/mydns restart启用服务.&lt;/p>
+&lt;pre>&lt;code> dig @localhost -p 5353 www.google.com
+&lt;/code>&lt;/pre>
+&lt;p>测试是否成功.&lt;/p>
+&lt;p>修改 /etc/dnsmasq.conf ,也可以通过配置实现&lt;/p>
+&lt;pre>&lt;code> server=127.0.0.1#5353 # statically configured
+&lt;/code>&lt;/pre>
+&lt;p>测试是否成功&lt;/p>
+&lt;pre>&lt;code>/etc/init.d/dnsmasq restart
+dig @localhost www.google.com
+&lt;/code>&lt;/pre>
+&lt;h3 id="4-设置开机脚本">4 设置开机脚本&lt;/h3>
+&lt;p>/config/scripts/post-config.d/update_iptables
+增加一行,保证mydns重启之后服务启动&lt;/p>
+&lt;pre>&lt;code>/etc/init.d/mydns restart
+&lt;/code>&lt;/pre></description></item></channel></rss>

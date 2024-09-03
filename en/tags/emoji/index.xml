@@ -1,1 +1,60 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>emoji on Loving life and dreams.</title><link>/en/tags/emoji/</link><description>Recent content in emoji on Loving life and dreams.</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Tue, 05 Mar 2019 00:00:00 +0000</lastBuildDate><atom:link href="/en/tags/emoji/index.xml" rel="self" type="application/rss+xml"/><item><title>Emoji Support</title><link>/en/post/emoji-support/</link><pubDate>Tue, 05 Mar 2019 00:00:00 +0000</pubDate><guid>/en/post/emoji-support/</guid><description>&lt;p>Emoji can be enabled in a Hugo project in a number of ways.&lt;/p></description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>emoji on Loving life and dreams.</title><link>/en/tags/emoji/</link><description>Recent content in emoji on Loving life and dreams.</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Tue, 05 Mar 2019 00:00:00 +0000</lastBuildDate><atom:link href="/en/tags/emoji/index.xml" rel="self" type="application/rss+xml"/><item><title>Emoji Support</title><link>/en/post/emoji-support/</link><pubDate>Tue, 05 Mar 2019 00:00:00 +0000</pubDate><guid>/en/post/emoji-support/</guid><description>&lt;p>Emoji can be enabled in a Hugo project in a number of ways.&lt;/p>
+&lt;p>The &lt;a href="https://gohugo.io/functions/emojify/" target="_blank" rel="noopener">&lt;code>emojify&lt;/code>&lt;/a>
+function can be called directly in templates or &lt;a href="https://gohugo.io/templates/shortcode-templates/#inline-shortcodes" target="_blank" rel="noopener">Inline Shortcodes&lt;/a>
+.&lt;/p>
+&lt;p>To enable emoji globally, set &lt;code>enableEmoji&lt;/code> to &lt;code>true&lt;/code> in your site&amp;rsquo;s &lt;a href="https://gohugo.io/getting-started/configuration/" target="_blank" rel="noopener">configuration&lt;/a>
+and then you can type emoji shorthand codes directly in content files; e.g.&lt;/p>
+&lt;h3 id="monkey">Monkey&lt;/h3>
+&lt;p>
+&lt;span class="nowrap">
+&lt;span class="emojify"> 🙈 &lt;/span>
+&lt;code>:see_no_evil:&lt;/code>
+&lt;/span>
+&lt;span class="nowrap">
+&lt;span class="emojify"> 🙉 &lt;/span>
+&lt;code>:hear_no_evil:&lt;/code>
+&lt;/span>
+&lt;span class="nowrap">
+&lt;span class="emojify"> 🙊 &lt;/span>
+&lt;code>:speak_no_evil:&lt;/code>
+&lt;/span>
+&lt;/p>
+&lt;hr>
+&lt;h3 id="number">Number&lt;/h3>
+&lt;p>
+&lt;span class="nowrap">
+&lt;span class="emojify"> 1️⃣ &lt;/span>
+&lt;code>:one:&lt;/code>
+&lt;/span>
+&lt;span class="nowrap">
+&lt;span class="emojify"> 2️⃣ &lt;/span>
+&lt;code>:two:&lt;/code>
+&lt;/span>
+&lt;span class="nowrap">
+&lt;span class="emojify"> 3️⃣ &lt;/span>
+&lt;code>:three:&lt;/code>
+&lt;/span>
+&lt;/p>
+&lt;hr>
+&lt;h3 id="building">Building&lt;/h3>
+&lt;p>
+&lt;span class="nowrap">
+&lt;span class="emojify"> 🏡 &lt;/span>
+&lt;code>:house_with_garden:&lt;/code>
+&lt;/span>
+&lt;span class="nowrap">
+&lt;span class="emojify"> 🏣 &lt;/span>
+&lt;code>:post_office:&lt;/code>
+&lt;/span>
+&lt;span class="nowrap">
+&lt;span class="emojify"> 🏥 &lt;/span>
+&lt;code>:hospital:&lt;/code>
+&lt;/span>
+&lt;/p>
+&lt;p>The &lt;a href="ttps://www.webfx.com/tools/emoji-cheat-sheet/">Emoji cheat sheet&lt;/a>
+is a useful reference for emoji shorthand codes.&lt;/p>
+&lt;hr>
+&lt;p>&lt;strong>N.B.&lt;/strong> The above steps enable Unicode Standard emoji characters and sequences in Hugo, however the rendering of these glyphs depends on the browser and the platform. To style the emoji you can either use a third party emoji font or a font stack; e.g.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-html" data-lang="html">&lt;span style="display:flex;">&lt;span>.emoji {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> font-family: Apple Color Emoji, Segoe UI Emoji, NotoColorEmoji, Segoe UI Symbol, Android Emoji, EmojiSymbols;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item></channel></rss>

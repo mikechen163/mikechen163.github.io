@@ -5,4 +5,20 @@
 &lt;pre>&lt;code>$ sudo yum install epel-release elrepo-release
 $ sudo yum install yum-plugin-elrepo
 $ sudo yum install kmod-wireguard wireguard-tools
+&lt;/code>&lt;/pre>
+&lt;h3 id="12-申请cloudflare-warp">1.2 申请cloudflare warp&lt;/h3>
+&lt;p>下载wgcf最新版本&lt;/p>
+&lt;pre>&lt;code> wget https://github.com/ViRb3/wgcf/releases/download/v2.2.15/wgcf_2.2.15_linux_386
+&lt;/code>&lt;/pre>
+&lt;p>注册新用户&lt;/p>
+&lt;pre>&lt;code> ./wgcf_2.2.15_linux_386 register
+&lt;/code>&lt;/pre>
+&lt;p>生成wireguard配置&lt;/p>
+&lt;pre>&lt;code>./wgcf_2.2.15_linux_386 generate
+&lt;/code>&lt;/pre>
+&lt;p>将配置文件中的 engage.cloudflareclient.com 替换为 162.159.192.1，并删除 AllowedIPs = 0.0.0.0/0。即配置文件中 [Peer] 部分为：&lt;/p>
+&lt;pre>&lt;code>[Peer]
+PublicKey = bmXOC+F1FxEMF9dyiK2H5/1SUtzH0JuVo51h2wPfgyo=
+AllowedIPs = ::/0
+Endpoint = 162.159.192.1:2408
 &lt;/code>&lt;/pre></description></item></channel></rss>
