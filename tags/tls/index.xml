@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>tls on 麦克的茶馆</title><link>/tags/tls/</link><description>Recent content in tls on 麦克的茶馆</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Mon, 13 Nov 2023 00:00:00 +0000</lastBuildDate><atom:link href="/tags/tls/index.xml" rel="self" type="application/rss+xml"/><item><title>centos 8启用nginx stream ssl preread module</title><link>/post/nginx-stream-preread-enable/</link><pubDate>Mon, 13 Nov 2023 00:00:00 +0000</pubDate><guid>/post/nginx-stream-preread-enable/</guid><description>&lt;p>目标: 为了让nginx服务器,根据不同的域名,转发到不同的app服务器. tls并不终结在nginx,而是转发到最终的app服务器.&lt;/p>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>tls on 麦克的茶馆</title><link>https://mikechen163.github.io/tags/tls/</link><description>Recent content in tls on 麦克的茶馆</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Mon, 13 Nov 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://mikechen163.github.io/tags/tls/index.xml" rel="self" type="application/rss+xml"/><item><title>centos 8启用nginx stream ssl preread module</title><link>https://mikechen163.github.io/post/nginx-stream-preread-enable/</link><pubDate>Mon, 13 Nov 2023 00:00:00 +0000</pubDate><guid>https://mikechen163.github.io/post/nginx-stream-preread-enable/</guid><description>&lt;p>目标: 为了让nginx服务器,根据不同的域名,转发到不同的app服务器. tls并不终结在nginx,而是转发到最终的app服务器.&lt;/p>
 &lt;p>在centos 8上,运行&lt;/p>
 &lt;pre>&lt;code>#nginx -V
 结果:
@@ -119,7 +119,7 @@ sudo sytemctl start nginx
 sudo sytemctl status nginx
 sudo sytemctl enable nginx
 &lt;/code>&lt;/pre>
-&lt;p>访问https://www.domain1.com 看看是否正常.&lt;/p></description></item><item><title>在centos 7配置trojan go</title><link>/post/trojan-go-setup/</link><pubDate>Mon, 12 Sep 2022 00:00:00 +0000</pubDate><guid>/post/trojan-go-setup/</guid><description>&lt;h3 id="1-前置条件">1 前置条件&lt;/h3>
+&lt;p>访问https://www.domain1.com 看看是否正常.&lt;/p></description></item><item><title>在centos 7配置trojan go</title><link>https://mikechen163.github.io/post/trojan-go-setup/</link><pubDate>Mon, 12 Sep 2022 00:00:00 +0000</pubDate><guid>https://mikechen163.github.io/post/trojan-go-setup/</guid><description>&lt;h3 id="1-前置条件">1 前置条件&lt;/h3>
 &lt;p>需要一个域名
 需要一个 vps，安装好centos 7 或者 8&lt;/p>
 &lt;h3 id="1-安装nginx">1 安装nginx&lt;/h3>
@@ -308,7 +308,7 @@ sudo certbot renew --dry-run
 &amp;quot;default_policy&amp;quot;: &amp;quot;proxy&amp;quot;
 }
 }
-&lt;/code>&lt;/pre></description></item><item><title>配置v2ray+ws+tls1.3+nginx</title><link>/post/setup-v2ray-ws-tls-nginx/</link><pubDate>Sat, 18 Jan 2020 00:00:00 +0000</pubDate><guid>/post/setup-v2ray-ws-tls-nginx/</guid><description>&lt;h3 id="1-安装nginx">1 安装nginx&lt;/h3>
+&lt;/code>&lt;/pre></description></item><item><title>配置v2ray+ws+tls1.3+nginx</title><link>https://mikechen163.github.io/post/setup-v2ray-ws-tls-nginx/</link><pubDate>Sat, 18 Jan 2020 00:00:00 +0000</pubDate><guid>https://mikechen163.github.io/post/setup-v2ray-ws-tls-nginx/</guid><description>&lt;h3 id="1-安装nginx">1 安装nginx&lt;/h3>
 &lt;pre>&lt;code>sudo yum install nginx
 sudo systemctl start nginx
 sudo systemctl status nginx

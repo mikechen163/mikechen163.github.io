@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>ipv6 on 麦克的茶馆</title><link>/tags/ipv6/</link><description>Recent content in ipv6 on 麦克的茶馆</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Sun, 19 Nov 2023 00:00:00 +0000</lastBuildDate><atom:link href="/tags/ipv6/index.xml" rel="self" type="application/rss+xml"/><item><title>在openwrt上启动ipv6</title><link>/post/ipv6-on-openwrt/</link><pubDate>Sun, 19 Nov 2023 00:00:00 +0000</pubDate><guid>/post/ipv6-on-openwrt/</guid><description>&lt;h2 id="1-在openwrt启动ipv6">1 在openwrt启动ipv6&lt;/h2>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>ipv6 on 麦克的茶馆</title><link>https://mikechen163.github.io/tags/ipv6/</link><description>Recent content in ipv6 on 麦克的茶馆</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Sun, 19 Nov 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://mikechen163.github.io/tags/ipv6/index.xml" rel="self" type="application/rss+xml"/><item><title>在openwrt上启动ipv6</title><link>https://mikechen163.github.io/post/ipv6-on-openwrt/</link><pubDate>Sun, 19 Nov 2023 00:00:00 +0000</pubDate><guid>https://mikechen163.github.io/post/ipv6-on-openwrt/</guid><description>&lt;h2 id="1-在openwrt启动ipv6">1 在openwrt启动ipv6&lt;/h2>
 &lt;h3 id="11-启动openwrt-ipv6">1.1 启动openwrt ipv6&lt;/h3>
 &lt;p>为什么要使用ipv6,主要是国内的一些服务,例如iptv电视,现在提供了ipv6的映射,为了方便使用.
 关键点在于,不要启动openwrt本身的dhcp ipv6,而是使用中继的方式,直接把运营商分配的ipv6地址,再下发给内网的每个设备. openwrt只作为ipv6的中介设备. 本身不分配ipv6地址.&lt;/p>
@@ -76,7 +76,7 @@ rules:
 - DOMAIN-SUFFIX,google.com,Chatgpt
 - DOMAIN-SUFFIX,googleusercontent.com,Chatgpt
 - DOMAIN-SUFFIX,i0.wp.com,Chatgpt
-&lt;/code>&lt;/pre></description></item><item><title>通过cloudflare warp给ipv4 vps添加ipv6</title><link>/post/cloudflare-warp-add-ipv6/</link><pubDate>Fri, 02 Dec 2022 00:00:00 +0000</pubDate><guid>/post/cloudflare-warp-add-ipv6/</guid><description>&lt;h2 id="1-安装wireguard">1 安装wireguard&lt;/h2>
+&lt;/code>&lt;/pre></description></item><item><title>通过cloudflare warp给ipv4 vps添加ipv6</title><link>https://mikechen163.github.io/post/cloudflare-warp-add-ipv6/</link><pubDate>Fri, 02 Dec 2022 00:00:00 +0000</pubDate><guid>https://mikechen163.github.io/post/cloudflare-warp-add-ipv6/</guid><description>&lt;h2 id="1-安装wireguard">1 安装wireguard&lt;/h2>
 &lt;p>主要流程参考了 &lt;a href="https://p3terx.com/archives/use-cloudflare-warp-to-add-extra-ipv4-or-ipv6-network-support-to-vps-servers-for-free.html" target="_blank" rel="noopener">Cloudflare WARP 给 Linux VPS 云服务器添加原生 IPv4/IPv6 双栈网络&lt;/a>
 &lt;/p>
 &lt;h3 id="11-centos-7安装-wireguard">1.1 centos 7安装 wireguard&lt;/h3>

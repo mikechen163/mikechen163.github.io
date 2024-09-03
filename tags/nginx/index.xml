@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>nginx on 麦克的茶馆</title><link>/tags/nginx/</link><description>Recent content in nginx on 麦克的茶馆</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Sat, 31 Aug 2024 00:00:00 +0000</lastBuildDate><atom:link href="/tags/nginx/index.xml" rel="self" type="application/rss+xml"/><item><title>Nginx配置指南：支持多域名HTTPS和代理协议</title><link>/post/config-nginx-detail-case/</link><pubDate>Sat, 31 Aug 2024 00:00:00 +0000</pubDate><guid>/post/config-nginx-detail-case/</guid><description>&lt;h1 id="nginx配置指南支持多域名https和proxy_protocol协议">Nginx配置指南：支持多域名HTTPS和proxy_protocol协议&lt;/h1>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>nginx on 麦克的茶馆</title><link>https://mikechen163.github.io/tags/nginx/</link><description>Recent content in nginx on 麦克的茶馆</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Sat, 31 Aug 2024 00:00:00 +0000</lastBuildDate><atom:link href="https://mikechen163.github.io/tags/nginx/index.xml" rel="self" type="application/rss+xml"/><item><title>Nginx配置指南：支持多域名HTTPS和代理协议</title><link>https://mikechen163.github.io/post/config-nginx-detail-case/</link><pubDate>Sat, 31 Aug 2024 00:00:00 +0000</pubDate><guid>https://mikechen163.github.io/post/config-nginx-detail-case/</guid><description>&lt;h1 id="nginx配置指南支持多域名https和proxy_protocol协议">Nginx配置指南：支持多域名HTTPS和proxy_protocol协议&lt;/h1>
 &lt;p>引言
 在当今的web服务架构中，Nginx作为一个强大的web服务器和反向代理服务器，扮演着至关重要的角色。本文将详细介绍如何配置Nginx以支持多域名HTTPS和代理协议，涵盖了几种常见的场景。我们将从基本的配置开始，逐步深入到更复杂的设置。&lt;/p>
 &lt;h2 id="场景1多域名https和sni">场景1：多域名HTTPS和SNI&lt;/h2>
@@ -120,7 +120,7 @@ proxy_pass real_backend;
 这个配置创建了一个中间层，它接收带有代理协议的连接，然后将纯HTTPS流量转发给后端服务。&lt;/p>
 &lt;h2 id="结论">结论&lt;/h2>
 &lt;p>通过这些配置示例，我们展示了Nginx在处理HTTPS流量、支持多域名、使用代理协议以及作为SSL终止代理方面的灵活性。根据您的具体需求，您可以混合和匹配这些配置来创建适合您的架构的设置。&lt;/p>
-&lt;p>记住，在应用这些配置时，始终要根据您的实际环境调整IP地址、域名和证书路径。此外，定期更新Nginx和SSL证书，并关注最新的安全最佳实践，以确保您的服务器配置始终安全和高效。&lt;/p></description></item><item><title>配置nginx,使用stream 模式,并且传递realip 给server</title><link>/post/config-nginx-stream-realip/</link><pubDate>Fri, 30 Aug 2024 00:00:00 +0000</pubDate><guid>/post/config-nginx-stream-realip/</guid><description>&lt;h1 id="如何配置-nginx-stream-realip-传递并隐藏真实域名">如何配置 Nginx Stream RealIP 传递并隐藏真实域名&lt;/h1>
+&lt;p>记住，在应用这些配置时，始终要根据您的实际环境调整IP地址、域名和证书路径。此外，定期更新Nginx和SSL证书，并关注最新的安全最佳实践，以确保您的服务器配置始终安全和高效。&lt;/p></description></item><item><title>配置nginx,使用stream 模式,并且传递realip 给server</title><link>https://mikechen163.github.io/post/config-nginx-stream-realip/</link><pubDate>Fri, 30 Aug 2024 00:00:00 +0000</pubDate><guid>https://mikechen163.github.io/post/config-nginx-stream-realip/</guid><description>&lt;h1 id="如何配置-nginx-stream-realip-传递并隐藏真实域名">如何配置 Nginx Stream RealIP 传递并隐藏真实域名&lt;/h1>
 &lt;p>在现代的网络架构中，使用 Nginx 作为反向代理服务器是非常常见的。为了增强安全性并隐藏真实的域名，我们可以配置 Nginx 的 real_ip 模块来传递客户端的真实 IP 地址，并通过 SSL/TLS 加密来保护数据传输。本文将详细介绍如何配置 Nginx 来实现这一目标。&lt;/p>
 &lt;h2 id="stream部分配置概述">stream部分配置概述&lt;/h2>
 &lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-nginx" data-lang="nginx">&lt;span style="display:flex;">&lt;span>
@@ -186,7 +186,7 @@ proxy_pass real_backend;
 &lt;li>配置 real_ip 模块以正确识别客户端的真实 IP 地址。&lt;/li>
 &lt;li>使用 SSL/TLS 加密来保护数据传输，并隐藏真实的域名。&lt;/li>
 &lt;li>通过这些步骤，您可以确保 Nginx 能够安全地传递客户端的真实 IP 地址，并隐藏真实的域名，从而提高系统的安全性和隐私保护。&lt;/li>
-&lt;/ul></description></item><item><title>centos 8启用nginx stream ssl preread module</title><link>/post/nginx-stream-preread-enable/</link><pubDate>Mon, 13 Nov 2023 00:00:00 +0000</pubDate><guid>/post/nginx-stream-preread-enable/</guid><description>&lt;p>目标: 为了让nginx服务器,根据不同的域名,转发到不同的app服务器. tls并不终结在nginx,而是转发到最终的app服务器.&lt;/p>
+&lt;/ul></description></item><item><title>centos 8启用nginx stream ssl preread module</title><link>https://mikechen163.github.io/post/nginx-stream-preread-enable/</link><pubDate>Mon, 13 Nov 2023 00:00:00 +0000</pubDate><guid>https://mikechen163.github.io/post/nginx-stream-preread-enable/</guid><description>&lt;p>目标: 为了让nginx服务器,根据不同的域名,转发到不同的app服务器. tls并不终结在nginx,而是转发到最终的app服务器.&lt;/p>
 &lt;p>在centos 8上,运行&lt;/p>
 &lt;pre>&lt;code>#nginx -V
 结果:
@@ -307,7 +307,7 @@ sudo sytemctl start nginx
 sudo sytemctl status nginx
 sudo sytemctl enable nginx
 &lt;/code>&lt;/pre>
-&lt;p>访问https://www.domain1.com 看看是否正常.&lt;/p></description></item><item><title>在centos 7配置trojan go</title><link>/post/trojan-go-setup/</link><pubDate>Mon, 12 Sep 2022 00:00:00 +0000</pubDate><guid>/post/trojan-go-setup/</guid><description>&lt;h3 id="1-前置条件">1 前置条件&lt;/h3>
+&lt;p>访问https://www.domain1.com 看看是否正常.&lt;/p></description></item><item><title>在centos 7配置trojan go</title><link>https://mikechen163.github.io/post/trojan-go-setup/</link><pubDate>Mon, 12 Sep 2022 00:00:00 +0000</pubDate><guid>https://mikechen163.github.io/post/trojan-go-setup/</guid><description>&lt;h3 id="1-前置条件">1 前置条件&lt;/h3>
 &lt;p>需要一个域名
 需要一个 vps，安装好centos 7 或者 8&lt;/p>
 &lt;h3 id="1-安装nginx">1 安装nginx&lt;/h3>
@@ -496,7 +496,7 @@ sudo certbot renew --dry-run
 &amp;quot;default_policy&amp;quot;: &amp;quot;proxy&amp;quot;
 }
 }
-&lt;/code>&lt;/pre></description></item><item><title>配置v2ray+ws+tls1.3+nginx</title><link>/post/setup-v2ray-ws-tls-nginx/</link><pubDate>Sat, 18 Jan 2020 00:00:00 +0000</pubDate><guid>/post/setup-v2ray-ws-tls-nginx/</guid><description>&lt;h3 id="1-安装nginx">1 安装nginx&lt;/h3>
+&lt;/code>&lt;/pre></description></item><item><title>配置v2ray+ws+tls1.3+nginx</title><link>https://mikechen163.github.io/post/setup-v2ray-ws-tls-nginx/</link><pubDate>Sat, 18 Jan 2020 00:00:00 +0000</pubDate><guid>https://mikechen163.github.io/post/setup-v2ray-ws-tls-nginx/</guid><description>&lt;h3 id="1-安装nginx">1 安装nginx&lt;/h3>
 &lt;pre>&lt;code>sudo yum install nginx
 sudo systemctl start nginx
 sudo systemctl status nginx
