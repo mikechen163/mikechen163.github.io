@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>openwrt on 麦克的茶馆</title><link>https://mikechen163.github.io/tags/openwrt/</link><description>Recent content in openwrt on 麦克的茶馆</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Sun, 19 Nov 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://mikechen163.github.io/tags/openwrt/index.xml" rel="self" type="application/rss+xml"/><item><title>在openwrt上启动ipv6</title><link>https://mikechen163.github.io/post/ipv6-on-openwrt/</link><pubDate>Sun, 19 Nov 2023 00:00:00 +0000</pubDate><guid>https://mikechen163.github.io/post/ipv6-on-openwrt/</guid><description>&lt;h2 id="1-在openwrt启动ipv6">1 在openwrt启动ipv6&lt;/h2>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>openwrt on 麦克的茶馆</title><link>/tags/openwrt/</link><description>Recent content in openwrt on 麦克的茶馆</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Sun, 19 Nov 2023 00:00:00 +0000</lastBuildDate><atom:link href="/tags/openwrt/index.xml" rel="self" type="application/rss+xml"/><item><title>在openwrt上启动ipv6</title><link>/post/ipv6-on-openwrt/</link><pubDate>Sun, 19 Nov 2023 00:00:00 +0000</pubDate><guid>/post/ipv6-on-openwrt/</guid><description>&lt;h2 id="1-在openwrt启动ipv6">1 在openwrt启动ipv6&lt;/h2>
 &lt;h3 id="11-启动openwrt-ipv6">1.1 启动openwrt ipv6&lt;/h3>
 &lt;p>为什么要使用ipv6,主要是国内的一些服务,例如iptv电视,现在提供了ipv6的映射,为了方便使用.
 关键点在于,不要启动openwrt本身的dhcp ipv6,而是使用中继的方式,直接把运营商分配的ipv6地址,再下发给内网的每个设备. openwrt只作为ipv6的中介设备. 本身不分配ipv6地址.&lt;/p>
@@ -76,7 +76,7 @@ rules:
 - DOMAIN-SUFFIX,google.com,Chatgpt
 - DOMAIN-SUFFIX,googleusercontent.com,Chatgpt
 - DOMAIN-SUFFIX,i0.wp.com,Chatgpt
-&lt;/code>&lt;/pre></description></item><item><title>WNDR4300安装Openwrt，使用shadowsocks配置透明代理,使用chinadns+dnscrypt-proxy处理DNS污染</title><link>https://mikechen163.github.io/post/openwrt-shadowsocks-chinadns-setup/</link><pubDate>Wed, 12 Aug 2015 00:00:00 +0000</pubDate><guid>https://mikechen163.github.io/post/openwrt-shadowsocks-chinadns-setup/</guid><description>&lt;h4 id="1-wndr4300刷openwrt固件">1 wndr4300刷openwrt固件&lt;/h4>
+&lt;/code>&lt;/pre></description></item><item><title>WNDR4300安装Openwrt，使用shadowsocks配置透明代理,使用chinadns+dnscrypt-proxy处理DNS污染</title><link>/post/openwrt-shadowsocks-chinadns-setup/</link><pubDate>Wed, 12 Aug 2015 00:00:00 +0000</pubDate><guid>/post/openwrt-shadowsocks-chinadns-setup/</guid><description>&lt;h4 id="1-wndr4300刷openwrt固件">1 wndr4300刷openwrt固件&lt;/h4>
 &lt;p>wndr4300在openwrt的官方支持列表中，但官方固件可使用空间只有12M，所以需要打一些补丁。本文所用固件来自&lt;a href="https://www.v2ex.com/t/147051#reply37" target="_blank" rel="noopener">我也分享 WNDR4300 14.07 固件，官方 ImageBuilder 编译，完全使用 128M flash,集成中文 Luci&lt;/a>
 ，具体链接：&lt;a href="http://pan.baidu.com/s/14eo7G" target="_blank" rel="noopener">openwrt-ar71xx-nand-wndr4300&lt;/a>
 &lt;/p>

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>centos on 麦克的茶馆</title><link>https://mikechen163.github.io/tags/centos/</link><description>Recent content in centos on 麦克的茶馆</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Tue, 21 Nov 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://mikechen163.github.io/tags/centos/index.xml" rel="self" type="application/rss+xml"/><item><title>在centos 8安装wireguard</title><link>https://mikechen163.github.io/post/install-wireguard/</link><pubDate>Tue, 21 Nov 2023 00:00:00 +0000</pubDate><guid>https://mikechen163.github.io/post/install-wireguard/</guid><description>&lt;h2 id="1-在centos-8安装wireguard">1 在centos 8安装wireguard&lt;/h2>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>centos on 麦克的茶馆</title><link>/tags/centos/</link><description>Recent content in centos on 麦克的茶馆</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Tue, 21 Nov 2023 00:00:00 +0000</lastBuildDate><atom:link href="/tags/centos/index.xml" rel="self" type="application/rss+xml"/><item><title>在centos 8安装wireguard</title><link>/post/install-wireguard/</link><pubDate>Tue, 21 Nov 2023 00:00:00 +0000</pubDate><guid>/post/install-wireguard/</guid><description>&lt;h2 id="1-在centos-8安装wireguard">1 在centos 8安装wireguard&lt;/h2>
 &lt;h3 id="11-安装kmod-wireguard-wireguard-tools">1.1 安装kmod-wireguard wireguard-tools&lt;/h3>
 &lt;p>最简单的办法就是使用 ELRepo的仓库安装. 其他方法比较复杂不推荐.&lt;/p>
 &lt;pre>&lt;code>sudo yum install elrepo-release epel-release
@@ -106,7 +106,7 @@ sudo systemctl restart wg-quick@wg0
 &lt;p>2 &lt;a href="https://www.cnblogs.com/milton/p/14178344.html" target="_blank" rel="noopener">Wireguard笔记(一) 节点安装配置和参数说明&lt;/a>
 &lt;/p>
 &lt;p>3 &lt;a href="https://www.llmgo.cn/post/wireguard-docs-practice/" target="_blank" rel="noopener">WireGuard 的搭建使用与配置详解&lt;/a>
-&lt;/p></description></item><item><title>centos 8安装postgresql 数据库</title><link>https://mikechen163.github.io/post/install-postgresql/</link><pubDate>Tue, 14 Nov 2023 00:00:00 +0000</pubDate><guid>https://mikechen163.github.io/post/install-postgresql/</guid><description>&lt;h2 id="1-安装记录">1 安装记录&lt;/h2>
+&lt;/p></description></item><item><title>centos 8安装postgresql 数据库</title><link>/post/install-postgresql/</link><pubDate>Tue, 14 Nov 2023 00:00:00 +0000</pubDate><guid>/post/install-postgresql/</guid><description>&lt;h2 id="1-安装记录">1 安装记录&lt;/h2>
 &lt;h3 id="11-安装">1.1 安装&lt;/h3>
 &lt;p>依次执行下面的命令&lt;/p>
 &lt;pre>&lt;code>dnf module list postgresql
@@ -159,7 +159,7 @@ sqlite3 db_daily.db &amp;lt; update-sa-sqlite-database-format.sql
 pg_dump stock_dev_db &amp;gt; db115.sql
 恢复数据库
 psql -d stock_dev_db -f db115.sql
-&lt;/code>&lt;/pre></description></item><item><title>centos 8启用nginx stream ssl preread module</title><link>https://mikechen163.github.io/post/nginx-stream-preread-enable/</link><pubDate>Mon, 13 Nov 2023 00:00:00 +0000</pubDate><guid>https://mikechen163.github.io/post/nginx-stream-preread-enable/</guid><description>&lt;p>目标: 为了让nginx服务器,根据不同的域名,转发到不同的app服务器. tls并不终结在nginx,而是转发到最终的app服务器.&lt;/p>
+&lt;/code>&lt;/pre></description></item><item><title>centos 8启用nginx stream ssl preread module</title><link>/post/nginx-stream-preread-enable/</link><pubDate>Mon, 13 Nov 2023 00:00:00 +0000</pubDate><guid>/post/nginx-stream-preread-enable/</guid><description>&lt;p>目标: 为了让nginx服务器,根据不同的域名,转发到不同的app服务器. tls并不终结在nginx,而是转发到最终的app服务器.&lt;/p>
 &lt;p>在centos 8上,运行&lt;/p>
 &lt;pre>&lt;code>#nginx -V
 结果:

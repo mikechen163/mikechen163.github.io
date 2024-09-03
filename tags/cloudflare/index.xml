@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>cloudflare on 麦克的茶馆</title><link>https://mikechen163.github.io/tags/cloudflare/</link><description>Recent content in cloudflare on 麦克的茶馆</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Fri, 02 Dec 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://mikechen163.github.io/tags/cloudflare/index.xml" rel="self" type="application/rss+xml"/><item><title>通过cloudflare warp给ipv4 vps添加ipv6</title><link>https://mikechen163.github.io/post/cloudflare-warp-add-ipv6/</link><pubDate>Fri, 02 Dec 2022 00:00:00 +0000</pubDate><guid>https://mikechen163.github.io/post/cloudflare-warp-add-ipv6/</guid><description>&lt;h2 id="1-安装wireguard">1 安装wireguard&lt;/h2>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>cloudflare on 麦克的茶馆</title><link>/tags/cloudflare/</link><description>Recent content in cloudflare on 麦克的茶馆</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Fri, 02 Dec 2022 00:00:00 +0000</lastBuildDate><atom:link href="/tags/cloudflare/index.xml" rel="self" type="application/rss+xml"/><item><title>通过cloudflare warp给ipv4 vps添加ipv6</title><link>/post/cloudflare-warp-add-ipv6/</link><pubDate>Fri, 02 Dec 2022 00:00:00 +0000</pubDate><guid>/post/cloudflare-warp-add-ipv6/</guid><description>&lt;h2 id="1-安装wireguard">1 安装wireguard&lt;/h2>
 &lt;p>主要流程参考了 &lt;a href="https://p3terx.com/archives/use-cloudflare-warp-to-add-extra-ipv4-or-ipv6-network-support-to-vps-servers-for-free.html" target="_blank" rel="noopener">Cloudflare WARP 给 Linux VPS 云服务器添加原生 IPv4/IPv6 双栈网络&lt;/a>
 &lt;/p>
 &lt;h3 id="11-centos-7安装-wireguard">1.1 centos 7安装 wireguard&lt;/h3>
@@ -21,7 +21,7 @@ $ sudo yum install kmod-wireguard wireguard-tools
 PublicKey = bmXOC+F1FxEMF9dyiK2H5/1SUtzH0JuVo51h2wPfgyo=
 AllowedIPs = ::/0
 Endpoint = 162.159.192.1:2408
-&lt;/code>&lt;/pre></description></item><item><title>Centos 7 增加第二个IP</title><link>https://mikechen163.github.io/post/add-2nd-ip/</link><pubDate>Wed, 01 Jul 2020 00:00:00 +0000</pubDate><guid>https://mikechen163.github.io/post/add-2nd-ip/</guid><description>&lt;p>最近的一些技术总结&lt;/p>
+&lt;/code>&lt;/pre></description></item><item><title>Centos 7 增加第二个IP</title><link>/post/add-2nd-ip/</link><pubDate>Wed, 01 Jul 2020 00:00:00 +0000</pubDate><guid>/post/add-2nd-ip/</guid><description>&lt;p>最近的一些技术总结&lt;/p>
 &lt;h3 id="1-centos-7-增加第二个ip">1 Centos 7 增加第二个ip&lt;/h3>
 &lt;p>服务器需要新增一个ip，记录一下：&lt;/p>
 &lt;p>检查服务器是否启用了NetworkManager服务&lt;/p>
