@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>['生活'] on 麦克的茶馆</title><link>/categories/%E7%94%9F%E6%B4%BB/</link><description>Recent content in ['生活'] on 麦克的茶馆</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Fri, 17 Jun 2016 00:00:00 +0000</lastBuildDate><atom:link href="/categories/%E7%94%9F%E6%B4%BB/index.xml" rel="self" type="application/rss+xml"/><item><title>科普作品列表</title><link>/post/science-book-list/</link><pubDate>Fri, 17 Jun 2016 00:00:00 +0000</pubDate><guid>/post/science-book-list/</guid><description>&lt;p>科 普 作 品 概 览(约１２００种) &lt;a href="https://www.douban.com/group/topic/8888698/?type=like" target="_blank" rel="noopener">这里&lt;/a>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>['生活'] on 麦克的茶馆</title><link>mikechen163.github.io/categories/%E7%94%9F%E6%B4%BB/</link><description>Recent content in ['生活'] on 麦克的茶馆</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Fri, 17 Jun 2016 00:00:00 +0000</lastBuildDate><atom:link href="mikechen163.github.io/categories/%E7%94%9F%E6%B4%BB/index.xml" rel="self" type="application/rss+xml"/><item><title>科普作品列表</title><link>mikechen163.github.io/post/science-book-list/</link><pubDate>Fri, 17 Jun 2016 00:00:00 +0000</pubDate><guid>mikechen163.github.io/post/science-book-list/</guid><description>&lt;p>科 普 作 品 概 览(约１２００种) &lt;a href="https://www.douban.com/group/topic/8888698/?type=like" target="_blank" rel="noopener">这里&lt;/a>
 &lt;/p>
 &lt;h4 id="目-录">目 录&lt;/h4>
 &lt;p>1．科学传记&lt;/p>
@@ -1224,7 +1224,7 @@
 &lt;p>《湍鉴》（布里格斯等）（翻译）商务印书馆&lt;/p>
 &lt;p>《物理学之“道”》（卡普拉）（翻译）北京出版社&lt;/p>
 &lt;p>《科学与宗教》（布鲁克）（翻译）复旦大学出版社&lt;/p>
-&lt;p>《宗教与科学》（罗素）（翻译）商务印书馆&lt;/p></description></item><item><title>使用hexo部署个人博客到coding.net</title><link>/post/setup-hexo-coding/</link><pubDate>Fri, 17 Jun 2016 00:00:00 +0000</pubDate><guid>/post/setup-hexo-coding/</guid><description>&lt;p>1 在coding.net创建一个新项目，名称和注册用户名一致。 类别为公开。&lt;/p>
+&lt;p>《宗教与科学》（罗素）（翻译）商务印书馆&lt;/p></description></item><item><title>使用hexo部署个人博客到coding.net</title><link>mikechen163.github.io/post/setup-hexo-coding/</link><pubDate>Fri, 17 Jun 2016 00:00:00 +0000</pubDate><guid>mikechen163.github.io/post/setup-hexo-coding/</guid><description>&lt;p>1 在coding.net创建一个新项目，名称和注册用户名一致。 类别为公开。&lt;/p>
 &lt;p>2 添加个人的public key到coding.net&lt;/p>
 &lt;p>3 修改hexo _config.yml文件，在 deploy 一节后添加下面的内容。 注意缩进对齐。&lt;/p>
 &lt;pre>&lt;code>- type: git
@@ -1240,7 +1240,7 @@ hexo d
 &lt;p>5 在你的域名服务器处，修改 外部域名，例如 blog.mike163.net 指向 mike163.coding.me&lt;/p>
 &lt;p>6 使用浏览器访问username.coding.me，如果成功，说明文件上传成功。再访问blog.mike163.net（换成你自己的外部域名），如果成功，说明外部域名也绑定成功。&lt;/p>
 &lt;p>参考：&lt;a href="https://coding.net/help/doc/pages/index.html" target="_blank" rel="noopener">coding.net个人页面设定帮助&lt;/a>
-&lt;/p></description></item><item><title>装修记录（一）：好的设计</title><link>/post/2012-03-22-collect-decoration-infomation/</link><pubDate>Thu, 22 Mar 2012 00:00:00 +0000</pubDate><guid>/post/2012-03-22-collect-decoration-infomation/</guid><description>&lt;p>这个帖子用于记录一些装修的信息。有信息可以直接回复在这个帖子&lt;/p>
+&lt;/p></description></item><item><title>装修记录（一）：好的设计</title><link>mikechen163.github.io/post/2012-03-22-collect-decoration-infomation/</link><pubDate>Thu, 22 Mar 2012 00:00:00 +0000</pubDate><guid>mikechen163.github.io/post/2012-03-22-collect-decoration-infomation/</guid><description>&lt;p>这个帖子用于记录一些装修的信息。有信息可以直接回复在这个帖子&lt;/p>
 &lt;p>##1.设计公司##
 三米设计确实还是有不少喜欢的作品&lt;/p>
 &lt;p>三米的案例集 &lt;a href="http://www.3mihome.com/wrod.asp?MaxID=2" target="_blank" rel="noopener">http://www.3mihome.com/wrod.asp?MaxID=2&lt;/a>

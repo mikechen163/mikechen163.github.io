@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>ss on 麦克的茶馆</title><link>/tags/ss/</link><description>Recent content in ss on 麦克的茶馆</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Sat, 18 Jan 2020 00:00:00 +0000</lastBuildDate><atom:link href="/tags/ss/index.xml" rel="self" type="application/rss+xml"/><item><title>UBNT ERX v2ray 配置透明代理</title><link>/post/setup-new-vps/</link><pubDate>Sat, 18 Jan 2020 00:00:00 +0000</pubDate><guid>/post/setup-new-vps/</guid><description>&lt;h3 id="1-安装v2ray">1 安装v2ray&lt;/h3>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>ss on 麦克的茶馆</title><link>mikechen163.github.io/tags/ss/</link><description>Recent content in ss on 麦克的茶馆</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Sat, 18 Jan 2020 00:00:00 +0000</lastBuildDate><atom:link href="mikechen163.github.io/tags/ss/index.xml" rel="self" type="application/rss+xml"/><item><title>UBNT ERX v2ray 配置透明代理</title><link>mikechen163.github.io/post/setup-new-vps/</link><pubDate>Sat, 18 Jan 2020 00:00:00 +0000</pubDate><guid>mikechen163.github.io/post/setup-new-vps/</guid><description>&lt;h3 id="1-安装v2ray">1 安装v2ray&lt;/h3>
 &lt;p>自动安装脚本应该是不行的。因此需要手工操作。还好都已经编译好了。路径
 &lt;a href="https://github.com/v2ray/v2ray-core/releases" target="_blank" rel="noopener">Releases · v2ray/v2ray-core&lt;/a>
 &lt;/p>
@@ -195,7 +195,7 @@ iptables -t nat -D OUTPUT -p tcp -m set --match-set gfwlist dst -j REDIRECT --to
 &lt;p>&lt;a href="https://www.v2ray.com/en/configuration/protocols/dokodemo.html" target="_blank" rel="noopener">Dokodemo · Project V Official&lt;/a>
 &lt;/p>
 &lt;p>&lt;a href="https://toutyrater.github.io/app/transparent_proxy.html" target="_blank" rel="noopener">透明代理(REDIRECT) · V2Ray 配置指南|V2Ray 白话文教程&lt;/a>
-&lt;/p></description></item><item><title>使用UBNT ER-X路由器的一些总结</title><link>/post/using-ubnt-erx-router/</link><pubDate>Mon, 13 Feb 2017 00:00:00 +0000</pubDate><guid>/post/using-ubnt-erx-router/</guid><description>&lt;p>以前是用wndr4300，加载openwrt，完成科学上网的任务。然而，长期使用下来，存在几个问题：&lt;/p>
+&lt;/p></description></item><item><title>使用UBNT ER-X路由器的一些总结</title><link>mikechen163.github.io/post/using-ubnt-erx-router/</link><pubDate>Mon, 13 Feb 2017 00:00:00 +0000</pubDate><guid>mikechen163.github.io/post/using-ubnt-erx-router/</guid><description>&lt;p>以前是用wndr4300，加载openwrt，完成科学上网的任务。然而，长期使用下来，存在几个问题：&lt;/p>
 &lt;pre>&lt;code>1 访问国外网站太慢，由于丢包太多，导致看视频的速率只有几百kbps，根本无法看。
 2 流量大的时候，路由器CPU使用率会升的很高，导致无线网络故障。
 &lt;/code>&lt;/pre>
