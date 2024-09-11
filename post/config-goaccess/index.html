@@ -1,101 +1,66 @@
-<!doctype html><html lang=zh-cn dir=zh><head><meta charset=UTF-8><meta http-equiv=X-UA-Compatible content="IE=edge,chrome=1"><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1"><meta http-equiv=Content-Security-Policy content="upgrade-insecure-requests"><title>在vmware虚拟机安装gentoo linux,使用systemd方案 - 麦克的茶馆 </title><meta name=keywords content="技术总结 投资 "><meta name=author content="mike163"><meta property="og:title" content="在vmware虚拟机安装gentoo linux,使用systemd方案"><meta property="og:site_name" content="麦克的茶馆"><meta property="og:image" content="https://mikechen163.github.io/img/author.jpg"><meta name=title content="在vmware虚拟机安装gentoo linux,使用systemd方案 - 麦克的茶馆"><meta name=description content="mike163's home"><link rel="shortcut icon" href=https://mikechen163.github.io/img/favicon.ico><link rel=apple-touch-icon href=https://mikechen163.github.io/img/apple-touch-icon.png><link rel=apple-touch-icon-precomposed href=https://mikechen163.github.io/img/apple-touch-icon.png><link href=//unpkg.com/font-awesome@4.7.0/css/font-awesome.min.css rel=stylesheet type=text/css><link href=//unpkg.com/imageviewer@1.1.0/dist/viewer.min.css rel=stylesheet><link href=https://mikechen163.github.io/css/main.css rel=stylesheet type=text/css><link href=https://mikechen163.github.io/css/syntax.css rel=stylesheet type=text/css></head><body itemscope itemtype=http://schema.org/WebPage lang=zh-Hans><div class="container one-collumn sidebar-position-left page-home"><div class=headband></div><header id=header class=header itemscope itemtype=http://schema.org/WPHeader><div class=header-inner><div class=site-brand-container><div class=site-nav-toggle><div class=toggle role=button style=opacity:1;top:0><span class=toggle-line></span>
+<!doctype html><html lang=zh-cn dir=zh><head><meta charset=UTF-8><meta http-equiv=X-UA-Compatible content="IE=edge,chrome=1"><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1"><meta http-equiv=Content-Security-Policy content="upgrade-insecure-requests"><title>配置goaccess 访问日志系统 - 麦克的茶馆 </title><meta name=keywords content="技术总结 投资 "><meta name=author content="mike163"><meta property="og:title" content="配置goaccess 访问日志系统"><meta property="og:site_name" content="麦克的茶馆"><meta property="og:image" content="https://mikechen163.github.io/img/author.jpg"><meta name=title content="配置goaccess 访问日志系统 - 麦克的茶馆"><meta name=description content="mike163's home"><link rel="shortcut icon" href=https://mikechen163.github.io/img/favicon.ico><link rel=apple-touch-icon href=https://mikechen163.github.io/img/apple-touch-icon.png><link rel=apple-touch-icon-precomposed href=https://mikechen163.github.io/img/apple-touch-icon.png><link href=//unpkg.com/font-awesome@4.7.0/css/font-awesome.min.css rel=stylesheet type=text/css><link href=//unpkg.com/imageviewer@1.1.0/dist/viewer.min.css rel=stylesheet><link href=https://mikechen163.github.io/css/main.css rel=stylesheet type=text/css><link href=https://mikechen163.github.io/css/syntax.css rel=stylesheet type=text/css></head><body itemscope itemtype=http://schema.org/WebPage lang=zh-Hans><div class="container one-collumn sidebar-position-left page-home"><div class=headband></div><header id=header class=header itemscope itemtype=http://schema.org/WPHeader><div class=header-inner><div class=site-brand-container><div class=site-nav-toggle><div class=toggle role=button style=opacity:1;top:0><span class=toggle-line></span>
 <span class=toggle-line></span>
 <span class=toggle-line></span></div></div><div class=site-meta><div class=custom-logo-site-title><a href=/ class=brand rel=start><span class=logo-line-before><i></i></span>
 <span class=site-title>麦克的茶馆</span>
-<span class=logo-line-after><i></i></span></a></div><p class=site-subtitle></p></div><div class=site-nav-right><div class="toggle popup-trigger" style=opacity:1;top:0><i class="fa fa-search fa-fw fa-lg"></i></div></div></div><nav class=site-nav><ul id=menu class=menu><li class=menu-item><a href=/ rel=section><i class="menu-item-icon fa fa-fw fa-home"></i><br>首页</a></li><li class="menu-item menu-item-active"><a href=/post rel=section><i class="menu-item-icon fa fa-fw fa-archive"></i><br>归档</a></li><li class=menu-item><a href=/about.html rel=section><i class="menu-item-icon fa fa-fw fa-user"></i><br>关于我</a></li><li class="menu-item menu-item-search"><a href=javascript:; class=popup-trigger><i class="menu-item-icon fa fa-search fa-fw"></i><br>搜索</a></li></ul><div class=site-search><div class="popup search-popup local-search-popup"><div class="local-search-header clearfix"><span class=search-icon><i class="fa fa-search"></i> </span><span class=popup-btn-close><i class="fa fa-times-circle"></i></span><div class=local-search-input-wrapper><input autocomplete=off placeholder=搜索关键字... spellcheck=false type=text id=local-search-input autocapitalize=none autocorrect=off></div></div><div id=local-search-result></div></div></div></nav></div></header><main id=main class=main><div class=main-inner><div class=content-wrap><div id=content class=content><section id=posts class=posts-expand><article class="post post-type-normal" itemscope itemtype=http://schema.org/Article><header class=post-header><h1 class=post-title itemprop="name headline"><a class=post-title-link href=https://mikechen163.github.io/post/gentoo-linux-install/ itemprop=url>在vmware虚拟机安装gentoo linux,使用systemd方案</a></h1><div class=post-meta><span class=post-pushdate><i class="fa fa-calendar-o fa-fw"></i>
+<span class=logo-line-after><i></i></span></a></div><p class=site-subtitle></p></div><div class=site-nav-right><div class="toggle popup-trigger" style=opacity:1;top:0><i class="fa fa-search fa-fw fa-lg"></i></div></div></div><nav class=site-nav><ul id=menu class=menu><li class=menu-item><a href=/ rel=section><i class="menu-item-icon fa fa-fw fa-home"></i><br>首页</a></li><li class="menu-item menu-item-active"><a href=/post rel=section><i class="menu-item-icon fa fa-fw fa-archive"></i><br>归档</a></li><li class=menu-item><a href=/about.html rel=section><i class="menu-item-icon fa fa-fw fa-user"></i><br>关于我</a></li><li class="menu-item menu-item-search"><a href=javascript:; class=popup-trigger><i class="menu-item-icon fa fa-search fa-fw"></i><br>搜索</a></li></ul><div class=site-search><div class="popup search-popup local-search-popup"><div class="local-search-header clearfix"><span class=search-icon><i class="fa fa-search"></i> </span><span class=popup-btn-close><i class="fa fa-times-circle"></i></span><div class=local-search-input-wrapper><input autocomplete=off placeholder=搜索关键字... spellcheck=false type=text id=local-search-input autocapitalize=none autocorrect=off></div></div><div id=local-search-result></div></div></div></nav></div></header><main id=main class=main><div class=main-inner><div class=content-wrap><div id=content class=content><section id=posts class=posts-expand><article class="post post-type-normal" itemscope itemtype=http://schema.org/Article><header class=post-header><h1 class=post-title itemprop="name headline"><a class=post-title-link href=https://mikechen163.github.io/post/config-goaccess/ itemprop=url>配置goaccess 访问日志系统</a></h1><div class=post-meta><span class=post-pushdate><i class="fa fa-calendar-o fa-fw"></i>
 <span class=post-meta-item-text>时间：</span>
-<time itemprop=dateCreated datetime=2016-03-22T13:04:35+08:00 content="2022-10-08">2022-10-08
+<time itemprop=dateCreated datetime=2016-03-22T13:04:35+08:00 content="2024-09-11">2024-09-11
 </time></span><span class=post-category><i class="fa fa-folder-o fa-fw"></i>
 <span class=post-meta-item-text>分类：</span>
 <span itemprop=about itemscope itemtype=https://schema.org/Thing><a class=post-category-a href=/categories/%E6%8A%80%E6%9C%AF itemprop=url rel=index><span itemprop=name>技术</span>
 </a>&nbsp;
 </span></span><span class=post-wordcount><i class="fa fa-file-word-o fa-fw"></i>
 <span class=post-meta-item-text>字数：</span>
-<span class=leancloud-world-count>738 字</span>
+<span class=leancloud-world-count>664 字</span>
 </span><span class=post-readtime><i class="fa fa-eye fa-fw"></i>
 <span class=post-meta-item-text>阅读：</span>
 <span class=leancloud-view-count>2分钟</span>
-</span><span id=/post/gentoo-linux-install/ class="leancloud_visitors post-visitor" data-flag-title="在vmware虚拟机安装gentoo linux,使用systemd方案"><i class="fa fa-binoculars fa-fw"></i>
+</span><span id=/post/config-goaccess/ class="leancloud_visitors post-visitor" data-flag-title="配置goaccess 访问日志系统"><i class="fa fa-binoculars fa-fw"></i>
 <span class=post-meta-item-text>阅读次数：</span>
-<span class=leancloud-visitors-count></span></span></div></header><div class=post-body itemprop=articleBody><h2 id=1-步骤记录>1 步骤记录</h2><p>主要流程参考了 <a href=https://segmentfault.com/a/1190000021830333 target=_blank rel=noopener>Gentoo虚拟机安装教程</a></p><p>本文主要记录差异的地方.</p><h3 id=11-vmware启动efi>1.1 vmware启动efi</h3><p>主要是修改vmx文件,增加一句:</p><pre><code>firmware=&quot;efi&quot;
-</code></pre><p>有了这句，虚拟机才能用efi方式启动. 否则后面grub安装不到efi去.</p><h3 id=12-第一次ip地址分配使用下载的iso文件启动>1.2 第一次ip地址分配(使用下载的iso文件启动)</h3><pre><code>第一次iso文件启动之后,需要启动sshd服务,才能分配到ip地址.
-rc-service sshd start
+<span class=leancloud-visitors-count></span></span></div></header><div class=post-body itemprop=articleBody><h1 id=1-配置goaccess-日志系统>1 配置goaccess 日志系统</h1><p>引言
+本文主要介绍,如何快速搭建一个可以查看nginx 访问日志的监控系统</p><h2 id=11-安装并配置goaccess>1.1 安装并配置goaccess</h2><p>以centos/alma linux为例子</p><p>直接安装</p><pre><code>sudo yum install goaccess
+</code></pre><p>安装成功成功之后</p><pre><code> sudo vi /etc/goaccess/goaccess.conf
+</code></pre><p>在文件最末端,添加下面的格式定义(nginx缺省格式),如果格式不同,请检查goaccess的相关资料,这里默认按照nginx缺省格式</p><pre><code> time-format %H:%M:%S
+ date-format %d/%b/%Y
+ log-format %h %^[%d:%t %^] &quot;%r&quot; %s %b &quot;%R&quot; &quot;%u&quot;
+</code></pre><p>对应的 /etc/nginx/nginx.conf的格式定义应为</p><pre><code> http {
+log_format  main  '$remote_addr - $remote_user [$time_local] &quot;$request&quot; '
+                  '$status $body_bytes_sent &quot;$http_referer&quot; '
+                  '&quot;$http_user_agent&quot; &quot;$http_x_forwarded_for&quot;';
 
-使用ip a命令,查看得到的ip地址,
+access_log  /var/log/nginx/access.log  main;
+</code></pre><p>在 /var/www目录下,建立一个goaccess目录,并修改权限</p><pre><code>cd /var/www  
+mkdir goaccess
+sudo chown -R nginx:nginx /var/www/goaccess
+sudo chmod -R 755 /var/www/goaccess
+</code></pre><p>执行下面的命令,正常情况下,应该 /var/www/goaccess目录下,生产一个 index.html文件,这个就是日志访问记录文件,用浏览器打开就能看到访问数据了.</p><pre><code> sudo goaccess /var/log/nginx/access.log -o /var/www/goaccess/index.html  --log-format=COMBINED
+</code></pre><h2 id=12-通过web访问日志文件>1.2 通过web访问日志文件</h2><p>假设你的 域名配置 goaccess.example.com,那么参考配置为 ,把域名和证书改成你自己的</p><pre><code># goaccess system
+server {
+  listen 8800  ssl http2; # Listen for HTTPS on port 
+  listen [::]:8800 ssl http2; # Listen for IPv6 traffic as well
+  server_name goaccess.example.com; # Replace with your actual domain
 
-nano /etc/ssh/sshd_config文件,增加
-PermitRootLogin yes
-然后重启 sshd
-rc-service sshd restart
-</code></pre><h3 id=13-第二次ip地址分配systemd>1.3 第二次ip地址分配(systemd)</h3><pre><code>设定systemid,必须执行,否则后面网络起不来
-systemd-machine-id-setup
+ # SSL configuration
 
-编辑主机名字
-/etc/hostname
+ ssl_certificate  /path/fullchain.pem;
+ssl_certificate_key /path/privkey.pem;
+ ssl_protocols TLSv1.2 TLSv1.3;
 
-
-创建dhcp配置文件
-/etc/systemd/network/50-dhcp.network
-[Match]
-Name=en*
-
-[Network]
-DHCP=yes
-
-//如果是静态ip
-[Match]
- Name=enp1s0
-
- [Network]
- Address=192.168.1.10/24
- Gateway=192.168.1.1
- DNS=192.168.1.1
- 
- 
- //启动网络服务
- systemctl enable systemd-networkd.service
- systemctl start systemd-networkd.service
-</code></pre><h3 id=14-安装二进制核心包不编译核心>1.4 安装二进制核心包,不编译核心</h3><p>因为gentoo编译内核很慢,因此第一次安装直接用 二进制格式,不编译.执行下面的命令</p><pre><code>emerge --ask  sys-kernel/gentoo-kernel-bin
-
-如果是新手,强烈建议不要编译内核.非常耗时间,而且可能启动失败.先用标准二进制包启动系统,后面有时间再慢慢编译内核.
-</code></pre><h2 id=2-编译内核>2 编译内核</h2><pre><code>使用二进制内核启动之后,有时间可以自行编译内核了.需要首先安装内核源代码
-emerge --ask sys-kernel/gentoo-sources
-
-//得到一个缺省配置
-make defconfig
-
-//得到一个当前全部正确的模块的核心配置参数
-make localmodconfig
-
-//核心模块全部编译到内核,推荐使用
-make localyesconfig
-</code></pre><p>然后按照这篇文章 <a href=https://segmentfault.com/a/1190000021830333 target=_blank rel=noopener>Gentoo虚拟机安装教程</a>
-，修改内核参数，保存.config</p><pre><code> //注意这里把systemd选上.缺省没有.是rc init
- make menuconfig
-
-//清除上次编译的中间结果
-make clean
-make 
-
-make modules_install
-make install
-//检查一下 /boot目录下是否有编译好的内核
-
-//把initramfs放进目录
-genkernel --kernel-config=/usr/src/linux/.config initramfs
-
-
-//重新生成grub菜单
-grub-mkconfig -o /boot/grub/grub.cfg
-
-//用这个工具,保存系统当前所有的模块数据
-/usr/bin/modprobed-db store
-//这个命令恢复.然后就一直执行make localmodconfig
-/usr/bin/modprobed-db recall
-</code></pre><h2 id=3-参考文档>3 参考文档</h2><p><a href=https://zhuanlan.zhihu.com/p/164910411 target=_blank rel=noopener>知乎医学生学习gentoo</a></p></div><footer class=post-footer><div class=post-tags><a href=/tags/gentoo rel=tag title=gentoo>#gentoo#</a>
-<a href=/tags/vmware rel=tag title=vmware>#vmware#</a>
-<a href=/tags/systemd rel=tag title=systemd>#systemd#</a>
-<a href=/tags/kernel rel=tag title=kernel>#kernel#</a></div><div class=addthis_inline_share_toolbox></div><div class=post-nav><div class="post-nav-next post-nav-item"><a href=https://mikechen163.github.io/post/cloudflare-warp-add-ipv6/ rel=next title="通过cloudflare warp给ipv4 vps添加ipv6"><i class="fa fa-chevron-left"></i> 通过cloudflare warp给ipv4 vps添加ipv6</a></div><div class="post-nav-prev post-nav-item"><a href=https://mikechen163.github.io/post/tcp-performance-tune/ rel=prev title=优化tcp性能>优化tcp性能
+ location / {
+    root /var/www/goaccess;
+    index index.html;
+}
+}
+</code></pre><p>检查配置文件正确行</p><pre><code>sudo nginx -t
+nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+nginx: configuration file /etc/nginx/nginx.conf test is successful
+</code></pre><p>如果成功,重启服务后,访问 goaccess.example.com应该就能看到访问数据了.</p><pre><code> sudo systemctl restart nginx
+</code></pre><h2 id=13-配置etccrontab定时更新数据>1.3 配置/etc/crontab,定时更新数据</h2><p>修改 /etc/crontab,增加一行 goaccess配置.前面一行是定时更新证书的命令,保存</p><pre><code>0 0,12 * * * root sleep 2380 &amp;&amp; certbot renew -q
+0 * * * * root goaccess /var/log/nginx/access.log -o /var/www/goaccess/index.html --log-format=COMBINED
+</code></pre><p>重启crond服务</p><pre><code>sudo systemctl restart crond
+</code></pre></div><footer class=post-footer><div class=post-tags><a href=/tags/nginx rel=tag title=nginx>#nginx#</a>
+<a href=/tags/goaccess rel=tag title=goaccess>#goaccess#</a>
+<a href=/tags/https rel=tag title=https>#https#</a></div><div class=addthis_inline_share_toolbox></div><div class=post-nav><div class="post-nav-next post-nav-item"></div><div class="post-nav-prev post-nav-item"><a href=https://mikechen163.github.io/post/config-nginx-detail-case/ rel=prev title=Nginx配置指南：支持多域名HTTPS和代理协议>Nginx配置指南：支持多域名HTTPS和代理协议
 <i class="fa fa-chevron-right"></i></a></div></div><div id=wcomments></div></footer></article></section></div></div><div class=sidebar-toggle><div class=sidebar-toggle-line-wrap><span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
 <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
 <span class="sidebar-toggle-line sidebar-toggle-line-last"></span></div></div><aside id=sidebar class=sidebar><div class=sidebar-inner><section class="site-overview sidebar-panel sidebar-panel-active"><div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person><img class=site-author-image itemprop=image src=/img/avatar.png alt=mike163><p class=site-author-name itemprop=name>mike163</p><p class="site-description motion-element" itemprop=description></p></div><nav class="site-state motion-element"><div class="site-state-item site-state-posts"><a href=/post/><span class=site-state-item-count>29</span>

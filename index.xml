@@ -1,4 +1,68 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Home on 麦克的茶馆</title><link>https://mikechen163.github.io/</link><description>Recent content in Home on 麦克的茶馆</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Sat, 31 Aug 2024 00:00:00 +0000</lastBuildDate><atom:link href="https://mikechen163.github.io/index.xml" rel="self" type="application/rss+xml"/><item><title>Nginx配置指南：支持多域名HTTPS和代理协议</title><link>https://mikechen163.github.io/post/config-nginx-detail-case/</link><pubDate>Sat, 31 Aug 2024 00:00:00 +0000</pubDate><guid>https://mikechen163.github.io/post/config-nginx-detail-case/</guid><description>&lt;h1 id="nginx配置指南支持多域名https和proxy_protocol协议">Nginx配置指南：支持多域名HTTPS和proxy_protocol协议&lt;/h1>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Home on 麦克的茶馆</title><link>https://mikechen163.github.io/</link><description>Recent content in Home on 麦克的茶馆</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Wed, 11 Sep 2024 00:00:00 +0000</lastBuildDate><atom:link href="https://mikechen163.github.io/index.xml" rel="self" type="application/rss+xml"/><item><title>配置goaccess 访问日志系统</title><link>https://mikechen163.github.io/post/config-goaccess/</link><pubDate>Wed, 11 Sep 2024 00:00:00 +0000</pubDate><guid>https://mikechen163.github.io/post/config-goaccess/</guid><description>&lt;h1 id="1-配置goaccess-日志系统">1 配置goaccess 日志系统&lt;/h1>
+&lt;p>引言
+本文主要介绍,如何快速搭建一个可以查看nginx 访问日志的监控系统&lt;/p>
+&lt;h2 id="11-安装并配置goaccess">1.1 安装并配置goaccess&lt;/h2>
+&lt;p>以centos/alma linux为例子&lt;/p>
+&lt;p>直接安装&lt;/p>
+&lt;pre>&lt;code>sudo yum install goaccess
+&lt;/code>&lt;/pre>
+&lt;p>安装成功成功之后&lt;/p>
+&lt;pre>&lt;code> sudo vi /etc/goaccess/goaccess.conf
+&lt;/code>&lt;/pre>
+&lt;p>在文件最末端,添加下面的格式定义(nginx缺省格式),如果格式不同,请检查goaccess的相关资料,这里默认按照nginx缺省格式&lt;/p>
+&lt;pre>&lt;code> time-format %H:%M:%S
+date-format %d/%b/%Y
+log-format %h %^[%d:%t %^] &amp;quot;%r&amp;quot; %s %b &amp;quot;%R&amp;quot; &amp;quot;%u&amp;quot;
+&lt;/code>&lt;/pre>
+&lt;p>对应的 /etc/nginx/nginx.conf的格式定义应为&lt;/p>
+&lt;pre>&lt;code> http {
+log_format main '$remote_addr - $remote_user [$time_local] &amp;quot;$request&amp;quot; '
+'$status $body_bytes_sent &amp;quot;$http_referer&amp;quot; '
+'&amp;quot;$http_user_agent&amp;quot; &amp;quot;$http_x_forwarded_for&amp;quot;';
+access_log /var/log/nginx/access.log main;
+&lt;/code>&lt;/pre>
+&lt;p>在 /var/www目录下,建立一个goaccess目录,并修改权限&lt;/p>
+&lt;pre>&lt;code>cd /var/www
+mkdir goaccess
+sudo chown -R nginx:nginx /var/www/goaccess
+sudo chmod -R 755 /var/www/goaccess
+&lt;/code>&lt;/pre>
+&lt;p>执行下面的命令,正常情况下,应该 /var/www/goaccess目录下,生产一个 index.html文件,这个就是日志访问记录文件,用浏览器打开就能看到访问数据了.&lt;/p>
+&lt;pre>&lt;code> sudo goaccess /var/log/nginx/access.log -o /var/www/goaccess/index.html --log-format=COMBINED
+&lt;/code>&lt;/pre>
+&lt;h2 id="12-通过web访问日志文件">1.2 通过web访问日志文件&lt;/h2>
+&lt;p>假设你的 域名配置 goaccess.example.com,那么参考配置为 ,把域名和证书改成你自己的&lt;/p>
+&lt;pre>&lt;code># goaccess system
+server {
+listen 8800 ssl http2; # Listen for HTTPS on port
+listen [::]:8800 ssl http2; # Listen for IPv6 traffic as well
+server_name goaccess.example.com; # Replace with your actual domain
+# SSL configuration
+ssl_certificate /path/fullchain.pem;
+ssl_certificate_key /path/privkey.pem;
+ssl_protocols TLSv1.2 TLSv1.3;
+location / {
+root /var/www/goaccess;
+index index.html;
+}
+}
+&lt;/code>&lt;/pre>
+&lt;p>检查配置文件正确行&lt;/p>
+&lt;pre>&lt;code>sudo nginx -t
+nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+nginx: configuration file /etc/nginx/nginx.conf test is successful
+&lt;/code>&lt;/pre>
+&lt;p>如果成功,重启服务后,访问 goaccess.example.com应该就能看到访问数据了.&lt;/p>
+&lt;pre>&lt;code> sudo systemctl restart nginx
+&lt;/code>&lt;/pre>
+&lt;h2 id="13-配置etccrontab定时更新数据">1.3 配置/etc/crontab,定时更新数据&lt;/h2>
+&lt;p>修改 /etc/crontab,增加一行 goaccess配置.前面一行是定时更新证书的命令,保存&lt;/p>
+&lt;pre>&lt;code>0 0,12 * * * root sleep 2380 &amp;amp;&amp;amp; certbot renew -q
+0 * * * * root goaccess /var/log/nginx/access.log -o /var/www/goaccess/index.html --log-format=COMBINED
+&lt;/code>&lt;/pre>
+&lt;p>重启crond服务&lt;/p>
+&lt;pre>&lt;code>sudo systemctl restart crond
+&lt;/code>&lt;/pre></description></item><item><title>Nginx配置指南：支持多域名HTTPS和代理协议</title><link>https://mikechen163.github.io/post/config-nginx-detail-case/</link><pubDate>Sat, 31 Aug 2024 00:00:00 +0000</pubDate><guid>https://mikechen163.github.io/post/config-nginx-detail-case/</guid><description>&lt;h1 id="nginx配置指南支持多域名https和proxy_protocol协议">Nginx配置指南：支持多域名HTTPS和proxy_protocol协议&lt;/h1>
 &lt;p>引言
 在当今的web服务架构中，Nginx作为一个强大的web服务器和反向代理服务器，扮演着至关重要的角色。本文将详细介绍如何配置Nginx以支持多域名HTTPS和代理协议，涵盖了几种常见的场景。我们将从基本的配置开始，逐步深入到更复杂的设置。&lt;/p>
 &lt;h2 id="场景1多域名https和sni">场景1：多域名HTTPS和SNI&lt;/h2>
