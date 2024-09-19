@@ -1,4 +1,16 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><search><entry><title>配置goaccess 访问日志系统</title><url>https://mikechen163.github.io/post/config-goaccess/</url><categories><category>技术</category></categories><tags><tag>nginx</tag><tag>goaccess</tag><tag>https</tag></tags><content type="html"> 1 配置goaccess 日志系统 引言 本文主要介绍,如何快速搭建一个可以查看nginx 访问日志的监控系统
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><search><entry><title>安装webui系统</title><url>https://mikechen163.github.io/post/config-webui/</url><categories><category>技术</category></categories><tags><tag>webui</tag><tag>litellm</tag><tag>openai</tag></tags><content type="html"> 1 安装webui系统 本文主要介绍,如何在 alma /centos linux上,安装 webui系统.,并配置litellm
+1.1 安装docker(略) 没啥特别的. 按说明操作就好.
+1.2 安装litellm 原来版本中,保存config.yaml文件的路径为 /var/lib/docker/volumes/open-webui/_data/litellm,建立一个新的路径,假设为docker/webui,
+sudo mkdir ~/docker/webui cd ~/docker/webui sudo cp /var/lib/docker/volumes/open-webui/_data/litellm/config.yaml . 新的webui中, litellm需要单独启动一个容器, 命令如下
+sudo docker run -d \ -p 172.17.0.1:4000:4000 \ --name litellm \ -v ./config.yaml:/app/config.yaml \ -e LITELLM_MASTER_KEY=your_secret_key \ --restart always \ ghcr.io/berriai/litellm:main-latest \ --config /app/config.yaml --port 4000 1.2 安装webui 命令为
+sudo docker run -d -p 3000:8080 -e OLLAMA_BASE_URL=http://your_ollama_server_address -v open-webui:/app/backend/data --name open-webui --restart always ghcr.io/open-webui/open-webui:main 正常情况可以启动,然后访问 http://server:3000,创建管理员用户名 密码.
+进入系统后,进入右上角管理员按钮, 选择 Admin Panel,然后选择setings ,选择connections,有个OpenAI API ,在右边的 + 按钮,点击后,创建新的链接 ,然后输入 你的本地l链接 http://172.17.0.1:4000/v1 和启动litellm容器时,设定的 your_secret_key ,点击后面的刷新按钮, 检查是否成功. 失败看下面的踩坑记录.
+openai 的key,也可以在这里输入
+1.3 猜坑记录 1 由于我的机器配置有 iptables, 缺省情况 网络不通, 需要配置一条让docker通过的命令.
+sudo iptables -I INPUT -i docker0 -j ACCEPT 2 缺省的litellm命令, 互联网是可以直接访问litellm的,不安全,需要把litellm容器的启动命令中,参数改成
+sudo docker run -d \ -p 172.17.0.1:4000:4000 \ --name litellm \ -v ./config.yaml:/app/config.yaml \ -e LITELLM_MASTER_KEY=your_secret_key \ --restart always \ ghcr.io/berriai/litellm:main-latest \ --config /app/config.yaml --port 4000 原来的命令是,区别在于加上了 ip地址限制
+sudo docker run -d \ -p 4000:4000 \ --name litellm \ -v ./config.yaml:/app/config.yaml \ -e LITELLM_MASTER_KEY=your_secret_key \ --restart always \ ghcr.io/berriai/litellm:main-latest \ --config /app/config.yaml --port 4000 3 限制外面的网络,不要折腾iptables, 要修改docker的启动参数.
+1.3 参考文档 1 https://docs.openwebui.com/getting-started/ 2 https://docs.openwebui.com/migration/#migrating-from-internal-to-external-litellm</content></entry><entry><title>配置goaccess 访问日志系统</title><url>https://mikechen163.github.io/post/config-goaccess/</url><categories><category>技术</category></categories><tags><tag>nginx</tag><tag>goaccess</tag><tag>https</tag></tags><content type="html"> 1 配置goaccess 日志系统 引言 本文主要介绍,如何快速搭建一个可以查看nginx 访问日志的监控系统
 1.1 安装并配置goaccess 以centos/alma linux为例子
 直接安装
 sudo yum install goaccess 安装成功成功之后

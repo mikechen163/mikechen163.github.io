@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>webui on 麦克的茶馆</title><link>https://mikechen163.github.io/tags/webui/</link><description>Recent content in webui on 麦克的茶馆</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Thu, 19 Sep 2024 00:00:00 +0000</lastBuildDate><atom:link href="https://mikechen163.github.io/tags/webui/index.xml" rel="self" type="application/rss+xml"/><item><title>安装webui系统</title><link>https://mikechen163.github.io/post/config-webui/</link><pubDate>Thu, 19 Sep 2024 00:00:00 +0000</pubDate><guid>https://mikechen163.github.io/post/config-webui/</guid><description>&lt;h1 id="1-安装webui系统">1 安装webui系统&lt;/h1>
+&lt;p>本文主要介绍,如何在 alma /centos linux上,安装 webui系统.,并配置litellm&lt;/p>
+&lt;h2 id="11-安装docker略">1.1 安装docker(略)&lt;/h2>
+&lt;p>没啥特别的. 按说明操作就好.&lt;/p>
+&lt;h2 id="12-安装litellm">1.2 安装litellm&lt;/h2>
+&lt;p>原来版本中,保存config.yaml文件的路径为 /var/lib/docker/volumes/open-webui/_data/litellm,建立一个新的路径,假设为docker/webui,&lt;/p>
+&lt;pre>&lt;code> sudo mkdir ~/docker/webui
+cd ~/docker/webui
+sudo cp /var/lib/docker/volumes/open-webui/_data/litellm/config.yaml .
+&lt;/code>&lt;/pre>
+&lt;p>新的webui中, litellm需要单独启动一个容器, 命令如下&lt;/p>
+&lt;pre>&lt;code>sudo docker run -d \
+-p 172.17.0.1:4000:4000 \
+--name litellm \
+-v ./config.yaml:/app/config.yaml \
+-e LITELLM_MASTER_KEY=your_secret_key \
+--restart always \
+ghcr.io/berriai/litellm:main-latest \
+--config /app/config.yaml --port 4000
+&lt;/code>&lt;/pre>
+&lt;h2 id="12-安装webui">1.2 安装webui&lt;/h2>
+&lt;p>命令为&lt;/p>
+&lt;pre>&lt;code>sudo docker run -d -p 3000:8080 -e OLLAMA_BASE_URL=http://your_ollama_server_address -v open-webui:/app/backend/data --name open-webui --restart always ghcr.io/open-webui/open-webui:main
+&lt;/code>&lt;/pre>
+&lt;p>正常情况可以启动,然后访问 http://server:3000,创建管理员用户名 密码.&lt;/p>
+&lt;p>进入系统后,进入右上角管理员按钮, 选择 Admin Panel,然后选择setings ,选择connections,有个OpenAI API ,在右边的 + 按钮,点击后,创建新的链接 ,然后输入 你的本地l链接 http://172.17.0.1:4000/v1 和启动litellm容器时,设定的 your_secret_key ,点击后面的刷新按钮, 检查是否成功. 失败看下面的踩坑记录.&lt;/p>
+&lt;p>openai 的key,也可以在这里输入&lt;/p>
+&lt;h2 id="13-猜坑记录">1.3 猜坑记录&lt;/h2>
+&lt;p>1 由于我的机器配置有 iptables, 缺省情况 网络不通, 需要配置一条让docker通过的命令.&lt;/p>
+&lt;pre>&lt;code> sudo iptables -I INPUT -i docker0 -j ACCEPT
+&lt;/code>&lt;/pre>
+&lt;p>2 缺省的litellm命令, 互联网是可以直接访问litellm的,不安全,需要把litellm容器的启动命令中,参数改成&lt;/p>
+&lt;pre>&lt;code>sudo docker run -d \
+-p 172.17.0.1:4000:4000 \
+--name litellm \
+-v ./config.yaml:/app/config.yaml \
+-e LITELLM_MASTER_KEY=your_secret_key \
+--restart always \
+ghcr.io/berriai/litellm:main-latest \
+--config /app/config.yaml --port 4000
+&lt;/code>&lt;/pre>
+&lt;p>原来的命令是,区别在于加上了 ip地址限制&lt;/p>
+&lt;pre>&lt;code>sudo docker run -d \
+-p 4000:4000 \
+--name litellm \
+-v ./config.yaml:/app/config.yaml \
+-e LITELLM_MASTER_KEY=your_secret_key \
+--restart always \
+ghcr.io/berriai/litellm:main-latest \
+--config /app/config.yaml --port 4000
+&lt;/code>&lt;/pre>
+&lt;p>3 限制外面的网络,不要折腾iptables, 要修改docker的启动参数.&lt;/p>
+&lt;h2 id="13-参考文档">1.3 参考文档&lt;/h2>
+&lt;p>1 &lt;a href="https://docs.openwebui.com/getting-started/" target="_blank" rel="noopener">https://docs.openwebui.com/getting-started/&lt;/a>
+&lt;/p>
+&lt;p>2 &lt;a href="https://docs.openwebui.com/migration/#migrating-from-internal-to-external-litellm" target="_blank" rel="noopener">https://docs.openwebui.com/migration/#migrating-from-internal-to-external-litellm&lt;/a>
+&lt;/p></description></item></channel></rss>
